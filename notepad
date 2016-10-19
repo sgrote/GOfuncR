@@ -67,7 +67,7 @@ cd /home/steffi_grote/R_packages/FuncBlocks_package
 R CMD build FuncBlocks #--resave-data
 
 # install package
-R CMD INSTALL FuncBlocks_1.0.2.tar.gz
+R CMD INSTALL FuncBlocks_1.0.3.tar.gz
 
 # look at help page
 # in R:
@@ -82,8 +82,10 @@ compileAttributes()
 
 
 # TODO
-() add function that given a GO returns annotated candidate genes (from last go_enrich-run or given the candidate genes?)
-() add function that given a gene returns all annotated GOs (with parent-GOs?)
+() add function that given a GO returns annotated candidate genes (from last go_enrich-run or given the candidate genes?), also those annotated to sub-categories (see inspect_GO:0098800.R)
+() add function that given a gene returns all annotated GOs (with parent-GOs? - maybe optional)
+() add a function that given a GO return all parent GOs
+() add a function that given a GO return all child GOs
 
 
 
