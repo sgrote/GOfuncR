@@ -1,0 +1,92 @@
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=7, warning=FALSE, message=FALSE)
+options(width=110)
+set.seed(123)
+```
+
+<!--
+%\VignetteIndexEntry{FuncBlocks: Ontology enrichment using FUNC}
+%\VignetteEngine{knitr::knitr}
+-->
+
+# FuncBlocks: Ontology enrichment using FUNC
+
+Package: ABAEnrichment   
+Author: Steffi Grote and David Reher   
+Date: August 26, 2015   
+
+## Overview
+*Blabla - hier kommt der Text voon ABAEnrichment*:
+
+`r Biocpkg("ABAEnrichment")` is an R package for the enrichment analysis of user defined candidate genes (in the set of expressed protein coding genes) in different human brain regions. The package integrates the expression of the candidate gene set (averaged across donors) and the structural information of the brain using an ontology, both provided by the Allen Brain Atlas project [1-4]. The statistical analysis is performed by the core function `aba_enrich` which interfaces the ontology enrichment software FUNC [5]. Additional functions provided in this package are `get_expression`, `plot_expression`, `get_name`, `get_sampled_substructures` and `get_superstructures` supporting the exploration and visualization of the expression data. 
+
+The enrichment analysis for candidate genes is performed by using either the hypergeometric or the Wilcoxon rank test implemented in the ontology enrichment software FUNC [5]. The hypergeometric test evaluates the enrichment of expressed candidate genes compared to a set of background genes for each brain region. The background genes can be defined explicitly like the candidate genes or, by default, consist of all expressed genes from the dataset outside the candidate genes. Using the Wilcoxon rank test, scores assigned to candidate genes are tested for an enrichment in brain regions. The boundary between 'expressed' and 'not expressed' is defined by different expression quantiles (e.g. the lowest 40% of gene expression are 'not expressed' and the upper 60% are 'expressed' for a quantile of 0.4). These cutoffs are set with the parameter `cutoff_quantiles` and an analysis is run for every cutoff separately. 
+
+The package incorporates three different brain expression datasets: first, microarray data from adult individuals, second, RNA-seq data from individuals of five different developmental stages (prenatal, infant, child, adolescent, adult) and third, a developmental effect score measuring the age effect on expression for given genes. In the latter case the data are not divided into 'expressed' and 'not expressed', but into 'developmental effect score above cutoff' or not. However, for simplicity we only refer to 'expression' in that documentation. For details on the datasets see the `r Biocexptpkg("ABAData")` vignette.
+
+
+Overview of the functions included in ABAEnrichment:
+
+function | description
+-------- | ----------
+`aba_enrich` | core function for performing enrichment analyses given a candidate gene set.
+`get_expression` | returns expression data or developmental effect scores for a given set of genes and brain structures.
+`plot_expression` | plots a heatmap with expression data or developmental effect scores for a given set of genes and brain structures.
+`get_name` | returns the full name of a brain region given a structure id.
+`get_sampled_substructures` | returns the substructures of a given brain region that have expression data available.
+`get_superstructures` | returns the superstructures of a given brain region.
+
+## Ontology and annotations
+The ontology was downloaded then at there. 
+
+GO-annotaion was obtain this way.
+
+User may also use custom ontology and go annotation. parameter `term`, `term2term` and `graph_path` then are the paths to the ontology tables as described in there. `go_annos` should be a file with two columns: first, GO:category eg. GO:1234 and second, a gene associated with the GO (only one gene per line).  
+   
+## Examples   
+
+*Ein Beispiel fuer FuncBlocks*
+
+#### Test gene expression enrichment with hypergeometric test
+For an example set of 5 FABP genes a test for GO-enrichment is performed using a set of 9 background genes. A binary vector with '1' for a candidate gene and '0' for a background gene and names as HGNC-symbol needs to be defined. If no background genes are defined, all remaining genes (see *GO-version*) of the dataset are used as background.
+
+```{r} 
+## load FuncBlocks package
+require(FuncBlocks)
+## create input vector with candidate genes 
+test_genes = paste(rep('FABP', 5), c(2,4:7), sep='')
+bg_genes = c('NCAPG', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1')
+genes = c(rep(1,length(test_genes)), rep(0,length(bg_genes)))
+names(genes) = c(test_genes, bg_genes)
+genes
+```
+
+In order to test the 5 FABP genes for GO-enrichment in brain regions at different developmental stages using `go_enrich` the vector `genes` is the only mandatory input. Optional parameters are  ..., and `n_randsets` (maybe show a table). Here `n_randsets` is set to 100 to lower computational time for the example. The default value is 1000. 
+
+```{r,results='hide'} 
+## run enrichment analysis
+func_out = go_enrich(genes, n_randsets=100)
+```
+
+
+The function `go_enrich` returns a table ... which is like that, and ordered by FWER.
+
+```{r}
+head(func_out)
+```
+
+
+
+## Session Info
+```{r}
+sessionInfo()
+```
+
+## References
+
+[5] Pruefer, K. et al. (2007) FUNC: A package for detecting significant associations between gene
+sets and ontological annotations, BMC Bioinformatics 8: 41. [doi:10.1186/1471-2105-8-41]

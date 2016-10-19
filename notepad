@@ -1,0 +1,99 @@
+
+
+cd /r1/people/steffi_grote/R_packages/FuncBlocks_package
+
+# termtables downloaded from
+http://archive.geneontology.org/full/2016-08-01/
+go_201608-termdb-tables.tar.gz
+
+# go gene association file "mart_export.csv" downloaded from
+http://grch37.ensembl.org/biomart/martview/c037173cf22cc8bc58b16d6a05d7e57a
+Database: Ensembl Genes
+Dataset: Homo sapiens genes (GRCh37.p13)
+Filters: none
+Attributes: GO Term Accession, HGNC symbol
+64162 Genes
+delimiter: csv
+unique results only: yes
+
+# gene positions file "gene_coords.txt" downloaded from
+http://grch37.ensembl.org/biomart/martview/b68c5eb25863d05a3de5670a0b312772
+Database: Ensembl Genes
+Dataset: Homo sapiens genes (GRCh37.p13)
+Filters: none
+Attributes: HGNC symbol, Chromosome Name, Gene Start (bp), Gene End (bp)
+64187 Genes
+delimiter: csv
+unique results only: yes
+
+## add files to package 
+# (R-objects saved in /R/sysdata.rda can be used in the package's R functions without any explicit loading)
+# in R: 
+rm(list=ls())
+setwd("/r1/people/steffi_grote/R_packages/FuncBlocks_package")
+term = read.table("term_tables/term.txt", sep="\t", quote="", comment.char="", as.is=TRUE)
+term2term = read.table("term_tables/term2term.txt", sep="\t", quote="", comment.char="", as.is=TRUE)
+graph_path = read.table("term_tables/graph_path.txt", sep="\t", quote="", comment.char="", as.is=TRUE)
+go_anno = read.csv("mart_export.csv", as.is=TRUE)
+# remove empty fields here to save space, but keep removing in go_enrich for custom user annotation
+go_anno = go_anno[go_anno[,1] != "",]
+gene_coords = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
+# convert to bed-file, remove empty fields and reduce to chr1-22,X,Y
+gene_coords_bed = gene_coords[,c(2,3,4,1)]
+# TODO: ADD this filering steps also for user defined gene_coords file
+gene_coords_bed = gene_coords_bed[gene_coords_bed[,4] != "",]
+gene_coords_bed = gene_coords_bed[gene_coords_bed[,1] %in% c(1:22,"X","Y"),]
+# if you wanna be ganz genau: ensembl is 1-based, bed-files are 0-based
+gene_coords_bed[,2:3] = gene_coords_bed[,2:3]-1
+save(list=ls(),file="./FuncBlocks/R/sysdata.rda")
+
+
+# package version number is set in 
+FuncBlocks/DESCRIPTION
+
+# help page
+FuncBlocks/vignettes/FuncBlocks.Rmd
+
+# needs BiocStyle installed
+# in R:
+source("https://bioconductor.org/biocLite.R")
+biocLite("BiocStyle")
+
+# help files for single function like ?go_enrich should be in FuncBlocks/man
+not done yet - I will copy some examples from ABAEnrichment
+
+# build package
+cd /home/steffi_grote/R_packages/FuncBlocks_package 
+R CMD build FuncBlocks #--resave-data
+
+# install package
+R CMD INSTALL FuncBlocks_1.0.2.tar.gz
+
+# look at help page
+# in R:
+vignette("FuncBlocks",package="FuncBlocks")
+
+# if new .cpp files are added, Rcpp's compileAttributes must be run once:
+# in R:
+require("Rcpp")
+setwd("/home/steffi_grote/R_packages/FuncBlocks_package/FuncBlocks")
+compileAttributes()
+
+
+
+# TODO
+() add function that given a GO returns annotated candidate genes (from last go_enrich-run or given the candidate genes?)
+() add function that given a gene returns all annotated GOs (with parent-GOs?)
+
+
+
+
+
+
+
+
+
+
+
+
+

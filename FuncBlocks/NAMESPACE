@@ -1,0 +1,4 @@
+useDynLib(FuncBlocks)
+export("go_enrich")
+importFrom(Rcpp, evalCpp)
+
