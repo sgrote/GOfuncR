@@ -15,6 +15,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 #	bed[,1] = substring(bed[,1], 4)  ## if chrom is given as chr21 instead of 21 
 	bed = as.data.frame(bed)
 	bed[,2:3] = apply(bed[,2:3], 2, as.integer)
+	bed[,1] = as.character(bed[,1])
 	
 	# check that start < stop
 	reverse_indi = bed[,2] > bed[,3]
@@ -84,11 +85,11 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		}
 				
 	} else {  # normal blocks option
-		# check that biggest bg_region is bigger than biggest test_region
+		# check that biggest test_region is not bigger than biggest bg_region
 		max_bg = max(bg_reg[,3] - bg_reg[,2])
 		too_big_indi = (test_reg[,3] - test_reg[,2]) > max_bg
 		if (sum(too_big_indi) > 0){
-			too_big = paste(names(genes[genes==1])[too_big_indi], collapse=", ")
+			too_big = paste(paste(test_reg[,1],":",test_reg[,2],"-",test_reg[,3],sep="")[too_big_indi], collapse=", ")
 			stop(paste( "Candidate regions bigger than any background region:\n  ", too_big, sep=""))	
 		}
 		# sort candidate regions by length (better chances that random placement works with small bg-regions)
