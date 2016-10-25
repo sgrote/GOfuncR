@@ -1,4 +1,6 @@
 useDynLib(FuncBlocks)
 export("go_enrich")
 importFrom(Rcpp, evalCpp)
+importFrom("utils", "read.table", "write.table")
 
+import(gtools)
