@@ -73,10 +73,10 @@ int* go_groups_hyper::calculate_data( ostream *os )
 		double prob_right ;
 
 		// pval
-		//				   ,- lower_tail
+		//				  
 		// steffi:
-		prob_left  = R::phyper( x, M, N-M, n, 1, 0 ) ; 
-		prob_right = R::phyper( x-1., M, N-M, n, 0, 0 ) ;
+		prob_left  = R::phyper( x, M, N-M, n, 1, 0 ) ; // underrep
+		prob_right = R::phyper( x-1., M, N-M, n, 0, 0 ) ; // overrep
 		//prob_left  = phyper( x, M, N-M, n, 1, 0 ) ; 
 		//prob_right = phyper( x-1., M, N-M, n, 0, 0 ) ;
 		data_pvals_l[i] = prob_left ;
@@ -128,6 +128,8 @@ int* go_groups_hyper::calculate_data( ostream *os )
 	osig_r.add_set( pvals_r ) ;
 	return ret ;
 }
+
+// evaluate one randomset
 int* go_groups_hyper::calculate_rand( string &data, ostream *os ) 
 {
 	istringstream is( data.c_str() ) ;
@@ -146,12 +148,15 @@ int* go_groups_hyper::calculate_rand( string &data, ostream *os )
 	}
 
 	multiset<double> pvals_l, pvals_r ;
-
+	// for every GO: get hyper p-vals
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
-
+		// # genes annotated to root node
 		double N = detected[root_idx] ;
+		// # test genes annotated to root node 
 		double M = changed[root_idx] ;
+		// # genes annotated to current node
 		double n = detected[i] ;
+		// # test genes annotated to current node
 		double x = changed[i] ;
 		
 		if ( n < cutoff ) continue ; 
@@ -177,7 +182,7 @@ int* go_groups_hyper::calculate_rand( string &data, ostream *os )
 			   << prob_left << "\t"
 			   << prob_right << endl ;
 		}
-
+		// ret array contains number of significant GOs per p-cutoff
 		if ( prob_left < 0.1 ) {
 			ret[0]++ ;
 			if ( prob_left < 0.05 ) {
@@ -226,6 +231,7 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 	map<double,double> *fdr_q_r = osig_r.fdr_qvals( 0 ) ; 
 	*/
 
+	// loop over GOs and compute FWER
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
 		if ( detected[i] >= cutoff ) { 
 			// FWER: number of randsets with smallest p <= p-val 

@@ -90,19 +90,16 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
          ************/
 	go_groups_hyper gos( groups, detected, changed, root_go, cutoff ) ;
 
-	// steffi:
-	//ofstream profile( argv[3] ) ;
-
-	// returns number of significant groups for 0.1, 0.05, 0.01, 0.001
-	//steffi:
+	// returns number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001
+	// for under and over respresentation -> 10 values, also printed to console
 	int *realdata = gos.calculate_data( ) ;
 //	int *realdata = gos.calculate_data( &profile ) ;
 //	out << endl << endl ;
 	
 
-	int sum_randdata[10] ;
+	int sum_randdata[10] ; // sum significant groups across all randomsets 
 	for ( int i=0 ; i < 10 ; ++i ) sum_randdata[i] = 0 ;
-	int nr_groups_ge[10] ;
+	int nr_groups_ge[10] ; // sum of randsets where randdata[i] >= realdata[i] 
 	for ( int i=0 ; i < 10 ; ++i ) nr_groups_ge[i] = 0 ;
 	int num_randdata = 0 ;
 	// randomsets
@@ -128,14 +125,14 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	// gos.print_pvals( num_randdata, Rcpp::Rcout ) ;
 	gos.print_pvals( num_randdata, out ) ;
 
-	// steffi: nicht in file sondern ausgabe auf konsole
+	// write summary to console
 	Rcpp::Rcout << "Randomsets: " << num_randdata << endl ;
 	Rcpp::Rcout << "conserved\t\t\t\tchanged" << endl ;
 	Rcpp::Rcout << "# sig. groups dataset" << endl ;
 	for ( int i = 0 ; i < 10 ; ++i ) 
 		Rcpp::Rcout << realdata[i] << "\t" ;
-	out << endl ;
-	out << "# sig. groups mean randomsets" << endl ;
+	Rcpp::Rcout << endl ;
+	Rcpp::Rcout << "# sig. groups mean randomsets" << endl ;
 	for ( int i = 0 ; i < 10 ; ++i ) 
 		Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
 	Rcpp::Rcout << endl ;
@@ -144,23 +141,6 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 		Rcpp::Rcout << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
 	Rcpp::Rcout << endl ;
 
-	/* steffi: Fuer R-package nicht noetig:
-	// write outfile
-	out << "Randomsets: " << num_randdata << endl ;
-	out << "conserved\t\t\t\tchanged" << endl ;
-	out << "# sig. groups dataset" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		out << realdata[i] << "\t" ;
-	out << endl ;
-	out << "# sig. groups mean randomsets" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		out << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
-	out << endl ;
-	out << "# p value" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		out << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
-	out << endl ;
-	*/
 
 	// steffi: delete ifstream and realdata
 	delete in;
