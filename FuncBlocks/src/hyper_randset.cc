@@ -184,6 +184,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		}
 	}
 	candidate_genes_in.close();
+	// print a line with the sums of annotated candidate genes for every go
 	gos.print_sum( *out ) ;
 	gos.clear() ;
 
@@ -214,7 +215,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	}			
 	// for all randomsets
 	for ( int i = 1 ; i <= number_of_randomsets ; ++i ) {
-		set<int> random_numbers ; // indices for the selected genes
+		set<int> random_numbers ; // indices for the selected genes TODO - use long and int consistently
 		
 		if (mod=="block"){
 			random_numbers = rannum_blocks(candidate_bed, background_bed, genename_to_index, genes_pos);
@@ -223,8 +224,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		} else if (mod=="gene_len"){			
 			random_numbers = rannum_genelen(n_candidate, genename_to_index, genes_pos, total_length);
 		} else if (mod=="classic"){
+			int ran;
 			while (random_numbers.size() < n_candidate) {	
-				long ran = R::runif(0,1) * n_background;				
+				ran = R::runif(0,1) * n_background;				
 				random_numbers.insert(ran) ;
 			}	
 			//Rcout << "Candidate genes: " << n_candidate << ", Random genes: " << random_numbers.size() << std::endl;
@@ -247,7 +249,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		}
 		random_numbers.clear() ;
 		
-		// print a line with the sums of annotated genes for every go
+		// print a line with the sums of annotated random candidate genes for every go
 		gos.print_sum( *out ) ;
 	}
 	delete out;

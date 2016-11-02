@@ -20,16 +20,17 @@ go_groups_hyper::go_groups_hyper( string &groups, string detected_s, string chan
 	istringstream is_ch( changed_s.c_str() ) ;
 	string name ;
 	int det,ch ;
+	//Rcpp::Rcout << endl << "go_groups_hyper:" << endl;
 	while ( is >> name ) {
 		is_det >> det ;
-		is_ch >> ch ;
-		//Rcpp::Rcerr << name << "\t" << det << "\t" << ch << endl ;
-		names.push_back( name ) ;
-		detected.push_back( det ) ;
-		changed_data.push_back( ch ) ;
-		if ( name == root_go ) root_idx = names.size() - 1 ; 
+		is_ch >> ch ;		
+		//Rcpp::Rcout << name << "\t" << det << "\t" << ch << endl ;
+		names.push_back( name ) ;	// vector<string> names: node-IDs
+		detected.push_back( det ) ; // vector<int> detected: # genes annotated to node
+		changed_data.push_back( ch ) ; // vector<int> changed_data: # candidate genes in node
+		if ( name == root_go ) root_idx = names.size() - 1 ; // index of root node
 	}
-	Rcpp::Rcerr << "GOs: " << names.size() << endl ;
+	Rcpp::Rcout << "GOs: " << names.size() << endl ;
 //	Rcpp::Rcerr << detected.size() << endl ;
 //	Rcpp::Rcerr << changed_data.size() << endl ;
 
@@ -39,7 +40,7 @@ go_groups_hyper::go_groups_hyper( string &groups, string detected_s, string chan
 
 int* go_groups_hyper::calculate_data( ostream *os ) 
 {
-//	int i = -1 ;
+	// count number of nodes with p-value < 0.1, 0.05, ... 
 	int *ret = new int[10] ;
 	for ( int i=0 ; i<10 ; ++i ) {
 		ret[i] = 0 ;
@@ -47,11 +48,12 @@ int* go_groups_hyper::calculate_data( ostream *os )
 
 	vector<int> &changed = changed_data ;
 
-	data_pvals_l.resize( names.size() ) ;
+	data_pvals_l.resize( names.size() ) ; // vector<double> data_pvals_l: p-vals for all nodes 
 	data_pvals_r.resize( names.size() ) ;
 
-	multiset<double> pvals_l, pvals_r ;
+	multiset<double> pvals_l, pvals_r ; // set of p-vals
 
+	// loop over all nodes, get p-value for over- and underrep
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
 		
 		data_pvals_l[i] = 2. ;
@@ -85,14 +87,14 @@ int* go_groups_hyper::calculate_data( ostream *os )
 		pvals_l.insert( prob_left ) ;
 		pvals_r.insert( prob_right ) ;
 
-		if ( os ) {
-			*os << names[i] << "\t" 
-			   << N << "\t"
-			   << n << "\t"
-			   << M << "\t"
-			   << x << "\t" << endl ;
-		}
-
+		//if ( os ) {
+			//*os << names[i] << "\t" 
+			   //<< N << "\t"
+			   //<< n << "\t"
+			   //<< M << "\t"
+			   //<< x << "\t" << endl ;
+		//}
+		// count number of nodes with p-value < 0.1, 0.05, ... 
 		if ( prob_left < 0.1 ) {
 			ret[0]++ ;
 			if ( prob_left < 0.05 ) {
@@ -124,7 +126,7 @@ int* go_groups_hyper::calculate_data( ostream *os )
 			}
 		}
 	}
-	osig_l.add_set( pvals_l ) ;
+	osig_l.add_set( pvals_l ) ; // overall_significance osig_l. add_set: add p-vals to multiset, overall sign. for graph
 	osig_r.add_set( pvals_r ) ;
 	return ret ;
 }
@@ -239,12 +241,12 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 			int n_l = 0 ; 
 			multiset<double>::const_iterator it = smallest_rand_p_l.begin() ;
 			while ( it != smallest_rand_p_l.end() && 
-				*it <= data_pvals_l[i] ) 
+				*it <= data_pvals_l[i] + 1.0e-10) // NEW: add tolerance to account for float inaccuracy  
 					n_l++, it++ ;
 			int n_r = 0 ;
 			it = smallest_rand_p_r.begin() ;
 			while ( it != smallest_rand_p_r.end() && 
-				*it <= data_pvals_r[i] ) 
+				*it <= data_pvals_r[i] + 1.0e-10) // NEW: add tolerance to account for float inaccuracy 
 					n_r++, it++ ;
 			os << names[i] << "\t" << data_pvals_l[i] << "\t"
 				<< data_pvals_r[i] << "\t" 

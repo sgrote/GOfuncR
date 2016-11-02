@@ -241,12 +241,12 @@ void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 			int n_l = 0 ; 
 			multiset<double>::const_iterator it = smallest_rand_p_l.begin() ;
 			while ( it != smallest_rand_p_l.end() && 
-				*it <= data_pvals_l[i] ) 
+				(*it <= data_pvals_l[i] + 1.0e-10) // NEW: add tolerance to account for float inaccuracy
 					n_l++, it++ ;
 			int n_g = 0 ;
 			it = smallest_rand_p_g.begin() ;
 			while ( it != smallest_rand_p_g.end() && 
-				*it <= data_pvals_g[i] ) 
+				*it <= data_pvals_g[i] + 1.0e-10) // NEW: add tolerance to account for float inaccuracy 
 					n_g++, it++ ;
 			os << names[i] << "\t" << data_pvals_l[i] << "\t"
 				<< data_pvals_g[i] << "\t" 
