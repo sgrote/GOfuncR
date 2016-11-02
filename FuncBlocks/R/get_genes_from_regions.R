@@ -64,10 +64,10 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	# if rolling chrom: remove unused bg chroms and warn, check that all candidate chroms have bg
 	if(circ_chrom == TRUE){				
 		if(!(all(bg_reg[,1] %in% test_reg[,1]))){
-			not_used = unique(bg_reg[!(bg_reg[,1] %in% test_reg[,1]),1])
-			not_used = paste(not_used, collapse=", ")
-			warning(paste("Unused chromosomes in background regions: ", not_used, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.",sep=""))
-			bg_reg = bg_reg[bg_reg[,1] %in% test_reg[,1],]
+#			not_used = unique(bg_reg[!(bg_reg[,1] %in% test_reg[,1]),1])
+#			not_used = paste(not_used, collapse=", ")
+#			warning(paste("Unused chromosomes in background regions: ", not_used, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.",sep=""))
+#			bg_reg = bg_reg[bg_reg[,1] %in% test_reg[,1],]
 		}			
 		if(!(all(test_reg[,1] %in% bg_reg[,1]))){
 			wo_bg = unique(test_reg[!(test_reg[,1] %in% bg_reg[,1]),1])
@@ -75,14 +75,14 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 			stop(paste("No background region for chromosomes: ",  wo_bg, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used." ,sep=""))
 		}
 		# check that background is big enough on all chroms, bg and test chroms are the same and have the same order 
-		bg_length = tapply(bg_reg[,3] - bg_reg[,2], bg_reg[,1], sum)
-		test_length = tapply(test_reg[,3] - test_reg[,2], test_reg[,1], sum)
-		too_big_indi = test_length > bg_length
-		if (sum(too_big_indi) > 0){
-			too_big = names(bg_length)[too_big_indi]
-			too_big = paste(mixedsort(too_big), collapse=", ")
-			stop(paste( "Sum of candidate regions is bigger than sum of background regions on chromosomes: ", too_big, sep=""))	
-		}
+#		bg_length = tapply(bg_reg[,3] - bg_reg[,2], bg_reg[,1], sum)
+#		test_length = tapply(test_reg[,3] - test_reg[,2], test_reg[,1], sum)
+#		too_big_indi = test_length > bg_length
+#		if (sum(too_big_indi) > 0){
+#			too_big = names(bg_length)[too_big_indi]
+#			too_big = paste(mixedsort(too_big), collapse=", ")
+#			stop(paste( "Sum of candidate regions is bigger than sum of background regions on chromosomes: ", too_big, sep=""))	
+#		}
 				
 	} else {  # normal blocks option
 		# check that biggest test_region is not bigger than biggest bg_region

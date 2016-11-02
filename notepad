@@ -37,14 +37,16 @@ graph_path = read.table("term_tables/graph_path.txt", sep="\t", quote="", commen
 go_anno = read.csv("mart_export.csv", as.is=TRUE)
 # remove empty fields here to save space, but keep removing in go_enrich for custom user annotation
 go_anno = go_anno[go_anno[,1] != "",]
-gene_coords = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
+gene_coords_grch37 = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
 # convert to bed-file, remove empty fields and reduce to chr1-22,X,Y
-gene_coords_bed = gene_coords[,c(2,3,4,1)]
+gene_coords_grch37 = gene_coords_grch37[,c(2,3,4,1)]
 # TODO: ADD this filering steps also for user defined gene_coords file
-gene_coords_bed = gene_coords_bed[gene_coords_bed[,4] != "",]
-gene_coords_bed = gene_coords_bed[gene_coords_bed[,1] %in% c(1:22,"X","Y"),]
+gene_coords_grch37 = gene_coords_grch37[gene_coords_grch37[,4] != "",]
+gene_coords_grch37 = gene_coords_grch37[gene_coords_grch37[,1] %in% c(1:22,"X","Y"),]
 # if you wanna be ganz genau: ensembl is 1-based, bed-files are 0-based
-gene_coords_bed[,2:3] = gene_coords_bed[,2:3]-1
+gene_coords_grch37[,2:3] = gene_coords_grch37[,2:3]-1
+# to allow usage of get_genes_from_regions.R from ABAEnrichment without modification
+colnames(gene_coords_grch37) = c("chr","start","end","hgnc_symbol")
 save(list=ls(),file="./FuncBlocks/R/sysdata.rda")
 
 
@@ -86,6 +88,8 @@ compileAttributes()
 () add function that given a gene returns all annotated GOs (with parent-GOs? - maybe optional)
 () add a function that given a GO return all parent GOs
 () add a function that given a GO return all child GOs
+() allow user-defined term-tables (GO-graph)
+() allow user-defined GO-annotations
 
 
 

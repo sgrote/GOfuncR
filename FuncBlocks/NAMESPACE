@@ -1,5 +1,5 @@
 useDynLib(FuncBlocks)
-export("go_enrich")
+export("go_enrich", "get_GO_names")
 importFrom(Rcpp, evalCpp)
 importFrom("utils", "read.table", "write.table")
 

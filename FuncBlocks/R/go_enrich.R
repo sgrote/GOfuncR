@@ -1,30 +1,21 @@
+# run "FUNC" with default GO and GO-annotations (update once in a while...) TODO: also allow user input
+# wilcoxon rank test or hypergeometric test
 
-# run original "FUNC" in subdirectory ("tmp")
-# reads term.txt, term2term.txt, graph_path.txt from /r1/steffi_grote/R_packages/term_tables 
+### Arguments
+# genes: vector of 0/1 (hypergeometric) or float (wilcoxon) with gene identifiers as names (HGNC-symbol), or chromosomal regions chr:start-stop (only for hypergeometric)
+# test: "hyper" or "wilcoxon"
+# n_randsets: number of random-sets
+# gene_len: randomset is dependent on length of genes
+# circ_chrom: for regions input: random regions are on same chrom and allowed to overlap multiple bg-regions
 
-# argument "blocks": if True, read gene_coordinates, modify "root-node", and call hyper_randset_blocks
+### Testing:
+#/r1/people/steffi_grote/R_packages/FuncBlocks_package/test.R)
 
-### zum Testen:
-#setwd("~/ownCloud/forAkeyPaper/FUNCpackage_Akey")
-#test_genes = paste(rep('FABP', 5), c(2,4:7), sep='')
-#bg_genes = c('NCAPG', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1')
-#genes = c(rep(1,length(test_genes)), rep(0,length(bg_genes)))
-#names(genes) = c(test_genes, bg_genes)
-#test="hyper"
-#blocks=FALSE
-#n_randsets=10
-
-go_enrich=function(genes, test="hyper", blocks=FALSE, n_randsets=1000)
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE)
 {
-
-	if (blocks==TRUE){
-		print(head(gene_coords_bed))
-		stop("This option is currently not available :(. But gene-positions are already included! :)") 
-#		gene_coords = read.table("~/ownCloud/forAkeyPaper/gene_coordinates.bed")[,1:4]
-#		print(head(gene_coords))
-#		if (!(all(names(genes) %in% gene_coords[,4]))){ 
-#			stop("Not all genes have coordinates in 'gene_coordinates.bed'!")}
-	}
+	
+	ref_genome = "grch37" # TODO: add grch38 as parameter and gene_coords_grch38 to sysdata.R 
+	
 	#####	1. Check arguments and define parameters
 	
 	## Check arguments
@@ -40,7 +31,7 @@ go_enrich=function(genes, test="hyper", blocks=FALSE, n_randsets=1000)
 		stop("Please define 'n_randsets' as a positive integer.")
 	}
 	if(n_randsets != round(n_randsets)){
-		n_randsets=round(n_randsets)
+		n_randsets = round(n_randsets)
 		warning(paste("'n_randsets' is expected to be an integer and was rounded to ",n_randsets,".",sep=""))
 	}
 	# test-specific arguments
@@ -55,85 +46,184 @@ go_enrich=function(genes, test="hyper", blocks=FALSE, n_randsets=1000)
 		if(!is.numeric(genes)){
 			stop("Not a valid 'genes' argument. Please use a numeric vector.")	
 		}	
+		if(gene_len == TRUE){
+			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+		}	
 	} else (stop("Not a valid test. Please use 'hyper' or 'wilcoxon'."))
-
+	
+	
+	#####	2. Prepare for FUNC	
+	
 	# Create input and output folder and write file with missing genes
 	directory = tempdir()
 #	dir.create("./tmp"); directory = "./tmp"
+
+	# load gene coordinates
+	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
 	
-	message("get GOs for genes")
-#	go = read.table("/mnt/expressions/miguel/neandertal_int/mart_export.txt",as.is=T,sep="\t",head=T)
-	go = go_anno[go_anno[,2] %in% names(genes) & go_anno[,1]!="",2:1]  
-	go$value = genes[match(go[,1], names(genes))]
-	# subset to GOs present in term.txt (which is now included in sys.data)
-#	term = read.table("/r1/people/steffi_grote/R_packages/term_tables/term.txt" ,sep="\t", quote="", comment.char="", as.is=TRUE)
+	# are genes or genomic regions ('blocks') given as input?
+	blocks = FALSE
+	identifier = detect_identifier(names(genes)[1]) # "blocks" or "hgnc_symbol"
+	if (identifier=="blocks"){
+#		identifier = "hgnc_symbol" # gene-name 
+		blocks = TRUE
+		# check that background region is specified
+		if(sum(genes) == length(genes)){
+			stop("All values of the 'genes' input are 1. Using chromosomal regions as input requires defining background regions with 0.")
+		}
+		# check that test is hyper
+		if (test != "hyper"){
+			stop("chromosomal regions can only be used with test='hyper'.")
+		}	
+		# warn if gene_len=TRUE, although regions are used
+		if (gene_len == TRUE){
+			warning("Unused argument: 'gene_len = TRUE'.")
+		}		
+		# convert coords from genes-vector to bed format, SORT, CHECK and extract genes overlapping regions
+		regions = get_genes_from_regions(genes, gene_coords, circ_chrom) # gene_coords from sysdata.rda HGNC
+		test_regions = regions[[1]]		
+		bg_regions = regions[[2]]
+		genes = regions[[3]]
+
+		message("Candidate regions:")
+		print(test_regions)
+		message("Background regions:")
+		print(bg_regions)		
+	
+		# write regions to files
+		write.table(test_regions,file=paste(directory, "/test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+		write.table(bg_regions,file=paste(directory, "/bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")		
+	} else if (circ_chrom == TRUE){
+		# warn if circ_chrom=TRUE, although individual genes are used
+		warning("Unused argument: 'circ_chrom = TRUE'.")
+	} 	
+	
+	message("get GOs for genes...")
 	# remove obsolete terms
 	term = term[term[,5]==0,]
-	go = go[go[,2] %in% term[,4],]
+	# subset to GOs present in term.txt and flip colums
+	go = go_anno[go_anno[,1] %in% term[,4] & go_anno[,1]!="", 2:1]
+	# subset to input genes (unless test=hyper & no background genes defined)
+	if(!(test=="hyper" & sum(genes) == length(genes))){
+		go = go[go[,1] %in% names(genes),] 
+	}
+	# add value for genes (1/0 for hyper, scores for wilcox) 
+	go$value = genes[match(go[,1], names(genes))]	
 	
-	# NEW: write ontolgy-graph tables to tmp-directory (which are now included in sys.data)
+	# check which genes dont have GOs annotated (GOs contained in the ontology)
+	not_in = names(genes)[!(names(genes) %in% go[,1])]	
+	remaining_genes = genes[names(genes) %in% go[,1]]	
+	if (length(not_in)>0){		
+		# is any gene in the data? if not, stop.
+		if (length(remaining_genes) == 0) {
+			stop("No requested genes with GO-annotation.")
+		}
+		# for 0/1 data: are test genes and background genes in the data (background only if background specified)?
+		if (test=="hyper" & sum(remaining_genes) == 0) {
+			stop("No requested test genes with GO-annotation.")
+		}
+		if (test=="hyper" & sum(genes)!=length(genes) & sum(remaining_genes)==length(remaining_genes)) {
+			stop("No requested background genes with GO-annotation.")
+		}	
+		if(!blocks){ # this message is usually too long when blocks are used. 
+			not_in_string = paste(not_in,collapse=", ")
+			warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
+		}
+		if (test=="wilcoxon" & length(remaining_genes) < 2) {
+			stop(paste("Less than 2 genes have annotated GOs.",sep=""))
+		}
+	}	
+	
+	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	write.table(term,file=paste(directory, "/term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(term2term,file=paste(directory, "/term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(graph_path,file=paste(directory, "/graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	
+	# initialize for warning message if candidate genes have no coordinates
+	candi_no_coords = c()
+
+
+	#####	3. Loop over GO root-nodes and run FUNC
+	
 	## loop over different root-nodes
-	# nur ein "universal root" hat die root-flag in term.txt
+	# only "universal root" has root-flag in term.txt -> define explicitly
 	root_node_ids= c("GO:0003674","GO:0008150","GO:0005575")
 	root_nodes = term[match(root_node_ids, term[,4]),2]
 	out = data.frame()
 
-	for (r in 1:length(root_nodes)){
+	for (r in 1:length(root_nodes)){		
 		root_node = root_nodes[r]
-		message(root_node)
+		root_id = root_node_ids[r]
+		message(paste("\n\nProcessing root node: ", root_node,"...\n", sep=""))
+		
 		# subset the input data to GOs that belong to current root node (col 3 in term.txt is root-node)
-		root_data = go[term[match(go[,2],term[,4]),3]==root_node,]
+		input = go[term[match(go[,2],term[,4]),3]==root_node,]
 		
-		# prepare root_data data (infile-data and root like in separate_taxonomies.pl)
-		# paste annotations
-		xx = tapply(root_data[,2],root_data[,1],function(x){paste(x,collapse=" ")})
-		
-		# create "root" dataframe 
-		if(blocks){
-			# Fuer ABAEnrichmentBlocks: add gene-coords to "root-node" file
-			gene = as.character(names(xx))
-			gene_position = gene_coords[match(gene, gene_coords[,4]),1:3]	
-			root = data.frame(genes=gene, gene_position ,goterms=as.character(xx))
-		} else {
-			root=data.frame(genes=as.character(names(xx)),goterms=as.character(xx)) 
-		}
-
-		# "infile-data" (wilcox) / "Allen:4005-changed" (hyper)
+		# prepare input data ('infile-data' and 'root' like in separate_taxonomies.pl in FUNC)
+		# "infile-data": genes and associated scores (wilcox) 
+		# "root-changed": one column with test genes (hyper)
 		if (test=="hyper"){
 			# subset to test genes
-			root_data=root_data[root_data[,3]==1,]	
-			yy=tapply(root_data[,2],root_data[,1],function(x){paste(x,collapse=" ")})
-			# create infile-data dataframe
-			infile_data=data.frame(genes=as.character(names(yy)),goterms=as.character(yy))
+			infile_data = data.frame(genes = unique(input[input[,3] == 1,1]))
 		} else if(test=="wilcoxon"){
-			infile_data = unique(root_data[,c(1,3)])
+			infile_data = unique(input[,c(1,3)])
+		}	
+			
+		# create "root" dataframe (all genes (test and bg) with GO-annotations, file named with root_node_id)
+		# add gene-coordinates, despite for classic FUNC option 
+		if (blocks || gene_len){
+			# one line per gene: gene | chrom | start | end | GO1 GO2 GO3
+			go_string=tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
+			gene = as.character(names(go_string))
+			# add coordinates
+			gene_position = gene_coords[match(gene, gene_coords[,4]),1:3]	
+			root = data.frame(genes=gene, gene_position ,goterms=as.character(go_string))				
+		} else {
+			# one line per gene: gene | GO1 GO2 GO3
+			go_string = tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
+			root = data.frame(genes=as.character(names(go_string)),goterms=as.character(go_string))
 		}
-
-		# write root_data-files to tmp-directory
-		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/infile-data",sep=""))
-		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/",root_node_ids[r],sep=""))
-		
-		# for debugging: save input-files
-#		system(paste("cp ",directory,"/infile-data ", directory, "/infile_data_", root_node, sep=""))
-							
-		##	3b) run func
-#			stop("Don't run FUNC!")
-		if(test=="hyper"){
-			if (blocks){
-				run_func(hyper_randset_blocks, hyper_category_test, directory, root_node_ids[r], n_randsets)	
-			} else {
-				run_func(hyper_randset, hyper_category_test, directory, root_node_ids[r], n_randsets)	
-			}		
-		} else if (test=="wilcoxon"){				
-			run_func(wilcox_randset, wilcox_category_test, directory, root_node_ids[r], n_randsets)
+		# remove genes with unknown coordinates (possible in gene_len-option)
+		if (gene_len){					
+			# warn if this affects test genes (background genes might be undefined and then its weird to get a warning about them)
+			no_coords = root[is.na(root[,3]),1]
+			candi_no_coords = c(candi_no_coords, as.character(no_coords[no_coords %in% infile_data[,1]]))
+			candi_no_coords = unique(candi_no_coords)	
+			root = root[!is.na(root[,3]),] 			
 		}	
 	
+		# write root_data-files to tmp-directory
+		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/infile-data",sep=""))
+		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/",root_id,sep=""))
+		
+		# for debugging: save input-files
+#		system(paste("cp ",directory,"/infile-data ", directory, "/infile_data_", root_id, sep=""))
+		
+		message("Run Func...\n")					
+		if (test=="hyper"){
+			# randomset
+			if (blocks & circ_chrom){
+				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id, "roll")
+			} else if (blocks){
+				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id,"block")				
+			} else if (gene_len){						
+				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id, "gene_len")	
+			} else {						
+				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id, "classic")
+			}	
+#			stop("only randomset")
+			# category test
+			hyper_category_test(paste(directory, "/randset_out",sep=""), paste(directory,"/category_test_out", sep=""), 1, root_id)
+		} else if (test=="wilcoxon"){
+			wilcox_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id)
+			# category test
+			wilcox_category_test(paste(directory, "/randset_out",sep=""), paste(directory,"/category_test_out", sep=""), 1, root_id)
+		}
+
+		# read Func output
 		groupy=read.table(paste(directory,"/category_test_out",sep=""))
-		system(paste("mv ", directory, "/category_test_out ",directory, "/out_", root_node, sep=""))
+		# for debugging: save output-files per root-node
+		#system(paste("mv ", directory, "/category_test_out ",directory, "/out_", root_id, sep=""))
 		out = rbind(out, groupy)
 	}
 	
