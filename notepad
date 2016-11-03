@@ -69,7 +69,7 @@ cd /home/steffi_grote/R_packages/FuncBlocks_package
 R CMD build FuncBlocks #--resave-data
 
 # install package
-R CMD INSTALL FuncBlocks_1.0.3.tar.gz
+R CMD INSTALL FuncBlocks_1.1.1.tar.gz
 
 # look at help page
 # in R:
