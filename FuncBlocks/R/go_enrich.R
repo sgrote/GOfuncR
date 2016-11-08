@@ -84,6 +84,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		test_regions = regions[[1]]		
 		bg_regions = regions[[2]]
 		genes = regions[[3]]
+		
+		# avoid scientific notation in regions (read in c++)
+		test_regions = format(test_regions,scientific=FALSE)
+		bg_regions = format(bg_regions,scientific=FALSE)
 
 		message("Candidate regions:")
 		print(test_regions)
