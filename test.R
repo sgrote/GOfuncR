@@ -9,6 +9,8 @@ setwd("/r1/people/steffi_grote/R_packages/FuncBlocks_package")
 get_GO_names(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
 
 
+# TODO: auf neues genes-output anpassen
+
 ###### Blocks
 
 background = read.table("Ben_background_regions.bed")
@@ -21,9 +23,18 @@ names(genes) = c(paste(desmap[,1],":",desmap[,2],"-",desmap[,3],sep=""))
 # normal run
 res1 = go_enrich(genes)
 res2 = go_enrich(genes, circ_chrom=TRUE)
-print(head(res1))
-print(head(res2))
+head(res1$results)
+head(res2$results)
+head(res1$genes)
+head(res2$genes)
 
+# check that genes from regions yield same p-val when passed directly to go_enrich
+res11 = go_enrich(res1$genes)
+res22 = go_enrich(res2$genes)
+head(res1$results)
+head(res11$results)
+head(res2$results)
+head(res22$results)
 
 ## Checks, Warnings and Error messages
 
@@ -76,7 +87,6 @@ res = go_enrich(err_genes)
 
 ## warning if gene_len is TRUE but not used
 res = go_enrich(genes, n_randsets=5, gene_len=TRUE)
-
 
 
 

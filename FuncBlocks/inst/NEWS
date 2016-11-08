@@ -1,3 +1,19 @@
+CHANGES IN VERSION 1.1.2
+------------------------
+
+NEW FEATURES
+
+	o in addition to FWERS, return genes
+	  (output now is list of 2)
+
+IMPROVEMENTS
+	  
+	o warn if user-defined genes have no coordinates
+	  (when gene_len==TRUE)
+	o improve handling of large genomic coordinates  
+	o check that FWER-order follows p-value order
+
+
 CHANGES IN VERSION 1.1.1
 ------------------------
 

@@ -258,9 +258,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	} else if (test == "wilcoxon"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank")
 	}
-	
+	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
+	final_output = list(results=out, genes=remaining_genes)
 	message("\nDone.")
-	# TODO return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
-	return(out)	
+
+	return(final_output)
 }	
 

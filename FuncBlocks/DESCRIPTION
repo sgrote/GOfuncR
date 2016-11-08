@@ -1,8 +1,8 @@
 Package: FuncBlocks
 Type: Package
 Title: Gene expression enrichment in human brain regions
-Version: 1.1.1
-Date: 2016-11-02
+Version: 1.1.2
+Date: 2016-11-08
 Author: Steffi Grote & David Reher
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
 Description: The package ABAEnrichment is designed to test for
