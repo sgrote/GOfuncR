@@ -191,7 +191,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			go_string=tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
 			gene = as.character(names(go_string))
 			# add coordinates
-			gene_position = gene_coords[match(gene, gene_coords[,4]),1:3]	
+			gene_position = format(gene_coords[match(gene, gene_coords[,4]),1:3], scientific=FALSE)	
 			root = data.frame(genes=gene, gene_position ,goterms=as.character(go_string))				
 		} else {
 			# one line per gene: gene | GO1 GO2 GO3
