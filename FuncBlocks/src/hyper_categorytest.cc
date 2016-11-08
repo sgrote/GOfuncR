@@ -69,10 +69,10 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
          ************/
 	// ignore header-lines
 	string dummy ;
-	getline( *in, dummy ) ; 
-	getline( *in, dummy ) ; 
+	getline( *in, dummy ) ;  // #Genes
+	getline( *in, dummy ) ;  // #annotated GOs
 
-	string groups, sites ;
+	string groups ;	
 	getline( *in, groups ) ; // GO IDs
 	if ( groups == "" ) {
 		//steffi:
@@ -82,8 +82,8 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	
 	string detected, changed ;
 	// ignore detected-values (reading it from profile instead)
-	getline( *in, detected ) ; 
-	getline( *in, changed ) ; 
+	getline( *in, detected ) ;  // #annotated genes (candidate and background)
+	getline( *in, changed ) ;  // #annotated candidate genes
 
 	/*************
          * go_groups handles parsing and analysis of dataset and randset lines
@@ -91,8 +91,9 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	go_groups_hyper gos( groups, detected, changed, root_go, cutoff ) ;
 
 	// returns number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001
-	// for under and over respresentation -> 10 values, also printed to console
+	// for under and over respresentation -> 10 values, also printed to console below
 	int *realdata = gos.calculate_data( ) ;
+
 //	int *realdata = gos.calculate_data( &profile ) ;
 //	out << endl << endl ;
 	
@@ -126,16 +127,19 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	gos.print_pvals( num_randdata, out ) ;
 
 	// write summary to console
-	Rcpp::Rcout << "Randomsets: " << num_randdata << endl ;
+	Rcpp::Rcout << "Randomsets: " << num_randdata << endl ;	
+	// number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001 for under- and over-rep -> 10 values
 	Rcpp::Rcout << "conserved\t\t\t\tchanged" << endl ;
 	Rcpp::Rcout << "# sig. groups dataset" << endl ;
 	for ( int i = 0 ; i < 10 ; ++i ) 
 		Rcpp::Rcout << realdata[i] << "\t" ;
 	Rcpp::Rcout << endl ;
+	// Mean number of significant nodes across all randomsets for different p-value cutoffs 0.1, 0.05, 0.01, 0.001, 0.0001; under- and overrep
 	Rcpp::Rcout << "# sig. groups mean randomsets" << endl ;
 	for ( int i = 0 ; i < 10 ; ++i ) 
 		Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
 	Rcpp::Rcout << endl ;
+	// proportion of randomsets where number of significant nodes at p 0.1, 0.05, 0.01, 0.001, 0.0001 is >= in original data
 	Rcpp::Rcout << "# p value" << endl ;
 	for ( int i = 0 ; i < 10 ; ++i ) 
 		Rcpp::Rcout << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;

@@ -4,9 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <set>
-// steffi:
-//#include "../../common/overall_sign.h"
-#include "overall_sign.h"
+//#include "overall_sign.h"
 
 using namespace std ;
 
@@ -56,7 +54,7 @@ class go_groups_hyper {
 		multiset<double> smallest_rand_p_l ;
 		multiset<double> smallest_rand_p_r ;
 
-		overall_significance osig_l, osig_r ;
+		//overall_significance osig_l, osig_r ;
 
 		// index of root node
 		int root_idx ;

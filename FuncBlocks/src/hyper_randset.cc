@@ -215,8 +215,8 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	}			
 	// for all randomsets
 	for ( int i = 1 ; i <= number_of_randomsets ; ++i ) {
-		set<int> random_numbers ; // indices for the selected genes TODO - use long and int consistently
-		
+		set<int> random_numbers ; // indices for the selected genes
+
 		if (mod=="block"){
 			random_numbers = rannum_blocks(candidate_bed, background_bed, genename_to_index, genes_pos);
 		} else if (mod=="roll"){

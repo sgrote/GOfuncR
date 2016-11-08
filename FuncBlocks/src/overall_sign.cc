@@ -16,7 +16,7 @@ overall_significance::overall_significance( double precision_ )
 void overall_significance::add_set( multiset<double> &pvals ) 
 {
 
-	cdfs_sets.push_back( pvals ) ;
+	cdfs_sets.push_back( pvals ) ; // vector<multiset<double> > cdfs_sets ;pvals: set of p-vals from original data or one randomset
 	
 	// vector to include into the cdfs
 	vector<unsigned int> *vec = new vector<unsigned int>( MAX_PVALS+1, 0 ) ;

@@ -3,8 +3,10 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+
 // steffi:
-#include "overall_sign.h" 
+#include <set>
+//#include "overall_sign.h" 
 
 using namespace std ;
 
@@ -51,6 +53,6 @@ class go_groups {
 		int root_idx ;
 		int cutoff ;
 		
-		overall_significance less_sig, greater_sig ;
+		//overall_significance less_sig, greater_sig ;
 	
 } ;

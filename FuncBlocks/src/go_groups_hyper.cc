@@ -126,8 +126,8 @@ int* go_groups_hyper::calculate_data( ostream *os )
 			}
 		}
 	}
-	osig_l.add_set( pvals_l ) ; // overall_significance osig_l. add_set: add p-vals to multiset, overall sign. for graph
-	osig_r.add_set( pvals_r ) ;
+	//osig_l.add_set( pvals_l ) ; // overall_significance osig_l. add_set: add p-vals to multiset, overall sign. for graph
+	//osig_r.add_set( pvals_r ) ;
 	return ret ;
 }
 
@@ -218,8 +218,8 @@ int* go_groups_hyper::calculate_rand( string &data, ostream *os )
 	}
 	smallest_rand_p_l.insert( *(pvals_l.begin()) ) ;
 	smallest_rand_p_r.insert( *(pvals_r.begin()) ) ;
-	osig_l.add_set( pvals_l ) ;
-	osig_r.add_set( pvals_r ) ;
+	//osig_l.add_set( pvals_l ) ;
+	//osig_r.add_set( pvals_r ) ;
 	return ret ;
 }
 

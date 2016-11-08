@@ -125,8 +125,8 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 			}
 		}
 	}
-	less_sig.add_set( pvals_less ) ;
-	greater_sig.add_set( pvals_greater ) ;
+	//less_sig.add_set( pvals_less ) ;
+	//greater_sig.add_set( pvals_greater ) ;
 	return ret ;
 }
 int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os ) 
@@ -216,9 +216,9 @@ int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os )
 		}
 	}
 	smallest_rand_p_l.insert( *(pvals_less.begin()) ) ;
-	less_sig.add_set( pvals_less ) ;
+	//less_sig.add_set( pvals_less ) ;
 	smallest_rand_p_g.insert( *(pvals_greater.begin()) ) ;
-	greater_sig.add_set( pvals_greater ) ;
+	//greater_sig.add_set( pvals_greater ) ;
 	return ret ;
 }
 
