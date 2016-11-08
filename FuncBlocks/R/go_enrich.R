@@ -103,44 +103,55 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	term = term[term[,5]==0,]
 	# subset to GOs present in term.txt and flip colums
 	go = go_anno[go_anno[,1] %in% term[,4] & go_anno[,1]!="", 2:1]
-	# subset to input genes (unless test=hyper & no background genes defined)
-	if(!(test=="hyper" & sum(genes) == length(genes))){
-		go = go[go[,1] %in% names(genes),] 
-	}
-	# add value for genes (1/0 for hyper, scores for wilcox) 
-	go$value = genes[match(go[,1], names(genes))]	
 	
 	# check which genes dont have GOs annotated (GOs contained in the ontology)
-	not_in = names(genes)[!(names(genes) %in% go[,1])]	
-	remaining_genes = genes[names(genes) %in% go[,1]]	
-	if (length(not_in)>0){		
+	remaining_genes = genes[names(genes) %in% go[,1]] # restrict
+	not_in = unique(names(genes)[!(names(genes) %in% names(remaining_genes))]) # removed	
+	if (length(not_in) > 0 && !blocks){	# this message is usually too long when blocks are used. 
+		not_in_string = paste(not_in,collapse=", ")
+		warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
+	}
+	# restrict to genes that have coordinates and warn about the rest
+	if (gene_len){
+		no_coords = unique(names(remaining_genes)[!(names(remaining_genes) %in% gene_coords[,4])]) # removed
+		if (length(no_coords) > 0){
+			remaining_genes = remaining_genes[!(names(remaining_genes) %in% no_coords)] # restrict
+			no_coords_string = paste(no_coords,collapse=", ")
+			warning(paste("No coordinates available for genes: ",no_coords_string,".\n  These genes were not included in the analysis.",sep=""))
+			not_in = c(not_in, no_coords)
+		}
+	}
+	# after removing genes without expression data or coordinates: are enough genes left?
+	if (length(not_in) > 0){
 		# is any gene in the data? if not, stop.
 		if (length(remaining_genes) == 0) {
-			stop("No requested genes with GO-annotation.")
+			stop("No requested genes in data.")
 		}
 		# for 0/1 data: are test genes and background genes in the data (background only if background specified)?
-		if (test=="hyper" & sum(remaining_genes) == 0) {
-			stop("No requested test genes with GO-annotation.")
+		if (test=="hyper" & sum(remaining_genes)==0) {
+			stop("No requested test genes in data.")
 		}
 		if (test=="hyper" & sum(genes)!=length(genes) & sum(remaining_genes)==length(remaining_genes)) {
-			stop("No requested background genes with GO-annotation.")
-		}	
-		if(!blocks){ # this message is usually too long when blocks are used. 
-			not_in_string = paste(not_in,collapse=", ")
-			warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
+			stop("No requested background genes in data.")
 		}
 		if (test=="wilcoxon" & length(remaining_genes) < 2) {
 			stop(paste("Less than 2 genes have annotated GOs.",sep=""))
 		}
-	}	
+	}
+			
 	
+	# subset to input genes (unless test=hyper & no background genes defined)
+	if(!(test=="hyper" & sum(genes) == length(genes))){
+		go = go[go[,1] %in% names(remaining_genes),] 
+	}
+	# add value for genes (1/0 for hyper, scores for wilcox) 
+	go$value = genes[match(go[,1], names(genes))]	
+
+
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	write.table(term,file=paste(directory, "/term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(term2term,file=paste(directory, "/term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-	write.table(graph_path,file=paste(directory, "/graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-	
-	# initialize for warning message if candidate genes have no coordinates
-	candi_no_coords = c()
+	write.table(graph_path,file=paste(directory, "/graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")	
 
 
 	#####	3. Loop over GO root-nodes and run FUNC
@@ -183,14 +194,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			go_string = tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
 			root = data.frame(genes=as.character(names(go_string)),goterms=as.character(go_string))
 		}
-		# remove genes with unknown coordinates (possible in gene_len-option)
-		if (gene_len){					
-			# warn if this affects test genes (background genes might be undefined and then its weird to get a warning about them)
-			no_coords = root[is.na(root[,3]),1]
-			candi_no_coords = c(candi_no_coords, as.character(no_coords[no_coords %in% infile_data[,1]]))
-			candi_no_coords = unique(candi_no_coords)	
-			root = root[!is.na(root[,3]),] 			
-		}	
 	
 		# write root_data-files to tmp-directory
 		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/infile-data",sep=""))
@@ -239,6 +242,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	}
 	
 	message("\nDone.")
+	# TODO return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	return(out)	
 }	
 
