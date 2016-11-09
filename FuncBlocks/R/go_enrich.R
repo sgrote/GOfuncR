@@ -86,8 +86,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		genes = regions[[3]]
 		
 		# avoid scientific notation in regions (read in c++)
-		test_regions = format(test_regions,scientific=FALSE)
-		bg_regions = format(bg_regions,scientific=FALSE)
+		test_regions = format(test_regions, scientific=FALSE, trim=TRUE)
+		bg_regions = format(bg_regions, scientific=FALSE, trim=TRUE)
 
 		message("Candidate regions:")
 		print(test_regions)
@@ -175,8 +175,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		input = go[term[match(go[,2],term[,4]),3]==root_node,]
 		
 		# prepare input data ('infile-data' and 'root' like in separate_taxonomies.pl in FUNC)
-		# "infile-data": genes and associated scores (wilcox) 
-		# "root-changed": one column with test genes (hyper)
+		# "infile-data": one column with test genes (hyper) OR genes and associated scores (wilcox) 
 		if (test=="hyper"){
 			# subset to test genes
 			infile_data = data.frame(genes = unique(input[input[,3] == 1,1]))
@@ -191,8 +190,14 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			go_string=tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
 			gene = as.character(names(go_string))
 			# add coordinates
-			gene_position = format(gene_coords[match(gene, gene_coords[,4]),1:3], scientific=FALSE)	
-			root = data.frame(genes=gene, gene_position ,goterms=as.character(go_string))				
+			gene_position = gene_coords[match(gene, gene_coords[,4]),1:3]	
+			root = data.frame(genes=gene, gene_position ,goterms=as.character(go_string))		
+			# remove genes with unknown coordinates (possible for default bg in gene_len-option) 
+			if (gene_len){					
+				root = root[!is.na(root[,3]),] 			
+			}	
+			# NEW just in case - avoid scientific notation of gene coordinates	
+			root[,3:4] = format(root[,3:4], scientific=FALSE, trim=TRUE)		
 		} else {
 			# one line per gene: gene | GO1 GO2 GO3
 			go_string = tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
