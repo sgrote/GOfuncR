@@ -1,6 +1,11 @@
 CHANGES IN VERSION 1.1.2
 ------------------------
 
+BUG FIXES
+
+	o mulitply tolerance for FWER calculation
+	  with p-value
+
 NEW FEATURES
 
 	o in addition to FWERS, return genes
@@ -19,7 +24,7 @@ CHANGES IN VERSION 1.1.1
 
 BUG FIXES
 
-	o Fix floating point inaccuracy in FWER calculation
+	o add tolerance for FWER calculation
 
 
 CHANGES IN VERSION 1.1.0
@@ -27,7 +32,7 @@ CHANGES IN VERSION 1.1.0
 
 NEW FEATURES
 
-	o Accept genomic regions as input
+	o accept genomic regions as input
 	o circ_chrom and gene_len option like in ABAEnrichment
 	o new function: get_GO_names(GO-IDs), 
 	  also returning GO-domain
