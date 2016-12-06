@@ -4,6 +4,7 @@
 #include <map> 
 #include <set> 
 #include <fstream>
+#include <iomanip>      // std::setprecision
 
 // steffi: Rcpp contains Rmath (eg. R::pnorm())
 //#define MATHLIB_STANDALONE
@@ -248,8 +249,9 @@ void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 			while ( it != smallest_rand_p_g.end() && 
 				*it <= data_pvals_g[i] + 1.0e-10 * data_pvals_g[i]) // NEW: add tolerance to account for float inaccuracy 
 					n_g++, it++ ;
-			os << names[i] << "\t" << data_pvals_l[i] << "\t"
-				<< data_pvals_g[i] << "\t" 
+			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
+			os << names[i] << "\t" << std::setprecision(17) << data_pvals_l[i] << "\t"
+				<< data_pvals_g[i] << "\t" << std::setprecision(6)
 				<< static_cast<double>(n_l)/
 				   static_cast<double>(nr_randsets) << "\t" 
 				<< static_cast<double>(n_g)/
