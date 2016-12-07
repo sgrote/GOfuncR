@@ -84,12 +84,15 @@ compileAttributes()
 
 
 # TODO
+() add help-pages (for go_enrich.R and get_name.R)
 () add function that given a GO returns annotated candidate genes (from last go_enrich-run or given the candidate genes?), also those annotated to sub-categories (see inspect_GO:0098800.R)
 () add function that given a gene returns all annotated GOs (with parent-GOs? - maybe optional)
 () add a function that given a GO return all parent GOs
 () add a function that given a GO return all child GOs
 () allow user-defined term-tables (GO-graph)
 () allow user-defined GO-annotations
+() allow user-defined gene_coordinates
+() wilcoxon randomset dauert irgendwie lange
 
 
 
