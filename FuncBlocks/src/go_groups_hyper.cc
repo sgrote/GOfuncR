@@ -52,7 +52,7 @@ int* go_groups_hyper::calculate_data( ostream *os )
 	data_pvals_l.resize( names.size() ) ; // vector<double> data_pvals_l: p-vals for all nodes 
 	data_pvals_r.resize( names.size() ) ;
 
-	multiset<double> pvals_l, pvals_r ; // set of p-vals
+	//multiset<double> pvals_l, pvals_r ; // set of p-vals
 
 	// loop over all nodes, get p-value for over- and underrep
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
@@ -85,8 +85,8 @@ int* go_groups_hyper::calculate_data( ostream *os )
 		data_pvals_l[i] = prob_left ;
 		data_pvals_r[i] = prob_right ;
 
-		pvals_l.insert( prob_left ) ;
-		pvals_r.insert( prob_right ) ;
+		//pvals_l.insert( prob_left ) ;
+		//pvals_r.insert( prob_right ) ;
 
 		//if ( os ) {
 			//*os << names[i] << "\t" 
@@ -250,12 +250,13 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 				*it <= data_pvals_r[i] + 1.0e-10 * data_pvals_r[i]) // NEW: add tolerance to account for float inaccuracy 
 					n_r++, it++ ;
 			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
-			os << names[i] << "\t" << std::setprecision(17) << data_pvals_l[i] << "\t"
-				<< data_pvals_r[i] << "\t" << std::setprecision(6)
-				<< static_cast<double>(n_l)/
-				   static_cast<double>(nr_randsets) << "\t" 
-				   << static_cast<double>(n_r)/ 
-				   static_cast<double>(nr_randsets) << endl;
+			os << names[i] << "\t" 
+				<< std::setprecision(17)
+				<< data_pvals_l[i] << "\t"	<< data_pvals_r[i] << "\t" //p-values
+				<< std::setprecision(6)
+				<< static_cast<double>(n_l)/ static_cast<double>(nr_randsets) << "\t" // FWER_under 
+				<< static_cast<double>(n_r)/ static_cast<double>(nr_randsets) << "\t" // FWER_over
+				<< endl;
 				/*steffi:
 				<< (*fdr_q_l)[data_pvals_l[i]] << "\t" 
 				<< (*fdr_q_r)[data_pvals_r[i]] << endl ;
