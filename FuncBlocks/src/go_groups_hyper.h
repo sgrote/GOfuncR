@@ -43,8 +43,11 @@ class go_groups_hyper {
 		void print_pvals( int nr_randsets, ostream &os ) ;
 	private:
 		vector<string> names ; // GO ID
-		vector<int> detected ; // # detected in group
-		vector<int> changed_data ; // # changed in group
+		vector<int> detected ; // # annotated to node
+		vector<int> changed_data ; // # candidate annotated to node
+
+		// NEW: expected and real number of annotated genes
+		vector<double> n_anno_expected ;
 
 		// pvalues for all groups in dataset
 		vector<double> data_pvals_l ;

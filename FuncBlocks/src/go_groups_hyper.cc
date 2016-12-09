@@ -51,6 +51,8 @@ int* go_groups_hyper::calculate_data( ostream *os )
 
 	data_pvals_l.resize( names.size() ) ; // vector<double> data_pvals_l: p-vals for all nodes 
 	data_pvals_r.resize( names.size() ) ;
+	
+	n_anno_expected.resize( names.size() ) ; // vector<double>: expected no. of anno. candidate genes per GOs 
 
 	//multiset<double> pvals_l, pvals_r ; // set of p-vals
 
@@ -76,8 +78,6 @@ int* go_groups_hyper::calculate_data( ostream *os )
 		double prob_right ;
 
 		// pval
-		//				  
-		// steffi:
 		prob_left  = R::phyper( x, M, N-M, n, 1, 0 ) ; // underrep
 		prob_right = R::phyper( x-1., M, N-M, n, 0, 0 ) ; // overrep
 		//prob_left  = phyper( x, M, N-M, n, 1, 0 ) ; 
@@ -87,6 +87,9 @@ int* go_groups_hyper::calculate_data( ostream *os )
 
 		//pvals_l.insert( prob_left ) ;
 		//pvals_r.insert( prob_right ) ;
+		
+		// NEW: expected no. of candidate genes
+		n_anno_expected[i] = n*(M/N);
 
 		//if ( os ) {
 			//*os << names[i] << "\t" 
@@ -256,6 +259,8 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 				<< std::setprecision(6)
 				<< static_cast<double>(n_l)/ static_cast<double>(nr_randsets) << "\t" // FWER_under 
 				<< static_cast<double>(n_r)/ static_cast<double>(nr_randsets) << "\t" // FWER_over
+				<< std::setprecision(17)
+				<< n_anno_expected[i] << "\t" << changed_data[i]  //NEW: expected and real number of candi genes
 				<< endl;
 				/*steffi:
 				<< (*fdr_q_l)[data_pvals_l[i]] << "\t" 
