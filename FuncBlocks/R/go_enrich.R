@@ -238,7 +238,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		#system(paste("mv ", directory, "/category_test_out ",directory, "/out_", root_id, sep=""))
 			
 		# NEW check that FWER order follows p-value order (per root_node)
-		colnames(groupy)=c("node_id","p_under","p_over","FWER_under","FWER_over")
+		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
 		groupy_sorted = groupy[signif(round(groupy$p_over,12), -groupy$FWER_over),]
 		if(any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
 			print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
@@ -261,7 +261,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	if (test == "hyper"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_underrep","raw_p_overrep","FWER_underrep","FWER_overrep", "n_candidate_expected", "n_candidate_real")
 	} else if (test == "wilcoxon"){
-		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank")
+		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank","ranksum_expected","ranksum_real")
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	final_output = list(results=out, genes=remaining_genes)

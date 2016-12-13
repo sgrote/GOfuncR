@@ -104,8 +104,8 @@ names(genes) = c(test_genes, bg_genes)
 
 res3=go_enrich(genes, n_randsets=5)
 res4=go_enrich(genes, n_randsets=5, gene_len=TRUE)
-print(head(res3))
-print(head(res4))
+print(head(res3[[1]]))
+print(head(res4[[1]]))
 
 # no background
 nb_genes = genes[genes==1]
@@ -118,66 +118,23 @@ res = go_enrich(genes, n_randsets=5, circ_chrom=TRUE)
 willi = as.integer(runif(length(genes),1,300))
 names(willi) = names(genes)
 res = go_enrich(willi, test="wilcoxon", n_randsets=5)
-res = go_enrich(willi, test="wilcoxon", gene_len=TRUE, n_randsets=5)
+#res = go_enrich(willi, test="wilcoxon", gene_len=TRUE, n_randsets=5)
 
 # wilcoxon ties
-willi = as.integer(runif(length(genes),1,3))
-names(willi) = names(genes)
+willi = c(1,3,4,3,8,10,10,10,20,20) # last gene not annotated to last root - no real tie
+names(willi) = c("AGTR1","ANO1","BTBD3","C21orf59","CACNG2","FABP2","FABP4","FABP5","FABP6","HSPB2")
 res = go_enrich(willi, test="wilcoxon", n_randsets=5)
 
 
-
-####### ORDER OF FWERs should follow ORDER of p-vals
-
-# return res before rearrangement - to find genomic regions bug order(p_val)!=order(FWER)
-library(FuncBlocks)
-
-test_order = function(resi){
-	for(root in unique(resi$ontology)){	
-		res = resi[resi$ontology==root,]
-		res = res[order(res$raw_p_overrep),]
-		fwers = res$FWER_overrep
-		for(i in 1:(nrow(res)-1)){
-			if(any(fwers[i:nrow(res)] < fwers[i])){
-				return(res[i:nrow(res),])
-			}
-		}
-	}	
-	return("Nice!")
-}
+randout = read.table("./tmp/randset_out", skip=1, header=T)
+colnames(randout) = gsub("\\.",":", colnames(randout))
+rowSums(randout)
+table(unlist(c(randout))) # max(sum-scores) = sum of all scores 1-9 (9 anno genes -> 9*5 = 45)
+root_node_ids= c("GO:0003674","GO:0008150","GO:0005575")
+root = root_node_ids[root_node_ids %in% colnames(randout)]
+randout[,root]
 
 
-# individual genes
-test_genes = paste(rep('FABP', 5), c(2,4:7), sep='')
-test_genes = c(test_genes, 'HSPB2' ,'LINC00239', 'TESTI') # die sollten keine coordinates haben
-bg_genes = c('NCAPG', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'MIRLET7BHG')
-genes = c(rep(1,length(test_genes)), rep(0,length(bg_genes)))
-names(genes) = c(test_genes, bg_genes)
-res1 = go_enrich(genes)
-res2 = go_enrich(genes, gene_len=T)
-res3 = go_enrich(genes[!(names(genes) %in% c('HSPB2','LINC00239'))]) # should be the same as res2
-#
-res2 = res2[order(res2$raw_p_overrep),]
-res3 = res3[order(res3$raw_p_overrep),]
-sum(res3$raw_p_overrep != res2$raw_p_overrep) # no problem here - it is a problem in adult aba_enrich
-
-# no problem here
-test_order(res1)
-test_order(res2)
-test_order(res3)
-
-
-# blocks
-mappable = read.table("~/ownCloud/forAkeyPaper/mappable_regions.bed")
-deserts = read.table("~/ownCloud/forAkeyPaper/deserts.bed")
-desmap = rbind(deserts, mappable)
-genes = c(rep(1,nrow(deserts)),rep(0,nrow(mappable)))
-names(genes) = c(paste(desmap[,1],":",desmap[,2],"-",desmap[,3],sep=""))
-res3 = go_enrich(genes)
-res4 = go_enrich(genes, circ_chrom=T)
-# YEAH! no problem here :D
-test_order(res3)
-test_order(res4)
 
 
 

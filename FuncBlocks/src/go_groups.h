@@ -41,6 +41,11 @@ class go_groups {
 	private:
 		vector<string> names ;
 		vector<int> nr_of_genes ;
+		
+		// NEW: expected and real number of annotated genes
+		vector<double> ranksums_expected ;
+		vector<double> ranksums; // was declared in go_groups.cc before
+		
 		// pvals of the dataset
 		vector<double> data_pvals_l ;
 		vector<double> data_pvals_g ;

@@ -4,7 +4,7 @@ set.seed(123)
 ###### standard go-enrichment with 13 candidate genes
 library(FuncBlocks)
 
-## input: a vactor with '1' for candidate and optional '0' for background genes
+## input: a vector with '1' for candidate and optional '0' for background genes
 ## the names of the vector are the corresponding gene symbols	
 genes = rep(1, 13)
 names(genes) = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
@@ -83,7 +83,10 @@ anno_all = get_anno_genes(go_ids=gos)
 get_GO_names(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
 
 
-
+#### future functions:
+# (3) GO->children
+# (4) GO->parents
+# (5) go_enrich-output,GO (or GO, genes+scores)-> plot odds-ratios (hyper) or score-distribution (wilcoxon)
 
 
 

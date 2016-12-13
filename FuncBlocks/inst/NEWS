@@ -1,4 +1,16 @@
 
+CHANGES IN VERSION 1.2.1
+------------------------
+
+NEW FEATURES
+
+	o additional output for :
+	  expected and real no. of annotated candidate
+	  genes per GO (hypergeometric test) or
+	  expected and real sum of ranks of annotated
+	  genes (wilcoxon rank-sum test)
+
+
 CHANGES IN VERSION 1.2.0
 ------------------------
 

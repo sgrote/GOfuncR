@@ -40,8 +40,6 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 		ret[i] = 0 ;
 	}
 
-	vector<double> ranksums;
-
 	while ( is ) {
 		double ranksum ;
 		is >> ranksum ;
@@ -51,6 +49,9 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 
 	data_pvals_l.resize( names.size() ) ;
 	data_pvals_g.resize( names.size() ) ;
+	// NEW
+	ranksums_expected.resize( names.size() ) ;
+	
 
 	multiset<double> pvals_less, pvals_greater ;
 
@@ -61,7 +62,11 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 
 		double N = nr_of_genes[root_idx] ;
 		double n = nr_of_genes[i] ;
+		// NEW expected sum of ranks ( (root-genes+1)/2 * go-genes )
+		ranksums_expected[i] = (N+1.)/2 * n;
+		
 		N -= n ;
+		
 		double ranksum = ranksums[i] ;
 		
 		double prob_greater ;
@@ -138,12 +143,12 @@ int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os )
 		ret[i] = 0 ;
 	}
 
-	vector<double> ranksums;
+	vector<double> ranksums_ran;
 
 	while ( is ) {
 		double ranksum ;
 		is >> ranksum ;
-		ranksums.push_back( ranksum ) ;
+		ranksums_ran.push_back( ranksum ) ;
 	}
 
 
@@ -155,8 +160,8 @@ int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os )
 		double N = nr_of_genes[root_idx] ;
 		double n = nr_of_genes[i] ;
 		N -= n ;
-		double ranksum = ranksums[i] ;
-		
+
+		double ranksum = ranksums_ran[i] ;		
 		double prob_greater ;
 		double prob_less ;
 
@@ -252,11 +257,11 @@ void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
 			os << names[i] << "\t" << std::setprecision(17) << data_pvals_l[i] << "\t"
 				<< data_pvals_g[i] << "\t" << std::setprecision(6)
-				<< static_cast<double>(n_l)/
-				   static_cast<double>(nr_randsets) << "\t" 
-				<< static_cast<double>(n_g)/
-				   static_cast<double>(nr_randsets) << endl;
-				// steffi:   
+				<< static_cast<double>(n_l)/static_cast<double>(nr_randsets) << "\t" //FWER low ranks
+				<< static_cast<double>(n_g)/static_cast<double>(nr_randsets) << "\t" //FWER high ranks
+				<< std::setprecision(17)
+				<< ranksums_expected[i] << "\t" << ranksums[i]  //NEW: expected and real sum of ranks
+				<< endl;
 				//<< (*fdr_qless)[data_pvals_l[i]] << "\t" 
 				//<< (*fdr_qgreater)[data_pvals_g[i]] << endl ;
 		}
