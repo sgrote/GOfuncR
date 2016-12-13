@@ -61,10 +61,12 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	/*****************
          * read gene information and annotate to graph
 	 *******************/
+	// read nodes_per_gene: one line per gene: gene | GO1 GO2 GO3
 	std::ifstream annf( nodes_per_gene.c_str() ) ;
 	if ( ! annf ) {
 		Rcpp::stop("Cannot open nodes_per_gene.\n");
 	}
+	// read gene-scores: two columns: gene | score
 	string gene_scores = directory + "/infile-data";
 	std::ifstream dataf( gene_scores.c_str() ) ;
 	if ( ! dataf ) {

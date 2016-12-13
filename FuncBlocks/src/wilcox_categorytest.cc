@@ -67,10 +67,11 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 
 	string groups, sites ;
 	getline( *in, groups ) ; // GO IDs
-	getline( *in, sites ) ; // sites
+	getline( *in, sites ) ; // sites (numbers of annotated genes per GO)
 
 	if ( groups == "" || sites == "" ) {
-		Rcpp::Rcerr << "Cant read Randomsets" << endl ;
+		Rcpp::stop("Cant read Randomsets");
+		//Rcpp::Rcerr << "Cant read Randomsets" << endl ;
 		//exit( 1 ) ;
 	}
 
@@ -89,7 +90,7 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 	go_groups gos( groups, sites, co_genes_per_group, root_go ) ;
 
 	string data ;
-	getline( *in, data ) ; // real data 
+	getline( *in, data ) ; // real data (sums of scores of annotated genes)
 
 	// returns number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001
 	// steffi: generiert auch Profile-output -> outfile weglassen

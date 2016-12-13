@@ -16,9 +16,7 @@ void gene::write_to_gos( set<go_obj*>* gos_ )
 
 void gene::write_to_gos(  ) 
 {
-	for ( set<go_obj*>::const_iterator it = gos.begin() ;
-			it != gos.end() ; ++it ) 
-	{
+	for ( set<go_obj*>::const_iterator it = gos.begin() ; it != gos.end() ; ++it ) {
 		(*it)->add_gene( this ) ;
 	}
 	

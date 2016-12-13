@@ -2,7 +2,6 @@
 #include "go_graph.h"
 #include <sstream>
 
-// steffi:
 #include <Rcpp.h>
 //using std::cerr;
 
@@ -84,7 +83,6 @@ void go_graph::get_parents( string &go, set<go_obj*>* parents ) {
 	if ( graph.find( go ) != graph.end() ) {
 		graph[go]->get_parents( parents ) ;
 	} else {
-		//steffi
 		Rcpp::Rcerr << "Cannot find " << go << endl ;
 	} 
 }
