@@ -75,8 +75,8 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	string groups ;	
 	getline( *in, groups ) ; // GO IDs
 	if ( groups == "" ) {
-		//steffi:
-		Rcpp::Rcerr << "Error reading randomsets" << endl ;
+		Rcpp::stop("Error reading randomsets") ;
+		//Rcpp::Rcerr << "Error reading randomsets" << endl ;
 		//exit( 1 ) ;
 	}
 	
