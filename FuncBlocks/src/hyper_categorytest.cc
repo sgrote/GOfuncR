@@ -37,11 +37,9 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 		in = new ifstream( argv[1] ) ;
 	}
 	*/
-	//steffi:
 	if ( ! *in ) {
 		Rcpp::Rcerr << "Cannot open " << input << endl ;
 	}
-	//steffi:
 	ofstream out( output.c_str( )) ;
 	if ( ! out ) {
 		Rcpp::Rcerr << "Cannot open " << output << endl ;
