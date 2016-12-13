@@ -1,7 +1,7 @@
 
 ## return the names of GOs, toghether with root node in a dataframe
 
-get_GO_names=function(go_ids){
+get_names=function(go_ids){
 	# remove obsolete terms
 	term = term[term[,5]==0,]
 	# find names for GOs

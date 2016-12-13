@@ -1,4 +1,16 @@
 
+CHANGES IN VERSION 1.2.2
+------------------------
+
+NEW FEATURES
+
+	o new functions: 'get_child_nodes' and 'get_parent_nodes'
+
+SIGNIFICANT USER-LEVEL CHANGES
+
+	o change name of function 'get_GO_names' to 'get_names'	
+
+
 CHANGES IN VERSION 1.2.1
 ------------------------
 
@@ -16,7 +28,7 @@ CHANGES IN VERSION 1.2.0
 
 NEW FEATURES
 
-	o new function: get_anno_genes returns genes 
+	o new function: 'get_anno_genes' returns genes 
 	  annotated to enriched or user defined GOs	
 
 

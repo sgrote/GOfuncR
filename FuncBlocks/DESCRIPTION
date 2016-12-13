@@ -1,27 +1,34 @@
 Package: FuncBlocks
 Type: Package
-Title: Gene expression enrichment in human brain regions
-Version: 1.2.1
-Date: 2016-12-09
+Title: Gene ontology enrichment using FUNC
+Version: 1.2.2
+Date: 2016-12-13
 Author: Steffi Grote & David Reher
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
-Description: The package ABAEnrichment is designed to test for
-        enrichment of user defined candidate genes in the set of
-        expressed genes in different human brain regions. The core
-        function 'aba_enrich' integrates the expression of the
-        candidate gene set (averaged across donors) and the structural
-        information of the brain using an ontology, both provided by
-        the Allen Brain Atlas project. 'aba_enrich' interfaces the
-        ontology enrichment software FUNC to perform the statistical
-        analyses. Additional functions provided in this package like
-        'get_expression' and 'plot_expression' facilitate exploring the
-        expression data.
+Description: The package FuncBlocks performs GO-enrichment analyses 
+		and provides functions that facilitate the interpretation
+		of the results.
+		The core function 'go_enrich' takes as input either candidate
+		and (optional) background genes, or genes together with 
+		user-defined scores. It then uses the hypergeometric or
+		wilcoxon rank-sum test to test GO-categories for enrichment 
+		of candidate or high-scored genes, respectively. 
+		'go_enrich' interfaces the ontology enrichment software FUNC,
+		which uses random permutations of candidate and background
+		or score assignments of genes to compute a family-wise error
+		rate to account for multiple testing.
+		Additional functions provided in this package like
+		'get_anno_genes', which returns the genes annotated to
+		given GO-categories, and 'get_names', 'get_parent_nodes'
+		and 'get_child_nodes' can be used to explore the GO-graph
+		and help to interpret the results of the enrichment
+		analyses. 
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.5), gtools (>= 3.5.0)
+Imports: Rcpp (>= 0.11.5)
 Depends: R (>= 3.2)
 LinkingTo: Rcpp
 Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr
-biocViews: GeneSetEnrichment, GeneExpression
+biocViews: GeneSetEnrichment
 NeedsCompilation: yes
 Packaged: 2016-08-08 15:40:43 UTC; steffi_grote

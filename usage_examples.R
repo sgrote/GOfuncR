@@ -69,10 +69,11 @@ gos = c('GO:0072025','GO:0072221','GO:0072205','GO:0072235')
 genes = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
  'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 anno_genes = get_anno_genes(go_ids=gos, genes=genes)
+anno_genes
 
 # get all genes annotated to these GOs
 anno_all = get_anno_genes(go_ids=gos)
-
+anno_all
 # does not work with regions 
 # (maybe 'yet', but its easy to get genes from regions and use those)
 # (go_region[[2]] e.g. has all genes contained in the input regions for that go_enrich analysis)
@@ -80,12 +81,18 @@ anno_all = get_anno_genes(go_ids=gos)
 
 
 #### (2) get name 
-get_GO_names(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+get_names(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+
+### (3) GO->children
+children = get_child_nodes(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+head(children)
+
+### (4) GO->parents
+parents = get_parent_nodes(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+parents
 
 
 #### future functions:
-# (3) GO->children
-# (4) GO->parents
 # (5) go_enrich-output,GO (or GO, genes+scores)-> plot odds-ratios (hyper) or score-distribution (wilcoxon)
 
 
