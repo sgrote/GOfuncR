@@ -29,7 +29,8 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 		fwers = res[[1]]
 		go_ids = fwers[fwers[,7] < fwer_threshold, "node_id"]
 		if(length(go_ids) == 0){
-			stop(paste("No significantly enriched GOs at FWER-threshold ",fwer_threshold,sep=""))
+			warning(paste("No significantly enriched GOs at FWER-threshold ",fwer_threshold,sep=""))
+			return(NULL)
 		}
 		## get genes
 		res_genes = res[[2]]
@@ -102,11 +103,11 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	out = data.frame(go_id, anno_gene)
 	
 	if(!(missing(res))){
-		FWER = fwers[match(out[,1], fwers[,2]),7]
+		fwer = fwers[match(out[,1], fwers[,2]),7]
 		score = res_genes[as.character(out$anno_gene)]
 		# replace NA with 0 for background genes
 		score[is.na(score)] = 0
-		out = cbind(out, FWER, score)		
+		out = cbind(out, fwer, score)		
 		out = out[order(out$FWER, out$go_id, out$score, out$anno_gene),]
 	} else {
 		out = out[order(out$go_id, out$anno_gene),]
