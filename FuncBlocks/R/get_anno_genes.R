@@ -15,7 +15,7 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	if(!(missing(res))){
 		## checks
 		# check that it is really a res-object
-		if(!is.list(res) && all(names(res) == c("results","genes"))){
+		if(!(is.list(res)) || is.null(names(res)) || !(all(names(res) == c("results","genes")))){
 			stop("Please use an object returned from go_enrich as input (list with 2 elements).\n Alternatively go_ids need to be defined.")
 		}
 		if(!is.null(go_ids)){
