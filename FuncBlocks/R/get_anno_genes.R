@@ -107,8 +107,8 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 		score = res_genes[as.character(out$anno_gene)]
 		# replace NA with 0 for background genes
 		score[is.na(score)] = 0
-		out = cbind(out, fwer, score)		
-		out = out[order(out$FWER, out$go_id, out$score, out$anno_gene),]
+		out = cbind(out, fwer, score)
+		out = out[order(out$fwer, out$go_id, out$score, out$anno_gene),]
 	} else {
 		out = out[order(out$go_id, out$anno_gene),]
 	}
