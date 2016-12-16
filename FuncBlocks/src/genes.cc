@@ -59,7 +59,7 @@ genes::genes( go_graph &graph, istream &annotation, istream &data )
 	// loop over unique scores, set ranks for every gene in "genes_ranked" (gene* = gene and GOs)
 	for ( multimap< double, gene* >::iterator it = genes_ranked.begin() ; it != genes_ranked.end() ;  ){ 
 		int equal = genes_ranked.count( it->first ) ; // how many have the same score?
-		Rcpp::Rcout << "\nequal:\n" << equal << "\nscore:\n" << it->first << std::endl;
+		//Rcpp::Rcout << "\nequal:\n" << equal << "\nscore:\n" << it->first << std::endl;
 		if ( equal > 1 ) {
 			sum_nties += pow(static_cast<double>(equal), 3.) // equal^3 - equal
 					-static_cast<double>(equal) ;
@@ -67,14 +67,14 @@ genes::genes( go_graph &graph, istream &annotation, istream &data )
 			// set the same averaged rank (scores: 2,4,4,6 -> ranks: 1,2.5,2.5,4)	
 			double rank = static_cast<double>(i) + static_cast<double>(equal-1)/2. ;
 			for ( int i2 = 0 ; i2 < equal ; i2++ ) {
-				Rcpp::Rcout << "tied rank:\n" << rank << std::endl;
+				//Rcpp::Rcout << "tied rank:\n" << rank << std::endl;
 				it->second->set_rank( rank ) ; //gene.set_rank
 				i++ ;
 				++it ;
 			}
 		} else {
 			// un-tied: rank = position of gene in the set
-			Rcpp::Rcout << "normal rank:\n" << i << std::endl;
+			//Rcpp::Rcout << "normal rank:\n" << i << std::endl;
 			it->second->set_rank( i ) ;
 			i++ ;
 			++it ;
