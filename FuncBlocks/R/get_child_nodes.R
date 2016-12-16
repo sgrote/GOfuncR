@@ -21,6 +21,7 @@ get_child_nodes = function(go_ids){
 	colnames(out) = c("parent_go_id","child_go_id","distance")
 	# sort
 	out = out[order(out[,1],out[,3],out[,2]),]
+	rownames(out) = 1:nrow(out)
 
 	return(out)
 }

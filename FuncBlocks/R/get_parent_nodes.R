@@ -23,7 +23,9 @@ get_parent_nodes = function(go_ids){
 	out = out[order(out[,1],out[,3],out[,2]),]
 	# remove 'all'-root node
 	out = out[out[,2] != "all",]
-
+	
+	rownames(out) = 1:nrow(out)
+	
 	return(out)
 }
 
