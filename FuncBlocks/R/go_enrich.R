@@ -161,7 +161,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	#####	3. Loop over GO root-nodes and run FUNC
 	
 	## loop over different root-nodes
-	# only "universal root" has root-flag in term.txt -> define explicitly
+	# #TODO: allow different root nodes (term has "all" root...,remove that) -> require root nodes-vector as input from user with default values 
 	root_node_ids= c("GO:0003674","GO:0008150","GO:0005575")
 	root_nodes = term[match(root_node_ids, term[,4]),2]
 	out = data.frame()
@@ -257,6 +257,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	namen = term[match(out[,1],term[,4]),2:3]
 	out = data.frame(namen[,2],out[,1], namen[,1], out[,2:ncol(out)])
 	out = out[order(out[,7], out[,5]),]
+	rownames(out) = 1:nrow(out)
 	
 	if (test == "hyper"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_underrep","raw_p_overrep","FWER_underrep","FWER_overrep", "n_candidate_expected", "n_candidate_real")
