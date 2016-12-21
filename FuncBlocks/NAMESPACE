@@ -1,6 +1,6 @@
 useDynLib(FuncBlocks)
-export("go_enrich", "get_names", "get_anno_genes", "get_child_nodes", "get_parent_nodes")
+export("go_enrich", "get_names", "get_anno_genes", "get_child_nodes", "get_parent_nodes", "plot_odds_ratio")
 importFrom(Rcpp, evalCpp)
 importFrom("utils", "read.table", "write.table")
 
-import(gtools)
+import(mapplots, gtools)
