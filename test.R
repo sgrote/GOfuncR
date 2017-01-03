@@ -1,9 +1,162 @@
 # remove package from R session
-detach("package:FuncBlocks", unload = TRUE)
+detach('package:FuncBlocks', unload = TRUE)
 #library.dynam.unload("FuncBlocks", system.file(package = "FuncBlocks"))
 
+##############################
+
+set.seed(123)
 library(FuncBlocks)
-setwd("/r1/people/steffi_grote/R_packages/FuncBlocks_package")
+setwd('/r1/people/steffi_grote/R_packages/FuncBlocks_package')
+
+
+##### standard parameters
+gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+genes = rep(1, length(gene_ids))
+names(genes) = gene_ids
+res = go_enrich(genes)
+head(res[[1]])
+res[[2]] # should not contain QUATSCH1
+### corner cases
+# one gene
+res = go_enrich(genes[1], n_randsets=100)
+head(res[[1]])
+# one gene without annotation
+res = go_enrich(genes[2])
+### erroneous input
+# not 1/0-input
+genes2 = genes
+genes2[3] = 2
+res = go_enrich(genes2)
+# no genes names
+res = go_enrich(c(1,0,0,1,0))
+# no gene scores
+res = go_enrich(gene_ids)
+
+##### standard parameters - background defined
+candi_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4')
+bg_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+genes = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)))
+names(genes) = c(candi_ids, bg_ids)
+res = go_enrich(genes, n_randsets=100)
+head(res[[1]])
+res[[2]]
+### corner cases
+# one background gene
+res = go_enrich(genes[1:(length(candi_ids)+1)], n_randsets=100)
+head(res[[1]])
+res[[2]]
+# one candidate gene
+res = go_enrich(genes[c(1,(length(candi_ids)+1):length(genes))], n_randsets=100)
+head(res[[1]])
+res[[2]]
+### erroneous input
+# only background defined
+res = go_enrich(genes[(length(candi_ids)+1):length(genes)])
+
+##### wilcoxon
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+genes = sample(1:30, length(gene_ids))
+names(genes) = gene_ids
+go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
+head(go_willi[[1]])
+go_willi[[2]]
+### corner cases
+# negative values
+genes_rev=-genes
+go_willi_rev = go_enrich(genes_rev, test='wilcoxon', n_randsets=100)
+head(go_willi_rev[[1]])
+forward_p_low = go_willi[[1]][match(go_willi_rev[[1]][,2], go_willi[[1]][,2]),'raw_p_low_rank']
+all.equal(go_willi_rev[[1]][,'raw_p_high_rank'], forward_p_low)
+# only two genes
+go_willi = go_enrich(genes[1:2], test='wilcoxon', n_randsets=100)
+head(go_willi[[1]])
+go_willi[[2]]
+# only one gene
+go_willi = go_enrich(genes[3], test='wilcoxon', n_randsets=100)
+# only two scores
+genes = sample(1:2, length(gene_ids), replace=TRUE)
+names(genes) = gene_ids
+go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
+head(go_willi[[1]])
+# only one score - works, all p and FWER are 1
+genes[genes==1] = 2
+go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
+head(go_willi[[1]])
+# floating point input
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1')
+genes = seq(1.1, 1.7, by=0.1)
+names(genes) = gene_ids
+go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
+head(go_willi[[1]])
+
+##### n_randsets
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
+genes = rep(1, length(gene_ids))
+names(genes) = gene_ids
+### corner cases
+go_ran = go_enrich(genes, n_randsets=0)
+go_ran = go_enrich(genes, n_randsets=1)
+# float
+go_willi = go_enrich(genes, test='wilcoxon', n_randsets=10.5)
+### erroneous input
+go_enrich(genes, n_randsets='ahh')
+go_enrich(genes, n_randsets=-3)
+
+
+##### gene_len
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
+genes = rep(1, length(gene_ids))
+names(genes) = gene_ids
+res_len = go_enrich(genes, gene_len=TRUE, n_randset=100)
+head(res_len[[1]])
+### corner cases
+# no input gene has coordinates
+no_coord_ids = c('HMGA1P6', 'RNY3P4', 'LINC00362', 'RNU6-58P', 'TATDN2P3', 'LINC00363')
+names(genes) = no_coord_ids
+res_len = go_enrich(genes, gene_len=TRUE, n_randset=100)
+# no background has coordinates
+genes_bg = rep(c(1,0),each=6)
+names(genes_bg) = c(gene_ids, no_coord_ids)
+res_len = go_enrich(genes, gene_len=TRUE, n_randset=100)
+
+### errorneous input
+# TODO: HIER WEITERMACHEN
+# other than T/Fr
+res_len = go_enrich(genes, gene_len="bla", n_randset=100) # TODO: add check that gene-len %in% T/F (also in aba_enrich)
+res_len = go_enrich(genes, gene_len=1:3, n_randset=100)
+
+# wilcoxon
+
+
+
+
+
+
+
+##### genomic regions
+genes = c(1, rep(0,6))
+names(genes) = c('8:82000000-83000000', '7:1300000-56800000', '7:74900000-148700000',
+ '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
+go_region = go_enrich(genes, n_randsets=100)
+### corner cases
+# background too tight for random placement
+
+### erroneous input
+# start larger than end
+# no background 
+# no candi
+# background too small
+# no genes in candidate
+# no genes in background
+
+
+
+
+
+##### circ_chrom
+
+
+
 
 ## get name 
 get_GO_names(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
