@@ -84,16 +84,31 @@ compileAttributes()
 
 
 # TODO
-() add help-pages (for go_enrich.R and get_name.R)
-() add function that given a GO returns annotated candidate genes (from last go_enrich-run or given the candidate genes?), also those annotated to sub-categories (see inspect_GO:0098800.R)
-() add function that given a gene returns all annotated GOs (with parent-GOs? - maybe optional)
-() add a function that given a GO return all parent GOs
-() add a function that given a GO return all child GOs
-() allow user-defined term-tables (GO-graph)
-() allow user-defined GO-annotations
-() allow user-defined gene_coordinates
-() wilcoxon randomset dauert irgendwie lange
+() complete test.R, move some plot_odds_ratio examples from usage_examples.R to test.R
 
+() also return total number of annotated genes
+() sort genes in res[[2]] alphabetically with mixedSort (most of all for genomic regions)
+() add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
+() maybe use one generic plotting function instead of plot_odds / plot_scores...
+() wilcoxon for genomic regions? - try out if easy to implement
+() add binomial and contingancy tests
+() refinement from Func (either use c++ or reimplement in R)
+() FDR?
+() overall-significance?
+
+() GRCh38 option for gene-coordinates
+
+() allow user-defined term-tables (GO-graph) (-> roots named explicitly or infer from term[,3]?)
+() allow user-defined GO-annotations
+() allow user-defined gene_coordinates (?)
+() update-functions for the previous 3?
+
+() e.g. in get_anno_genes return NULL (as now) or rather an empty dataframe identical to normal output?
+() visualization (email janet - plotting GO-categories)
+
+() add help-pages 
+() add vignette
+() remove check for FWER-order before publication
 
 
 
