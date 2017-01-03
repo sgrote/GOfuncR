@@ -48,7 +48,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}	
 		if(gene_len == TRUE){
 			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-		}	
+		}
+		if(length(genes) < 2){
+			stop("Only one gene provided as input.")
+		}
 	} else (stop("Not a valid test. Please use 'hyper' or 'wilcoxon'."))
 	
 	
