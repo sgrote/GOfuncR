@@ -27,29 +27,35 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	if (length(names(genes))==0){
 		stop("Please add gene identifiers as names to 'genes' vector.")
 	}
-	if(length(n_randsets)>1 || !is.numeric(n_randsets) || n_randsets<1){
+	if (length(n_randsets)>1 || !is.numeric(n_randsets) || n_randsets<1){
 		stop("Please define 'n_randsets' as a positive integer.")
 	}
-	if(n_randsets != round(n_randsets)){
+	if (n_randsets != round(n_randsets)){
 		n_randsets = round(n_randsets)
 		warning(paste("'n_randsets' is expected to be an integer and was rounded to ",n_randsets,".",sep=""))
 	}
+	if (!is.logical(gene_len)){
+		stop("Please set gene_len to TRUE or FALSE.")
+	}
+	if (!is.logical(circ_chrom)){
+		stop("Please set circ_chrom to TRUE or FALSE.")
+	}
 	# test-specific arguments
 	if (test=="hyper"){
-		if(!all(genes %in% c(0,1))){
+		if (!all(genes %in% c(0,1))){
 			stop("Not a valid 'genes' argument for hypergeometric test. Please use a vector of 0/1.")	
 		}	
-		if(sum(genes)==0){
+		if (sum(genes)==0){
 			stop("Only 0 in genes vector. Please enter test genes.")	
 		}
 	} else	if (test=="wilcoxon"){
-		if(!is.numeric(genes)){
+		if (!is.numeric(genes)){
 			stop("Not a valid 'genes' argument. Please use a numeric vector.")	
 		}	
-		if(gene_len == TRUE){
+		if (gene_len == TRUE){
 			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
 		}
-		if(length(genes) < 2){
+		if (length(genes) < 2){
 			stop("Only one gene provided as input.")
 		}
 	} else (stop("Not a valid test. Please use 'hyper' or 'wilcoxon'."))
@@ -71,7 +77,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 #		identifier = "hgnc_symbol" # gene-name 
 		blocks = TRUE
 		# check that background region is specified
-		if(sum(genes) == length(genes)){
+		if (sum(genes) == length(genes)){
 			stop("All values of the 'genes' input are 1. Using chromosomal regions as input requires defining background regions with 0.")
 		}
 		# check that test is hyper
@@ -148,7 +154,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			
 	
 	# subset to input genes (unless test=hyper & no background genes defined)
-	if(!(test=="hyper" & sum(genes) == length(genes))){
+	if (!(test=="hyper" & sum(genes) == length(genes))){
 		go = go[go[,1] %in% names(remaining_genes),] 
 	}
 	# add value for genes (1/0 for hyper, scores for wilcox) 
@@ -182,7 +188,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (test=="hyper"){
 			# subset to test genes
 			infile_data = data.frame(genes = unique(input[input[,3] == 1,1]))
-		} else if(test=="wilcoxon"){
+		} else if (test=="wilcoxon"){
 			infile_data = unique(input[,c(1,3)])
 		}	
 			
@@ -242,13 +248,13 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			
 		# NEW check that FWER order follows p-value order (per root_node)
 		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
-		groupy_sorted = groupy[signif(round(groupy$p_over,12), -groupy$FWER_over),]
-		if(any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
+		groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
+		if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
 			print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
 			stop("FWER_over does not strictly follow p_over. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de or david_reher@eva.mpg.de.")
 		}
-		groupy_sorted = groupy[order(signif(groupy$p_under,12), -groupy$FWER_under),]	
-		if(any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
+		groupy_sorted = groupy[order(signif (groupy$p_under,12), -groupy$FWER_under),]
+		if (any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
 			print(data.frame(groupy_sorted[,c(1,2,4)], FWER_check=groupy_sorted$FWER_under == cummax(groupy_sorted$FWER_under)))
 			stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de or david_reher@eva.mpg.de.")
 		}
