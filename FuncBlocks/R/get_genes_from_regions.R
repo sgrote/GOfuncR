@@ -101,11 +101,20 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	for (i in 1:nrow(bg_reg)){
 		bg_genes = c(bg_genes, gene_pos[gene_pos[,"chr"]==bg_reg[i,1] & ((gene_pos[,"start"] >= bg_reg[i,2] & gene_pos[,"start"] < bg_reg[i,3]) | (gene_pos[,"end"] >= bg_reg[i,2] & gene_pos[,"end"] < bg_reg[i,3]) |  (gene_pos[,"start"] <= bg_reg[i,2] & gene_pos[,"end"] >= bg_reg[i,3])), "hgnc_symbol"])		
 	}
+	# check that bg-region contains genes
+	# (if no bg-genes here, all non-candidate genes would be background in go_enrich -> unwanted)
+	if (length(bg_genes)==0){
+		stop("Background regions do not contain protein-coding genes.")
+	}
 	
 	# get genes overlapping test-regions
 	test_genes = c()
 	for (i in 1:nrow(test_reg)){
 		test_genes = c(test_genes, gene_pos[gene_pos[,"chr"]==test_reg[i,1] & ((gene_pos[,"start"] >= test_reg[i,2] & gene_pos[,"start"] < test_reg[i,3]) | (gene_pos[,"end"] >= test_reg[i,2] & gene_pos[,"end"] < test_reg[i,3]) | (gene_pos[,"start"] <= test_reg[i,2] & gene_pos[,"end"] >= test_reg[i,3])), "hgnc_symbol"])		
+	}
+	# check that test-region contains genes
+	if (length(test_genes)==0){
+		stop("Candidate regions do not contain protein-coding genes.")
 	}
 
 	# convert to classic "genes" func-input-vector 
