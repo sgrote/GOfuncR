@@ -274,6 +274,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank","ranksum_expected","ranksum_real")
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
+	remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
 	final_output = list(results=out, genes=remaining_genes)
 	message("\nDone.")
 
