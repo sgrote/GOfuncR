@@ -17,7 +17,7 @@ go_res = go_enrich(genes)
 # the output is a list of 2 elements: 
 # 1) the results from the anlysis (ordered by FWER for overrepresentation of candidate genes)
 head(go_res[[1]])
-by(go_res[[1]], go_res[[1]][,"ontology"], head)
+by(go_res[[1]], go_res[[1]][,'ontology'], head)
 # 2) the usable input genes 
 go_res[[2]]
 
@@ -83,7 +83,7 @@ head(anno_bg)
 anno_region = get_anno_genes(go_region, fwer_threshold=0.1)
 
 
-## B) given GOs and "optionally" genes directly
+## B) given GOs and 'optionally' genes directly
 gos = c('GO:0072025','GO:0072221','GO:0072205','GO:0072235')
 genes = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
  'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -100,30 +100,23 @@ anno_all
 
 
 #### (2) get name 
-get_names(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 
 ### (3) GO->children
-children = get_child_nodes(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+children = get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 head(children)
 
 ### (4) GO->parents
-parents = get_parent_nodes(c("GO:0051082", "GO:123", "GO:0042254", "GO:0000109"))
+parents = get_parent_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 parents
 
 ### (5) go_enrich-output and (fwer_threshold or go_ids)-> plot odds-ratios (hyper)
 plot_odds_ratio(go_res, fwer_threshold=0.02)
 plot_odds_ratio(go_bg,fwer_threshold=0.8)
-plot_odds_ratio(go_res, go_ids=c("GO:0072025","GO:0072221","GO:0072235", "GO:0044765"))
-plot_odds_ratio(go_bg, go_ids=c("GO:0005634","GO:0004945","0.05309471","GO:0008289","GO:0005737","GO:0071495"))
-plot_odds_ratio(go_bg, go_ids=c("GO:0005623"))
+plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
+plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','0.05309471','GO:0008289','GO:0005737','GO:0071495'))
 
-# TODO: test GO without genes / candidate genes ; maybe set height of pie-circles to the lowest root-pie
-# TODO colors no dataframe?
-# TODO: move from here to test-script
-# TODO: then commit
-plot_odds_ratio(go_bg, go_ids=c("GO:0000009", "GO:0000010", "GO:0000014")) # no genes annotated
-plot_odds_ratio(go_bg, go_ids=c("GO:0000166", "GO:0000287", "GO:0000981")) # no candidate annotated
-plot_odds_ratio(go_bg, fwer_threshold=0.001) # no gos with fwer below threshold
+
 
 
 #### future functions:
