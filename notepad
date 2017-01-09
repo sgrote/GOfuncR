@@ -84,10 +84,13 @@ compileAttributes()
 
 
 # TODO
-() complete test.R, move some plot_odds_ratio examples from usage_examples.R to test.R
+() complete test_get_functions.R
+() complete test_plotting_functions.R
 
+() check that there is no restriction on the relation in the ontology
+
+() rename get_names to get_node_name, get_parent_nodes? (oder statt nodes "gos", node allgemeiner) 
 () also return total number of annotated genes
-() sort genes in res[[2]] alphabetically with mixedSort (most of all for genomic regions)
 () add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 () maybe use one generic plotting function instead of plot_odds / plot_scores...
 () wilcoxon for genomic regions? - try out if easy to implement
@@ -106,6 +109,7 @@ compileAttributes()
 () e.g. in get_anno_genes return NULL (as now) or rather an empty dataframe identical to normal output?
 () visualization (email janet - plotting GO-categories)
 
+() add testthat scripts
 () add help-pages 
 () add vignette
 () remove check for FWER-order before publication
