@@ -48,22 +48,14 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	}
 
 	## GO-graph and GO-annotations	
-	# find children
+	# find children # TODO: warum nicht get_child_nodes? Der part dauert sehr lang
 	message("find child nodes of GOs...")
-	children = list()
-	for(go in go_ids){
-		# go_id in ontology
-		go_id_term = term[term[,4]==go, 1]
-		if(length(go_id_term) == 0){ 
-			next
-		}	
-		# go-categories that are children of *go* (cols graph_path: id, parent, child, relation, distance, ...)
-		go_children = graph_path[graph_path[,2]==go_id_term,]
-		# GO-IDs of child nodes (and the node itself)
-		child_gos = term[term[,1] %in% go_children[,3],4]
-		children[[go]] = child_gos
-	}
-	
+	children = get_child_nodes(go_ids)
+	children = tapply(children[,2], children[,1], as.character, simplify=FALSE)
+	# uniqueness is not required, takes long. duplicates due to different distances to same child node
+#	children = tapply(children[,2], children[,1], function(x){as.character(unique(x))}, simplify=FALSE)
+
+
 	# 3) find genes annotated to child nodes
 	message("find genes annotated to child nodes...")
 	# remove obsolete terms
