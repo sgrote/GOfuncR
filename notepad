@@ -115,11 +115,8 @@ compileAttributes()
 () add vignette
 () remove check for FWER-order before publication
 
-<<<<<<< HEAD
 () NEW4
-=======
-() NEW3
->>>>>>> 9b5554f7c0e85e0ec7e63dfeb4dd54227c483c92
+
 
 
 
