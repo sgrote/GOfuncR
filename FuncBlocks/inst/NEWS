@@ -1,4 +1,17 @@
 
+CHANGES IN VERSION 1.2.3
+------------------------
+
+NEW FEATURES
+
+	o new functions: 'plot_odds_ratios' and 'plot_scores'
+
+MINOR CHANGES
+
+	o genes in go_enrich(...)[[2]] are sorted alphabetically
+	  (mixedsort)
+
+
 CHANGES IN VERSION 1.2.2
 ------------------------
 
