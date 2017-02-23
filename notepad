@@ -55,9 +55,7 @@ go_anno_m = read.csv("mart_export_mouse.csv", as.is=TRUE)
 # remove empty fields here to save space, but keep removing in go_enrich for custom user annotation
 go_anno_grcm38 = go_anno_m[go_anno_m[,1] != "",]
 
-
-
-## gene-ccordinates
+## gene-cordinates # TODO: add mouse gene coordinates
 gene_coords_grch37 = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
 # convert to bed-file, remove empty fields and reduce to chr1-22,X,Y
 gene_coords_grch37 = gene_coords_grch37[,c(2,3,4,1)]

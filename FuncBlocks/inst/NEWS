@@ -4,7 +4,7 @@ CHANGES IN VERSION 1.2.3 (under construction)
 
 NEW FEATURES
 
-	o allow custom ontology, annotations and (gene coordinates)
+	o mouse gene annotations
 	o new functions: 'plot_odds_ratios' and ('plot_scores')
 
 MINOR CHANGES

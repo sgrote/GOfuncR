@@ -8,6 +8,15 @@ library(FuncBlocks)
 set.seed(123)
 
 
+###### NEW: mouse
+gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
+genes = rep(1, length(gene_ids))
+names(genes) = gene_ids
+go_mouse = go_enrich(genes, ref_genome="grcm38")
+
+
+
+
 ###### standard go-enrichment with 14 candidate genes
 
 ## input: a vector with '1' for candidate and optional '0' for background genes

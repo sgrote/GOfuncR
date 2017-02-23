@@ -11,16 +11,20 @@
 ### Testing:
 #/r1/people/steffi_grote/R_packages/FuncBlocks_package/test.R)
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE)
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37")
 {
 	
-	ref_genome = "grch37" # TODO: add grch38 as parameter and gene_coords_grch38 to sysdata.R 
+	# TODO: add grch38 as parameter and gene_coords_grch38 to sysdata.R 
 	
 	#####	1. Check arguments and define parameters
 	
 	## Check arguments
 	# general
 	message("Checking arguments...")
+	# NEW:
+	if (!(ref_genome %in% c("grch37","grcm38"))){
+		stop("Please use 'ref_genome=grch37' or 'ref_genome=grcm38'")
+	}
 	if (length(genes)==0){
 		stop("Please enter genes.")
 	}	
@@ -67,8 +71,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	directory = tempdir()
 #	dir.create("./tmp"); directory = "./tmp"
 
-	# load gene coordinates
-	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
+	# load gene coordinates # TODO: add mouse coordinates and remove if-statement
+	if (ref_genome=="grch37"){
+		gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
+	}
+	# load GO-annotation
+	go_anno = get(paste("go_anno_", ref_genome, sep=""))
 	
 	# detect identifier: are genes or genomic regions ('blocks') given as input?
 	blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", names(genes)[1]) # TODO: allow more than [0-9XY] as chroms?
@@ -157,7 +165,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# add value for genes (1/0 for hyper, scores for wilcox) 
 	go$value = genes[match(go[,1], names(genes))]	
 
-
+	#
+	
+	
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	write.table(term,file=paste(directory, "/term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(term2term,file=paste(directory, "/term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
