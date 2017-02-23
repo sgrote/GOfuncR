@@ -80,7 +80,10 @@ require("Rcpp")
 setwd("/home/steffi_grote/R_packages/FuncBlocks_package/FuncBlocks")
 compileAttributes()
 
-
+# check that values of some sample anaylses still match "saved_results.RData" (or set them)
+cd /home/steffi_grote/R_packages/FuncBlocks_package 
+Rscript test_go_enrich_values.R
+#Rscript test_go_enrich_values.R set_values  		# to set the saved results ("saved_results.RData")
 
 # TODO
 () complete test_get_functions.R
