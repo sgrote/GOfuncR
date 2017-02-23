@@ -99,7 +99,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	# get genes overlapping background-regions
 	bg_genes = c()
 	for (i in 1:nrow(bg_reg)){
-		bg_genes = c(bg_genes, gene_pos[gene_pos[,"chr"]==bg_reg[i,1] & ((gene_pos[,"start"] >= bg_reg[i,2] & gene_pos[,"start"] < bg_reg[i,3]) | (gene_pos[,"end"] >= bg_reg[i,2] & gene_pos[,"end"] < bg_reg[i,3]) |  (gene_pos[,"start"] <= bg_reg[i,2] & gene_pos[,"end"] >= bg_reg[i,3])), "hgnc_symbol"])		
+		bg_genes = c(bg_genes, gene_pos[gene_pos[,1]==bg_reg[i,1] & ((gene_pos[,2] >= bg_reg[i,2] & gene_pos[,2] < bg_reg[i,3]) | (gene_pos[,3] >= bg_reg[i,2] & gene_pos[,3] < bg_reg[i,3]) |  (gene_pos[,2] <= bg_reg[i,2] & gene_pos[,3] >= bg_reg[i,3])), 4])		
 	}
 	# check that bg-region contains genes
 	# (if no bg-genes here, all non-candidate genes would be background in go_enrich -> unwanted)
@@ -110,7 +110,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	# get genes overlapping test-regions
 	test_genes = c()
 	for (i in 1:nrow(test_reg)){
-		test_genes = c(test_genes, gene_pos[gene_pos[,"chr"]==test_reg[i,1] & ((gene_pos[,"start"] >= test_reg[i,2] & gene_pos[,"start"] < test_reg[i,3]) | (gene_pos[,"end"] >= test_reg[i,2] & gene_pos[,"end"] < test_reg[i,3]) | (gene_pos[,"start"] <= test_reg[i,2] & gene_pos[,"end"] >= test_reg[i,3])), "hgnc_symbol"])		
+		test_genes = c(test_genes, gene_pos[gene_pos[,1]==test_reg[i,1] & ((gene_pos[,2] >= test_reg[i,2] & gene_pos[,2] < test_reg[i,3]) | (gene_pos[,3] >= test_reg[i,2] & gene_pos[,3] < test_reg[i,3]) | (gene_pos[,2] <= test_reg[i,2] & gene_pos[,3] >= test_reg[i,3])), 4])
 	}
 	# check that test-region contains genes
 	if (length(test_genes)==0){
