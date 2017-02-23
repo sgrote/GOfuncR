@@ -70,12 +70,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# load gene coordinates
 	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
 	
-	# are genes or genomic regions ('blocks') given as input?
-	blocks = FALSE
-	identifier = detect_identifier(names(genes)[1]) # "blocks" or "hgnc_symbol"
-	if (identifier=="blocks"){
-#		identifier = "hgnc_symbol" # gene-name 
-		blocks = TRUE
+	# detect identifier: are genes or genomic regions ('blocks') given as input?
+	blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", names(genes)[1]) # TODO: allow more than [0-9XY] as chroms?
+
+	if (blocks){
 		# check that background region is specified
 		if (sum(genes) == length(genes)){
 			stop("All values of the 'genes' input are 1. Using chromosomal regions as input requires defining background regions with 0.")
@@ -151,7 +149,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			stop(paste("Less than 2 genes have annotated GOs.",sep=""))
 		}
 	}
-			
 	
 	# subset to input genes (unless test=hyper & no background genes defined)
 	if (!(test=="hyper" & sum(genes) == length(genes))){
