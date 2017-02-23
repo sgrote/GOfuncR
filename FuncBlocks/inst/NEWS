@@ -1,10 +1,11 @@
 
-CHANGES IN VERSION 1.2.3
+CHANGES IN VERSION 1.2.3 (under construction)
 ------------------------
 
 NEW FEATURES
 
-	o new functions: 'plot_odds_ratios' and 'plot_scores'
+	o allow custom ontology, annotations and (gene coordinates)
+	o new functions: 'plot_odds_ratios' and ('plot_scores')
 
 MINOR CHANGES
 

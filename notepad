@@ -1,6 +1,4 @@
 
-Git-Test: Steffi added a new line, again
-
 cd /r1/people/steffi_grote/R_packages/FuncBlocks_package
 
 # termtables downloaded from
@@ -41,7 +39,7 @@ go_anno = go_anno[go_anno[,1] != "",]
 gene_coords_grch37 = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
 # convert to bed-file, remove empty fields and reduce to chr1-22,X,Y
 gene_coords_grch37 = gene_coords_grch37[,c(2,3,4,1)]
-# TODO: ADD this filering steps also for user defined gene_coords file
+# TODO: ADD this filering step also for user defined gene_coords file (or simply require bed)
 gene_coords_grch37 = gene_coords_grch37[gene_coords_grch37[,4] != "",]
 gene_coords_grch37 = gene_coords_grch37[gene_coords_grch37[,1] %in% c(1:22,"X","Y"),]
 # if you wanna be ganz genau: ensembl is 1-based, bed-files are 0-based
@@ -89,6 +87,7 @@ compileAttributes()
 () complete test_plotting_functions.R
 
 () check that there is no restriction on the relation in the ontology
+() in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
 
 () rename get_names to get_node_name, get_parent_nodes? (oder statt nodes "gos", node allgemeiner) 
 () also return total number of annotated genes
@@ -115,7 +114,6 @@ compileAttributes()
 () add vignette
 () remove check for FWER-order before publication
 
-() NEW4
 
 
 

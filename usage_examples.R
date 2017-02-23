@@ -1,8 +1,14 @@
+# install
+system("R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.3.tar.gz")
 
+# load
+library(FuncBlocks)
+
+# random number seed
 set.seed(123)
 
+
 ###### standard go-enrichment with 14 candidate genes
-library(FuncBlocks)
 
 ## input: a vector with '1' for candidate and optional '0' for background genes
 ## the names of the vector are the corresponding gene symbols	
@@ -18,7 +24,7 @@ go_res = go_enrich(genes)
 # 1) the results from the anlysis (ordered by FWER for overrepresentation of candidate genes)
 head(go_res[[1]])
 by(go_res[[1]], go_res[[1]][,'ontology'], head)
-# 2) the usable input genes 
+# 2) all valid input genes
 go_res[[2]]
 
 
@@ -52,13 +58,13 @@ go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 genes = c(1, rep(0,6))
 names(genes) = c('8:82000000-83000000', '7:1300000-56800000', '7:74900000-148700000',
  '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
+genes
 go_region = go_enrich(genes, n_randsets=100)
 # genes located in candidate region
 go_region[[2]][go_region[[2]]==1]
 
 # background regions only on a circularized chromosome
 go_region_circ = go_enrich(genes, n_randsets=100, circ_chrom=TRUE)
-
 
 
 
@@ -70,7 +76,7 @@ go_region_circ = go_enrich(genes, n_randsets=100, circ_chrom=TRUE)
 ## A) given a go_enrich result for GO-IDs with FWER<0.05 (FWER for overrepresentation / high_rank)
 anno = get_anno_genes(go_res)
 # using a different FWER-threshold
-anno_willi = get_anno_genes(go_willi, fwer_threshold=0.2) 
+anno_willi = get_anno_genes(go_willi, fwer_threshold=0.5) 
 # 'score' refers to candidate(1) or background(0) gene (or score in the wilcoxon test)
 anno
 anno_willi

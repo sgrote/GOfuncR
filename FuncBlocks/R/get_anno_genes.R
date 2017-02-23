@@ -48,7 +48,7 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	}
 
 	## GO-graph and GO-annotations	
-	# find children # TODO: warum nicht get_child_nodes? Der part dauert sehr lang
+	# find children
 	message("find child nodes of GOs...")
 	children = get_child_nodes(go_ids)
 	children = tapply(children[,2], children[,1], as.character, simplify=FALSE)
