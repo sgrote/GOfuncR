@@ -15,6 +15,16 @@ Attributes: GO Term Accession, HGNC symbol
 delimiter: csv
 unique results only: yes
 
+# NEW go gene association file "mart_export_mouse.csv" downloaded from
+http://www.ensembl.org/biomart/martview/e7f9da3fa2cf158de4c1e4769e35d204
+Database: Ensembl Genes 87
+Dataset: Mouse genes (GRCh37.p13)
+Filters: none
+Attributes: GO Term Accession, Associated Gene Name
+64162 Genes #TODO update that number
+delimiter: csv
+unique results only: yes
+
 # gene positions file "gene_coords.txt" downloaded from
 http://grch37.ensembl.org/biomart/martview/b68c5eb25863d05a3de5670a0b312772
 Database: Ensembl Genes
@@ -25,17 +35,29 @@ Attributes: HGNC symbol, Chromosome Name, Gene Start (bp), Gene End (bp)
 delimiter: csv
 unique results only: yes
 
-## add files to package 
+##### add files to package 
 # (R-objects saved in /R/sysdata.rda can be used in the package's R functions without any explicit loading)
 # in R: 
 rm(list=ls())
 setwd("/r1/people/steffi_grote/R_packages/FuncBlocks_package")
+
+## ontology
 term = read.table("term_tables/term.txt", sep="\t", quote="", comment.char="", as.is=TRUE)
 term2term = read.table("term_tables/term2term.txt", sep="\t", quote="", comment.char="", as.is=TRUE)
 graph_path = read.table("term_tables/graph_path.txt", sep="\t", quote="", comment.char="", as.is=TRUE)
+
+## GO-annotations
 go_anno = read.csv("mart_export.csv", as.is=TRUE)
 # remove empty fields here to save space, but keep removing in go_enrich for custom user annotation
-go_anno = go_anno[go_anno[,1] != "",]
+go_anno_grch37 = go_anno[go_anno[,1] != "",]
+# mouse
+go_anno_m = read.csv("mart_export_mouse.csv", as.is=TRUE)
+# remove empty fields here to save space, but keep removing in go_enrich for custom user annotation
+go_anno_grcm38 = go_anno_m[go_anno_m[,1] != "",]
+
+
+
+## gene-ccordinates
 gene_coords_grch37 = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
 # convert to bed-file, remove empty fields and reduce to chr1-22,X,Y
 gene_coords_grch37 = gene_coords_grch37[,c(2,3,4,1)]
