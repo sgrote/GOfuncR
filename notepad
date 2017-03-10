@@ -6,17 +6,27 @@ http://archive.geneontology.org/full/2016-08-01/
 go_201608-termdb-tables.tar.gz
 
 # go gene association file "mart_export.csv" downloaded from
-http://grch37.ensembl.org/biomart/martview/c037173cf22cc8bc58b16d6a05d7e57a
+http://grch37.ensembl.org/biomart/martview/
 Database: Ensembl Genes
 Dataset: Homo sapiens genes (GRCh37.p13)
 Filters: none
 Attributes: GO Term Accession, HGNC symbol
-64162 Genes
+19684 Genes
+delimiter: csv
+unique results only: yes
+
+# gene positions file "gene_coords.csv" downloaded from
+http://grch37.ensembl.org/biomart/martview/
+Database: Ensembl Genes
+Dataset: Homo sapiens genes (GRCh37.p13)
+Filters: none
+Attributes: HGNC symbol, Chromosome Name, Gene Start (bp), Gene End (bp)
+33671 Genes
 delimiter: csv
 unique results only: yes
 
 # NEW go gene association file "mart_export_mouse.csv" downloaded from
-http://www.ensembl.org/biomart/martview/e7f9da3fa2cf158de4c1e4769e35d204
+http://www.ensembl.org/biomart/martview/
 Database: Ensembl Genes 87
 Dataset: Mouse genes (GRCm38.p5)
 Filters: none
@@ -25,13 +35,14 @@ Attributes: GO Term Accession, Associated Gene Name
 delimiter: csv
 unique results only: yes
 
-# gene positions file "gene_coords.txt" downloaded from
-http://grch37.ensembl.org/biomart/martview/b68c5eb25863d05a3de5670a0b312772
-Database: Ensembl Genes
-Dataset: Homo sapiens genes (GRCh37.p13)
+# NEW gene positions for mouse "gene_coords_mouse.csv" downloaded from 
+# TODO: combine coords and annotations? maybe easier, almost all GO-annotated genes also have coords
+http://www.ensembl.org/biomart/martview/
+Database: Ensembl Genes 87
+Dataset: Mouse genes (GRCm38.p5)
 Filters: none
-Attributes: HGNC symbol, Chromosome Name, Gene Start (bp), Gene End (bp)
-64187 Genes
+Attributes: Associated Gene Name, Chromosome/scaffold name, Gene Start (bp), Gene End (bp)
+49845 Genes
 delimiter: csv
 unique results only: yes
 
@@ -56,7 +67,7 @@ go_anno_m = read.csv("mart_export_mouse.csv", as.is=TRUE)
 go_anno_grcm38 = go_anno_m[go_anno_m[,1] != "",]
 
 ## gene-cordinates # TODO: add mouse gene coordinates
-gene_coords_grch37 = read.table("gene_coords.txt", sep="\t", header=T, as.is=T)
+gene_coords_grch37 = read.csv("gene_coords.csv", header=T, as.is=T)
 # convert to bed-file, remove empty fields and reduce to chr1-22,X,Y
 gene_coords_grch37 = gene_coords_grch37[,c(2,3,4,1)]
 # TODO: ADD this filering step also for user defined gene_coords file (or simply require bed)
