@@ -18,10 +18,10 @@ unique results only: yes
 # NEW go gene association file "mart_export_mouse.csv" downloaded from
 http://www.ensembl.org/biomart/martview/e7f9da3fa2cf158de4c1e4769e35d204
 Database: Ensembl Genes 87
-Dataset: Mouse genes (GRCh37.p13)
+Dataset: Mouse genes (GRCm38.p5)
 Filters: none
 Attributes: GO Term Accession, Associated Gene Name
-64162 Genes #TODO update that number
+22635 Genes
 delimiter: csv
 unique results only: yes
 
