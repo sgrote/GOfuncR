@@ -16,8 +16,8 @@ go_mouse = go_enrich(genes, ref_genome="grcm38", n_randset=10)
 ##########
 library(FuncBlocks)
 
-genes.a = readRDS('/mnt/SingleCellGenomics/scg_projects/foxp2_mice_2016/test_go_func.genes.a.RDS')
-genes.b = readRDS('/mnt/SingleCellGenomics/scg_projects/foxp2_mice_2016/test_go_func.genes.b.RDS')
+genes.a = readRDS('test_go_func.genes.a.RDS')
+genes.b = readRDS('test_go_func.genes.b.RDS')
 
 table(genes.a)
 table(genes.b)

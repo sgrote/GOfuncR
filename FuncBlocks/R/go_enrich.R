@@ -163,10 +163,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		go = go[go[,1] %in% names(remaining_genes),] 
 	}
 	# add value for genes (1/0 for hyper, scores for wilcox) 
+	# (for hyper-all-bg this adds NA to background genes, doesn't matter, file with all and file with candi-genes needed for func)
 	go$value = genes[match(go[,1], names(genes))]	
-
-	#
 	
+	print(go[go[,1] %in% c("goCul5","Eif5a","Park2"),])
 	
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	write.table(term,file=paste(directory, "/term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
