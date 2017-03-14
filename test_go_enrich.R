@@ -55,7 +55,10 @@ res[[2]]
 ### erroneous input
 # only background defined
 res = go_enrich(genes[(length(candi_ids)+1):length(genes)])
-
+# genes defined as both, background and candidate
+genes = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)), c(0,0,0,1,1))
+names(genes) = c(candi_ids, bg_ids, candi_ids[1:3], bg_ids[1:2])
+res = go_enrich(genes)
 
 ##### wilcoxon
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -92,7 +95,11 @@ genes = seq(1.1, 1.7, by=0.1)
 names(genes) = gene_ids
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 head(go_willi[[1]])
-
+### erroneous input
+# genes defined as both, background and candidate
+genes = c(3,4,5,genes)
+names(genes)[1:3] = names(genes)[6:8]
+res = go_enrich(genes)
 
 ##### n_randsets
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')

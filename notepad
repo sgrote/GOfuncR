@@ -145,7 +145,7 @@ Rscript test_go_enrich_values.R
 
 () add testthat scripts
 () add help-pages 
-() add vignette
+() add vignette (include table with versions of GO-tree and annotations)
 () remove check for FWER-order before publication
 
 

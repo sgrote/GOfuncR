@@ -21,7 +21,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	## Check arguments
 	# general
 	message("Checking arguments...")
-	# NEW:
 	if (!(ref_genome %in% c("grch37","grcm38"))){
 		stop("Please use 'ref_genome=grch37' or 'ref_genome=grcm38'")
 	}
@@ -43,6 +42,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	}
 	if (!is.logical(circ_chrom)){
 		stop("Please set circ_chrom to TRUE or FALSE.")
+	}
+	# NEW: check for multiple assignment for one gene
+	genetab = unique(data.frame(genes, names(genes))) # allow for multiple assignment of the same value
+	multi_genes = sort(unique(genetab[,2][duplicated(genetab[,2])]))
+	if (length(multi_genes) > 0){
+		stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
 	}
 	# test-specific arguments
 	if (test=="hyper"){
@@ -166,8 +171,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# (for hyper-all-bg this adds NA to background genes, doesn't matter, file with all and file with candi-genes needed for func)
 	go$value = genes[match(go[,1], names(genes))]	
 	
-	print(go[go[,1] %in% c("goCul5","Eif5a","Park2"),])
-	
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	write.table(term,file=paste(directory, "/term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(term2term,file=paste(directory, "/term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
@@ -211,7 +214,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			# remove genes with unknown coordinates (possible for default bg in gene_len-option) 
 			if (gene_len){					
 				root = root[!is.na(root[,3]),] 			
-			}	
+			}
 			# NEW just in case - avoid scientific notation of gene coordinates	
 			root[,3:4] = format(root[,3:4], scientific=FALSE, trim=TRUE)		
 		} else {
