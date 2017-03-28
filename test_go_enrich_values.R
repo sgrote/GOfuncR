@@ -112,9 +112,12 @@ if (set_values){
 	load("saved_results.RData")
 	failed = 0
 	for (i in 1:length(test_results)){
-		if (!all.equal(saved_results[[i]], test_results[[i]])){
-			# TODO: this did not work in a fail-example, instead
-			message(paste("test_results[[",i,"]] is failing (", names(saved_results[[i]]),").",sep=""))
+		if (!(isTRUE(all.equal(saved_results[[i]], test_results[[i]])))){
+			message(paste("test_results[[",i,"]] is failing (", names(saved_results)[i],").",sep=""))
+			message("print(head(saved_results[[i]][[1]]))")
+			print(head(saved_results[[i]][[1]]))
+			message("print(head(test_results[[i]][[1]]))")
+			print(head(test_results[[i]][[1]]))
 			failed = failed+1
 		}
 	}

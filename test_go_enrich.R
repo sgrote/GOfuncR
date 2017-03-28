@@ -95,11 +95,7 @@ genes = seq(1.1, 1.7, by=0.1)
 names(genes) = gene_ids
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 head(go_willi[[1]])
-### erroneous input
-# genes defined as both, background and candidate
-genes = c(3,4,5,genes)
-names(genes)[1:3] = names(genes)[6:8]
-res = go_enrich(genes)
+
 
 ##### n_randsets
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
