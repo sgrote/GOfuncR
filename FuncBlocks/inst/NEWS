@@ -11,6 +11,9 @@ MINOR CHANGES
 
 	o genes in go_enrich(...)[[2]] are sorted alphabetically
 	  (mixedsort)
+	o when genomic regions are provided as input, candidate
+	  regions are implicitly also part of background
+	  (like it is for single-genes-input)
 
 
 CHANGES IN VERSION 1.2.2

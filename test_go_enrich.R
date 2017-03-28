@@ -53,12 +53,12 @@ res = go_enrich(genes[c(1,(length(candi_ids)+1):length(genes))], n_randsets=100)
 head(res[[1]])
 res[[2]]
 ### erroneous input
+# same gene as candidate and background
+names(genes)[1:3] = bg_ids[1:3]
+res = go_enrich(genes)
 # only background defined
 res = go_enrich(genes[(length(candi_ids)+1):length(genes)])
-# genes defined as both, background and candidate
-genes = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)), c(0,0,0,1,1))
-names(genes) = c(candi_ids, bg_ids, candi_ids[1:3], bg_ids[1:2])
-res = go_enrich(genes)
+
 
 ##### wilcoxon
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -148,7 +148,7 @@ head(go_region[[2]])
 ### corner cases
 # background too tight for random placement
 tight = c(rep(1,4),0)
-names(tight) = c('1:104000000-114900000', '3:76500000-90500000', '7:113600000-124700000', '8:54500000-65400000', '5:0-47000000')
+names(tight) = c('1:104000000-114900000', '3:76500000-90500000', '7:113600000-124700000', '8:54500000-65400000', '5:0-4700000')
 go_enrich(tight, n_randsets=100)
 ### erroneous input
 # start larger than end
