@@ -7,9 +7,7 @@
 # n_randsets: number of random-sets
 # gene_len: randomset is dependent on length of genes
 # circ_chrom: for regions input: random regions are on same chrom and allowed to overlap multiple bg-regions
-
-### Testing:
-#/r1/people/steffi_grote/R_packages/FuncBlocks_package/test.R)
+# ref_genome: "grch37" (hg19) or "grcm38" (mouse)
 
 go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37")
 {
@@ -42,12 +40,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	}
 	if (!is.logical(circ_chrom)){
 		stop("Please set circ_chrom to TRUE or FALSE.")
-	}
-	# NEW: check for multiple assignment for one gene
-	genetab = unique(data.frame(genes, names(genes))) # allow for multiple assignment of the same value
-	multi_genes = sort(unique(genetab[,2][duplicated(genetab[,2])]))
-	if (length(multi_genes) > 0){
-		stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
 	}
 	# test-specific arguments
 	if (test=="hyper"){
@@ -117,9 +109,17 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# write regions to files
 		write.table(test_regions,file=paste(directory, "/test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 		write.table(bg_regions,file=paste(directory, "/bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")		
-	} else if (circ_chrom == TRUE){
-		# warn if circ_chrom=TRUE, although individual genes are used
-		warning("Unused argument: 'circ_chrom = TRUE'.")
+	} else {
+		if (circ_chrom == TRUE){
+			# warn if circ_chrom=TRUE, although individual genes are used
+			warning("Unused argument: 'circ_chrom = TRUE'.")
+		}
+		# NEW: check for multiple assignment for one gene
+		genetab = unique(data.frame(genes, names(genes))) # allow for multiple assignment of the same value
+		multi_genes = sort(unique(genetab[,2][duplicated(genetab[,2])]))
+		if (length(multi_genes) > 0){
+			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
+		}
 	} 	
 	
 	message("get GOs for genes...")
