@@ -68,10 +68,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	directory = tempdir()
 #	dir.create("./tmp"); directory = "./tmp"
 
-	# load gene coordinates # TODO: add mouse coordinates and remove if-statement
-	if (ref_genome=="grch37"){
-		gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
-	}
+	# load gene coordinates
+	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
+
 	# load GO-annotation
 	go_anno = get(paste("go_anno_", ref_genome, sep=""))
 	

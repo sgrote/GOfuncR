@@ -9,11 +9,12 @@ set.seed(123)
 
 
 ###### NEW: mouse
+# ref_genome="grcm38" for mouse GO-annotations, and mouse gene-coordinates for gene_len=T and regions-input
 gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
 go_mouse = go_enrich(genes, ref_genome="grcm38")
-
+ 
 
 
 

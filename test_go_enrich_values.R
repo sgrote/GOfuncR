@@ -6,6 +6,9 @@
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0){
 	set_values = FALSE  # set values (or test values)
+	if (!("saved_results.RData") %in% dir()){
+		stop("saved_results.RData not found")
+	}
 } else if (args[1] == "set_values"){
 	set_values = TRUE
 } else {
@@ -22,6 +25,7 @@ test_results = list()
 ###########################################################################################
 
 ##### standard parameters
+set.seed(123)
 gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
@@ -29,8 +33,15 @@ test_results[["res1"]] = go_enrich(genes, n_randset=100)
 ### corner cases
 # one gene
 test_results[["res2"]] = go_enrich(genes[1], n_randsets=100)
+### mouse
+gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
+genes = rep(1, length(gene_ids))
+names(genes) = gene_ids
+test_results[["res_mouse"]] = go_enrich(genes, n_randsets=100, ref_genome='grcm38')
+
 
 ##### standard parameters - background defined
+set.seed(123)
 candi_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4')
 bg_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 genes = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)))
@@ -44,6 +55,7 @@ test_results[["res5"]] = go_enrich(genes[c(1,(length(candi_ids)+1):length(genes)
 
 
 ##### wilcoxon
+set.seed(123)
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 genes = sample(1:30, length(gene_ids))
 names(genes) = gene_ids
@@ -69,25 +81,35 @@ test_results[["go_willi6"]] = go_enrich(genes, test='wilcoxon', n_randsets=100)
 
 
 ##### gene_len
+set.seed(123)
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
 test_results[["res_len"]] = go_enrich(genes, gene_len=TRUE, n_randset=100)
-
+### mouse
+gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
+genes = rep(1, length(gene_ids))
+names(genes) = gene_ids
+test_results[["res_mouse_len"]] = go_enrich(genes, gene_len=TRUE, n_randsets=100, ref_genome='grcm38')
 
 
 ##### genomic regions
+set.seed(123)
 genes = c(1,1, rep(0,6))
 names(genes) = c('8:82000000-83000000', '3:76500000-90500000', '7:1300000-56800000', '7:74900000-148700000',
  '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
 test_results[["go_region"]] = go_enrich(genes, n_randsets=100)
+### mouse
+test_results[["go_region_mouse"]] = go_enrich(genes, n_randsets=100, ref_genome='grcm38')
 
 ### circ_chrom
+set.seed(123)
 test_results[["go_circ1"]] = go_enrich(genes[c(1,5,6)], n_randsets=100, circ_chrom=TRUE)
 # warning about unused chromosomes
 test_results[["go_circ2"]] = go_enrich(genes[-2], n_randsets=100, circ_chrom=TRUE)
 
 ### example with Ben's deserts
+set.seed(123)
 background = read.table('Ben_background_regions.bed')
 candidate = read.table('Ben_neandertal_deserts.bed')
 back_cand = rbind(candidate, background)
@@ -97,6 +119,8 @@ names(regions) = c(paste(back_cand[,1],':',back_cand[,2],'-',back_cand[,3],sep='
 test_results[["ben"]] = go_enrich(regions, n_randset=100)
 # circ chrom
 test_results[["ben_circ"]] = go_enrich(regions, circ_chrom=TRUE, n_randset=100)
+
+
 
 
 ####################################################################################
