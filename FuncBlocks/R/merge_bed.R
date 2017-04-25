@@ -30,11 +30,9 @@ merge_chrom = function(chrbed){
 }
 
 merge_bed = function(bed){
-	# check that start < stop (athough this is already done in get_genes_from_regions...)
-	reverse_indi = bed[,2] > bed[,3]
-	if (sum(reverse_indi) > 0){
-		reverse = paste(names(genes)[reverse_indi], collapse=", ")
-		stop(paste("Invalid regions: ", reverse, ".\n  In 'chr:start-stop' start < stop is required.", sep=""))
+	# check that start < stop (athough this is already done in get_genes_from_regions...), for completeness
+	if (any(bed[,2] > bed[,3])){
+		stop("Genomic regions must be defined with start < stop.")
 	}
 	# sort
 	bed = bed[order(bed[,1],bed[,2],bed[,3]),]

@@ -74,7 +74,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		}
 	} else {  # normal blocks option
 		# sort candidate regions by length (better chances that random placement works with small bg-regions)
-		test_reg = test_reg[order(test_reg[,3] - test_reg[,2], decreasing=T),]
+		test_reg = test_reg[order(test_reg[,3] - test_reg[,2], decreasing=TRUE),]
 	}
 	
 	# get genes overlapping background-regions
@@ -98,14 +98,14 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		stop("Candidate regions do not contain protein-coding genes.")
 	}
 
-	# NEW: merge candidate into background regions (single-genes-FUNC also implicitly integrates candidate into background genes to choose from in randomsets)
-	bg_reg = merge_bed(rbind(bg_reg,test_reg))
-
 	# convert to classic "genes" func-input-vector 
 	gene_names = unique(c(test_genes, bg_genes))
 	genes_vec = rep(0, length(gene_names))
 	names(genes_vec) = gene_names
 	genes_vec[names(genes_vec) %in% test_genes] = 1
+
+	# NEW: merge candidate into background regions (single-genes-FUNC also implicitly integrates candidate into background genes to choose from in randomsets)
+	bg_reg = merge_bed(rbind(bg_reg,test_reg))
 	
 	return(list(test_reg, bg_reg, genes_vec))	
 }
