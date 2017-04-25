@@ -7,8 +7,10 @@ NEW FEATURES
 	o mouse gene annotations and gene_coordinates
 	o new functions: 'plot_odds_ratios' and ('plot_scores')
 
-MINOR CHANGES
+USER-LEVEL CHANGES
 
+	o update ontology 
+	  (25.04.2017, http://archive.geneontology.org/latest-full/)
 	o genes in go_enrich(...)[[2]] are sorted alphabetically
 	  (mixedsort)
 	o when genomic regions are provided as input, candidate
@@ -23,7 +25,7 @@ NEW FEATURES
 
 	o new functions: 'get_child_nodes' and 'get_parent_nodes'
 
-SIGNIFICANT USER-LEVEL CHANGES
+USER-LEVEL CHANGES
 
 	o change name of function 'get_GO_names' to 'get_names'	
 

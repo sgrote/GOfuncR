@@ -1,9 +1,11 @@
 
 cd /r1/people/steffi_grote/R_packages/FuncBlocks_package
 
-# termtables downloaded from
-http://archive.geneontology.org/full/2016-08-01/
-go_201608-termdb-tables.tar.gz
+# termtables downloaded from (last modified: 07-Jan-2017)
+http://archive.geneontology.org/latest-full/
+go_monthly-termdb-tables.tar.gz
+# keep term.txt, term2term.txt, graph_path.txt
+# TODO: check 'Local GO mirror' on http://www.geneontology.org/page/lead-database-guide if dierctory above is not updated anymore
 
 # go gene association file "mart_export.csv" downloaded from
 http://grch37.ensembl.org/biomart/martview/
