@@ -45,6 +45,7 @@ Rscript test_go_enrich_values.R
 () check that there is no restriction on the relation in the ontology
 () in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
 
+() print or return(!) version of ontology, annotations, (gene-coords for gene_len and regions)
 () rename get_names to get_node_name, get_parent_nodes? (oder statt nodes "gos", node allgemeiner) 
 () also return total number of annotated genes
 () add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)

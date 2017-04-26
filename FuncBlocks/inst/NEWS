@@ -9,8 +9,7 @@ NEW FEATURES
 
 USER-LEVEL CHANGES
 
-	o update ontology 
-	  (25.04.2017, http://archive.geneontology.org/latest-full/)
+	o update ontology (last modified: 25.04.2017)
 	o genes in go_enrich(...)[[2]] are sorted alphabetically
 	  (mixedsort)
 	o when genomic regions are provided as input, candidate
