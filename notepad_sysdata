@@ -2,8 +2,8 @@
 cd /r1/people/steffi_grote/R_packages/FuncBlocks_package
 
 # termtables downloaded from (last modified: 25-Apr-2017)
-http://archive.geneontology.org/latest-lite/
-go_weekly-termdb-tables.tar.gz 
+http://archive.geneontology.org/latest-termdb/
+go_daily-termdb-tables.tar.gz
 # keep term.txt, term2term.txt, graph_path.txt
 
 # go gene association file "mart_export.csv" downloaded from
