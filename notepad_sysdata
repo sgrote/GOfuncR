@@ -11,8 +11,8 @@ http://grch37.ensembl.org/biomart/martview/
 Database: Ensembl Genes
 Dataset: Homo sapiens genes (GRCh37.p13)
 Filters: none
-Attributes: GO Term Accession, HGNC symbol
-19684 Genes
+Attributes: GO Term Accession, Gene name
+19684 Genes # TODO: change
 delimiter: csv
 unique results only: yes
 
@@ -22,7 +22,27 @@ Database: Ensembl Genes
 Dataset: Homo sapiens genes (GRCh37.p13)
 Filters: none
 Attributes: HGNC symbol, Chromosome Name, Gene Start (bp), Gene End (bp)
-33671 Genes
+33671 Genes # TODO: change
+delimiter: csv
+unique results only: yes
+
+# TODO hg20 go gene association file "mart_export_hg20.csv" downloaded from
+http://ensembl.org/biomart/martview/
+Database: Ensembl Genes 88
+Dataset: Homo sapiens genes (GRCh38.p10)
+Filters: none
+Attributes: GO Term Accession, Gene name
+19684 Genes # TODO: change
+delimiter: csv
+unique results only: yes
+
+# TODO gene positions file "gene_coords_hg20.csv" downloaded from
+http://grch37.ensembl.org/biomart/martview/
+Database: Ensembl Genes
+Dataset: Homo sapiens genes (GRCh37.p13)
+Filters: none
+Attributes: HGNC symbol, Chromosome Name, Gene Start (bp), Gene End (bp)
+33671 Genes # TODO: change
 delimiter: csv
 unique results only: yes
 
@@ -45,6 +65,11 @@ Attributes: Associated Gene Name, Chromosome/scaffold name, Gene Start (bp), Gen
 49845 Genes (49544)
 delimiter: csv
 unique results only: yes
+
+
+
+#####################################################################################
+
 
 ####### add files to package 
 # (R-objects saved in /R/sysdata.rda can be used in the package's R functions without any explicit loading)

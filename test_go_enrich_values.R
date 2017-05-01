@@ -18,6 +18,7 @@ if (length(args)==0){
 set.seed(123)
 library(FuncBlocks)
 setwd('/r1/people/steffi_grote/R_packages/FuncBlocks_package')
+#setwd('~/FuncBlocks')
 
 # store all results in a list
 test_results = list()
