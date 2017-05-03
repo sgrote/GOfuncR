@@ -1,5 +1,5 @@
 # install
-system("R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.3.tar.gz")
+system('R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.3.tar.gz')
 
 # load
 library(FuncBlocks)
@@ -13,8 +13,13 @@ set.seed(123)
 gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
-go_mouse = go_enrich(genes, ref_genome="grcm38")
- 
+go_mouse = go_enrich(genes, ref_genome='grcm38')
+# get annotated genes for GOs with FWER<0.5
+get_anno_genes(go_mouse, fwer_threshold=0.5, ref_genome='grcm38')
+# same including background genes
+anno_bg = get_anno_genes(go_mouse, fwer_threshold=0.5, background=TRUE, ref_genome='grcm38')
+# all mouse genes annotated to a GO
+imbo_genes = get_anno_genes(go_ids='GO:0043231', ref_genome='grcm38')
 
 
 

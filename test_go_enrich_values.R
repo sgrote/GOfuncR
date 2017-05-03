@@ -138,6 +138,7 @@ if (set_values){
 	failed = 0
 	for (i in 1:length(test_results)){
 		if (!(isTRUE(all.equal(saved_results[[i]], test_results[[i]])))){
+			# TODO: loop again:   print only those that dont match from res[[1]],res[[2]],res[[3]]
 			message(paste("test_results[[",i,"]] is failing (", names(saved_results)[i],").",sep=""))
 			message("print(head(saved_results[[i]][[1]]))")
 			print(head(saved_results[[i]][[1]]))

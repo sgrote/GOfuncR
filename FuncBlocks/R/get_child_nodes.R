@@ -8,6 +8,7 @@ get_child_nodes = function(go_ids){
 	# get term-IDs of GOs
 	go_ids_term = term[term[,4] %in% go_ids, 1]
 	if(length(go_ids_term) == 0){
+		# TODO: add failing GO-IDs to error message
 		stop("GO-IDs not found in ontology or obsolete.")
 	}
 	# go-categories that are children of *go* (cols graph_path: id, parent, child, relation, distance, ...)

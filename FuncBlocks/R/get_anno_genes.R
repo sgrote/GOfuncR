@@ -8,7 +8,7 @@
 # output: go_id, gene, (FWER, candiate/score)
 
 
-get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NULL, genes=NULL){
+get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NULL, genes=NULL, ref_genome=NULL){
 	
 	## Check input	
 	# given res as input:
@@ -19,7 +19,7 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 			stop("Please use an object returned from go_enrich as input (list with 2 elements).\n Alternatively go_ids need to be defined.")
 		}
 		if(!is.null(go_ids)){
-			warning("Unused argument: structure_ids")
+			warning("Unused argument: go_ids")
 		}		
 		if(!is.null(genes)){
 			warning("Unused argument: genes")
@@ -34,6 +34,8 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 		}
 		## get genes
 		res_genes = res[[2]]
+		## get reference genome
+		ref_genome = res[[3]]
 	# without res as input	
 	} else {
 		## checks
@@ -41,10 +43,17 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 		if(is.null(go_ids)){
 			stop("Please define go_ids.")
 		}
+		# reference genome
+		if(is.null(ref_genome)){
+			stop("Please define a ref_genome ('grch37','grch38','grcm38').")
+		}
 		# background
 		if(background){
 			warning("Unused argument: background")
 		}
+	}
+	if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
+		stop("Please use 'ref_genome=grch37', 'ref_genome=grch38' or 'ref_genome=grcm38'")
 	}
 
 	## GO-graph and GO-annotations	
@@ -60,6 +69,8 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	message("find genes annotated to child nodes...")
 	# remove obsolete terms
 	term = term[term[,5]==0,]
+	# load GO-annotation
+	go_anno = get(paste("go_anno_", ref_genome, sep=""))
 	# remove empty genes in annotations
 	go_anno = go_anno[go_anno[,2]!="",]
 	# restrict annotations to GOs present in term

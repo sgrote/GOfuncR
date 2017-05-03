@@ -1,6 +1,6 @@
 
 # plot the odds-ratio and the 95%-CI from Fishers excact test (two-sided)
-# show number of background and candidate genes in pie-charts with size dependet on total nr. of genes
+# show number of background and candidate genes in pie-charts with size dependent on total nr. of genes
 
 # use as input results from go_enrich and (fwer-threshold or go_ids)
 
@@ -33,13 +33,14 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 		anno = anno[,-3]
 	} else {
 		# get custom GOs, add score 1/0
+		# TODO: warn in fwer_threshold was modified
 		go_ids = as.character(go_ids)
 		if (bgdef){
 			# background defined: restrict to input genes
-			anno = get_anno_genes(go_ids=go_ids, genes=names(in_genes))
+			anno = get_anno_genes(go_ids=go_ids, genes=names(in_genes), ref_genome=res[[3]])
 		} else {
 			# background not defined: get all genes annotations
-			anno = get_anno_genes(go_ids=go_ids)
+			anno = get_anno_genes(go_ids=go_ids, ref_genome=res[[3]])
 		}
 		if(is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
 		anno$score = 0

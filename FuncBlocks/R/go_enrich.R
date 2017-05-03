@@ -7,20 +7,18 @@
 # n_randsets: number of random-sets
 # gene_len: randomset is dependent on length of genes
 # circ_chrom: for regions input: random regions are on same chrom and allowed to overlap multiple bg-regions
-# ref_genome: "grch37" (hg19) or "grcm38" (mouse)
+# ref_genome: "grch37" (hg19), "grch38" (hg20) or "grcm38" (mouse)
 
 go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37")
 {
-	
-	# TODO: add grch38 as parameter and gene_coords_grch38 to sysdata.R 
 	
 	#####	1. Check arguments and define parameters
 	
 	## Check arguments
 	# general
 	message("Checking arguments...")
-	if (!(ref_genome %in% c("grch37","grcm38"))){
-		stop("Please use 'ref_genome=grch37' or 'ref_genome=grcm38'")
+	if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
+		stop("Please use 'ref_genome=grch37', 'ref_genome=grch38' or 'ref_genome=grcm38'")
 	}
 	if (length(genes)==0){
 		stop("Please enter genes.")
@@ -284,7 +282,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
-	final_output = list(results=out, genes=remaining_genes)
+	final_output = list(results=out, genes=remaining_genes, ref_genome=ref_genome)
 	message("\nDone.")
 
 	return(final_output)

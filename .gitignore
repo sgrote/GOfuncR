@@ -2,3 +2,4 @@
 *.so
 *tar.gz
 .DS_Store
+FuncBlocks.Rcheck/
