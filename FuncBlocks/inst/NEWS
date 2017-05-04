@@ -1,11 +1,12 @@
 
-CHANGES IN VERSION 1.2.3 (under construction)
+CHANGES IN VERSION 1.2.3
 ------------------------
 
 NEW FEATURES
 
 	o mouse gene annotations and gene_coordinates
-	o new functions: 'plot_odds_ratios' and ('plot_scores')
+	o hg20 gene annotations and gene_coordinates
+	o new function: 'plot_odds_ratios'
 
 USER-LEVEL CHANGES
 
@@ -15,6 +16,8 @@ USER-LEVEL CHANGES
 	o when genomic regions are provided as input, candidate
 	  regions are implicitly also part of background
 	  (like it is for single-genes-input)
+	o output of go_enrich has a new element:
+	  go_enrich()[[3]] = reference genome  
 
 
 CHANGES IN VERSION 1.2.2

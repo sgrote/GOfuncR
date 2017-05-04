@@ -11,8 +11,8 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 
 	### check input
 	# check that res could be go_enrich-output
-	if(!(is.list(res) && all(names(res) == c("results","genes")))){
-		stop("Please use an object returned from go_enrich as input (list with 2 elements).\n Alternatively go_ids need to be defined.")
+	if(!(is.list(res) && all(names(res) == c("results","genes","ref_genome")))){
+		stop("Please use an object returned from go_enrich as input (list with 3 elements).\n Alternatively go_ids need to be defined.")
 	}
 	# check that it's a hypergeometric test
 	in_genes = res[[2]]
@@ -56,10 +56,10 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	#TODO: allow different root nodes (term has "all" root...,remove that) -> require root nodes-vector as input from user with default values; or use only roots of required GOs? 
 	if (bgdef){
 		# background defined: restrict to input genes
-		root_anno = get_anno_genes(go_ids=root_ids, genes=names(in_genes))
+		root_anno = get_anno_genes(go_ids=root_ids, genes=names(in_genes), ref_genome=res[[3]])
 	} else {
 		# background not defined: get all genes annotations
-		root_anno = get_anno_genes(go_ids=root_ids)
+		root_anno = get_anno_genes(go_ids=root_ids, ref_genome=res[[3]])
 	}
 	root_anno$score = 0
 	root_anno[root_anno[,2] %in% names(in_genes[in_genes==1]), "score"] = 1

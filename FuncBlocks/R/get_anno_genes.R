@@ -8,21 +8,24 @@
 # output: go_id, gene, (FWER, candiate/score)
 
 
-get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NULL, genes=NULL, ref_genome=NULL){
+get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NULL, ref_genome=NULL, genes=NULL){
 	
 	## Check input	
 	# given res as input:
 	if(!(missing(res))){
 		## checks
 		# check that it is really a res-object
-		if(!(is.list(res)) || is.null(names(res)) || !(all(names(res) == c("results","genes")))){
-			stop("Please use an object returned from go_enrich as input (list with 2 elements).\n Alternatively go_ids need to be defined.")
+		if(!(is.list(res)) || is.null(names(res)) || !(all(names(res) == c("results","genes","ref_genome")))){
+			stop("Please use an object returned from go_enrich as input (list with 3 elements).\n Alternatively go_ids need to be defined.")
 		}
 		if(!is.null(go_ids)){
 			warning("Unused argument: go_ids")
 		}		
 		if(!is.null(genes)){
 			warning("Unused argument: genes")
+		}
+		if(!is.null(ref_genome)){
+			warning(paste("Unused argument: ref_genome."))
 		}
 		## get significant GOs given the fwer_threshold
 		message("extract enriched GOs...")
@@ -66,7 +69,7 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 
 
 	# 3) find genes annotated to child nodes
-	message("find genes annotated to child nodes...")
+	message(paste("find genes annotated to child nodes using ref_genome ",ref_genome,"...",sep=""))
 	# remove obsolete terms
 	term = term[term[,5]==0,]
 	# load GO-annotation
