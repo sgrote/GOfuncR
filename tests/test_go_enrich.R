@@ -180,8 +180,8 @@ length(go_circ[[2]][go_circ[[2]]==0]) == length(go_circ_unused[[2]][go_circ_unus
 length(go_circ_unused[[2]][go_circ_unused[[2]]==0]) < length(go_region[[2]][go_region[[2]]==0])
 
 ##### example with Ben's deserts
-background = read.table('Ben_background_regions.bed')
-candidate = read.table('Ben_neandertal_deserts.bed')
+background = read.table('~/R_packages/FuncBlocks_package/Ben_background_regions.bed')
+candidate = read.table('~/R_packages/FuncBlocks_package/Ben_neandertal_deserts.bed')
 back_cand = rbind(candidate, background)
 regions = c(rep(1,nrow(candidate)),rep(0,nrow(background)))
 names(regions) = c(paste(back_cand[,1],':',back_cand[,2],'-',back_cand[,3],sep=''))
