@@ -6,7 +6,7 @@ NEW FEATURES
 
 	o mouse gene annotations and gene_coordinates
 	o hg20 gene annotations and gene_coordinates
-	o new function: 'plot_odds_ratios'
+	o new function: 'plot_odds_ratio'
 
 USER-LEVEL CHANGES
 
