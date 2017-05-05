@@ -102,7 +102,7 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	suppressWarnings(arrows(c(1:nrow(fish_odds),1:nrow(fish_odds)),c(fish_odds$ci95_high,fish_odds$ci95_low), c(1:nrow(fish_odds),1:nrow(fish_odds)), c(fish_odds$odds_ratio, fish_odds$odds_ratio), angle=90, code=1, length=0.03))
 	# horizontal line at 1
 	abline(h=1, col="#F15A60")
-	axis(4,at=1,label="1", col="#F15A60", col.axis="#F15A60", las=1, cex.axis=0.8)
+	axis(4,at=1,labels="1", col="#F15A60", col.axis="#F15A60", las=1, cex.axis=0.8)
 	
 	# pie charts
 	par(mar=c(5.5,4,3,1), bty="l")
