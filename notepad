@@ -39,9 +39,8 @@ Rscript test_values.R
 #Rscript test_values.R set_values  		# to set the saved results ("saved_results.RData")
 
 # TODO
-() complete test_get_functions.R
-() complete test_plotting_functions.R
-
+() modify tempfiles to make parallel possible (try multicore/parallel example)
+() add silent option
 () in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
 
 () print or return(!) version of ontology, annotations, (gene-coords for gene_len and regions)
