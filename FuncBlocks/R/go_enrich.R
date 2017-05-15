@@ -62,9 +62,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	
 	#####	2. Prepare for FUNC	
 	
-	# Create input and output folder and write file with missing genes
-	directory = tempdir()
-#	dir.create("./tmp"); directory = "./tmp"
+	# Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
+	directory = tempfile()
+#	dir.create("./tmp"); directory = "./tmp/test"
 
 	# load gene coordinates
 	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
@@ -104,8 +104,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		print(bg_regions)		
 	
 		# write regions to files
-		write.table(test_regions,file=paste(directory, "/test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-		write.table(bg_regions,file=paste(directory, "/bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")		
+		write.table(test_regions,file=paste(directory, "_test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+		write.table(bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	} else {
 		if (circ_chrom == TRUE){
 			# warn if circ_chrom=TRUE, although individual genes are used
@@ -169,9 +169,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	go$value = genes[match(go[,1], names(genes))]	
 	
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
-	write.table(term,file=paste(directory, "/term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-	write.table(term2term,file=paste(directory, "/term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-	write.table(graph_path,file=paste(directory, "/graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")	
+	write.table(term,file=paste(directory, "_term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+	write.table(term2term,file=paste(directory, "_term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+	write.table(graph_path,file=paste(directory, "_graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 
 
 	#####	3. Loop over GO root-nodes and run FUNC
@@ -221,37 +221,37 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 	
 		# write root_data-files to tmp-directory
-		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/infile-data",sep=""))
-		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"/",root_id,sep=""))
+		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_infile-data",sep=""))
+		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_",root_id,sep=""))
 		
 		# for debugging: save input-files
-#		system(paste("cp ",directory,"/infile-data ", directory, "/infile_data_", root_id, sep=""))
+#		system(paste("cp ",directory,"_infile-data ", directory, "_infile_data_", root_id, sep=""))
 		
-		message("Run Func...\n")					
+		message("Run Func...\n")
 		if (test=="hyper"){
 			# randomset
 			if (blocks & circ_chrom){
-				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id, "roll")
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll")
 			} else if (blocks){
-				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id,"block")				
-			} else if (gene_len){						
-				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id, "gene_len")	
-			} else {						
-				hyper_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id, "classic")
-			}	
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id,"block")
+			} else if (gene_len){
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "gene_len")
+			} else {
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic")
+			}
 #			stop("only randomset")
 			# category test
-			hyper_category_test(paste(directory, "/randset_out",sep=""), paste(directory,"/category_test_out", sep=""), 1, root_id)
+			hyper_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id)
 		} else if (test=="wilcoxon"){
-			wilcox_randset(paste(directory,"/",root_id,sep=""), n_randsets, directory, root_id)
+			wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id)
 			# category test
-			wilcox_category_test(paste(directory, "/randset_out",sep=""), paste(directory,"/category_test_out", sep=""), 1, root_id)
+			wilcox_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id)
 		}
 
 		# read Func output
-		groupy=read.table(paste(directory,"/category_test_out",sep=""))
+		groupy=read.table(paste(directory,"_category_test_out",sep=""))
 		# for debugging: save output-files per root-node
-		#system(paste("mv ", directory, "/category_test_out ",directory, "/out_", root_id, sep=""))
+		#system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
 			
 		# NEW check that FWER order follows p-value order (per root_node)
 		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")

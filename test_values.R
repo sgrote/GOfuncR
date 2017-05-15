@@ -4,6 +4,7 @@
 
 library(FuncBlocks)
 setwd("./tests")
+source("test_parallel.R")  # this does check on the fly when sourced
 source("test_go_enrich_values.R")
 source("test_get_functions_values.R")
 

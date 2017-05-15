@@ -47,7 +47,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 // 1) Build GO-Graph using different files from go_date_termdb-tables.tar.gz
 	
 	// read term.txt
-	string term = directory + "/term.txt";
+	string term = directory + "_term.txt";
 	std::ifstream terms( term.c_str() ) ;
 	if ( ! terms ) {
 		Rcpp::stop("Cannot open term.txt.\n"); 
@@ -57,7 +57,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	Rcout << "Read " << id_to_go.size() << " terms." << endl ;
 
 	// read graph_path.txt
-	string graph_path = directory + "/graph_path.txt";
+	string graph_path = directory + "_graph_path.txt";
 	std::ifstream transition_graph( graph_path.c_str() ) ;
 	if ( ! transition_graph ) {
 		Rcpp::stop("Cannot open graph_path.txt.\n");
@@ -69,7 +69,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	Rcout << "Found " << trans.size() << " nodes." << endl ;
 
 	// read term2term.txt
-	string termtoterm = directory + "/term2term.txt";
+	string termtoterm = directory + "_term2term.txt";
 	std::ifstream term2term( termtoterm.c_str() ) ;
 	if ( ! term2term ) {
 		Rcpp::stop("Cannot open term2term.txt.\n");
@@ -145,7 +145,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	
 	// write to file randset_out 
 	std::ostream *out ;
-	string outfile = directory + "/randset_out";
+	string outfile = directory + "_randset_out";
 	out = new std::ofstream( outfile.c_str() ) ;
 	
 	*out << "Genes:\t" << gens.size() << endl ;
@@ -160,7 +160,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 // 3) Read expressed test genes and add 1s to their annotated categories
 
 	// read candidate_genes-file (infile data, one line per expressed TEST gene with genname
-	string candidate_genes = directory + "/infile-data";
+	string candidate_genes = directory + "_infile-data";
 	std::ifstream candidate_genes_in( candidate_genes.c_str() ) ;
 	if ( ! candidate_genes_in ) {
 		Rcpp::stop("Cannot open infile-data.\n");
@@ -192,9 +192,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 // 4) Read regions and store in vector of bed-structures
 	vector< bed_str > candidate_bed;
 	vector< bed_str > background_bed;
-	if (mod=="roll" || mod=="block"){	
-		candidate_bed = read_bed(directory + "/test_regions.bed"); 
-		background_bed = read_bed(directory+ "/bg_regions.bed"); 		
+	if (mod=="roll" || mod=="block"){
+		candidate_bed = read_bed(directory + "_test_regions.bed");
+		background_bed = read_bed(directory+ "_bg_regions.bed");
 		// print regions 
 		//Rcout << endl << "Candidate regions: " << endl;
 		//for (int k=0; k < candidate_bed.size(); k++){

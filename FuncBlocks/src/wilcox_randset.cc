@@ -27,7 +27,7 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
          * read graph-structure and create graph
 	 *******************/
 	// read term.txt
-	string term = directory + "/term.txt";
+	string term = directory + "_term.txt";
 	std::ifstream terms( term.c_str() ) ;
 	if ( ! terms ) {
 		Rcpp::stop("Cannot open term.txt.\n"); 
@@ -37,7 +37,7 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	Rcout << "Read " << id_to_go.size() << " terms." << endl ;
 	
 	// read graph_path	
-	string graph_path = directory + "/graph_path.txt";
+	string graph_path = directory + "_graph_path.txt";
 	std::ifstream transition_graph( graph_path.c_str() ) ;
 	if ( ! transition_graph ) {
 		Rcpp::stop("Cannot open graph_path.txt.\n"); 
@@ -49,7 +49,7 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	Rcout << "Found " << trans.size() << " nodes." << endl ;
 	
 	// read term2term
-	string termtoterm = directory + "/term2term.txt";
+	string termtoterm = directory + "_term2term.txt";
 	std::ifstream term2term( termtoterm.c_str() ) ;
 	if ( ! term2term ) {
 		Rcpp::stop("Cannot open term2term.txt.\n"); 
@@ -67,7 +67,7 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 		Rcpp::stop("Cannot open nodes_per_gene.\n");
 	}
 	// read gene-scores: two columns: gene | score
-	string gene_scores = directory + "/infile-data";
+	string gene_scores = directory + "_infile-data";
 	std::ifstream dataf( gene_scores.c_str() ) ;
 	if ( ! dataf ) {
 		Rcpp::stop("Cannot open infile-data.\n"); 
@@ -81,7 +81,7 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	// steffi:
 	Rcout << "Computing randomsets..." << number_of_randomsets << "." <<endl;
 
-	string outfile = directory + "/randset_out";
+	string outfile = directory + "_randset_out";
 	ofstream out;
 	out.open ( outfile.c_str() );
 
