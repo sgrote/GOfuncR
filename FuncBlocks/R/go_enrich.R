@@ -64,7 +64,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	
 	# Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
 	directory = tempfile()
-#	dir.create("./tmp"); directory = "./tmp/test"
+#	dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
 
 	# load gene coordinates
 	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
@@ -201,10 +201,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			
 		# create "root" dataframe (all genes (test and bg) with GO-annotations, file named with root_node_id)
 		# add gene-coordinates, despite for classic FUNC option 
+		go_string = tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
+		go_string = go_string[mixedorder(names(go_string))]
+		gene = as.character(names(go_string))
 		if (blocks || gene_len){
 			# one line per gene: gene | chrom | start | end | GO1 GO2 GO3
-			go_string=tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
-			gene = as.character(names(go_string))
 			# add coordinates
 			gene_position = gene_coords[match(gene, gene_coords[,4]),1:3]	
 			root = data.frame(genes=gene, gene_position ,goterms=as.character(go_string))		
@@ -212,12 +213,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			if (gene_len){					
 				root = root[!is.na(root[,3]),] 			
 			}
-			# NEW just in case - avoid scientific notation of gene coordinates	
+			# just in case - avoid scientific notation of gene coordinates	
 			root[,3:4] = format(root[,3:4], scientific=FALSE, trim=TRUE)		
 		} else {
 			# one line per gene: gene | GO1 GO2 GO3
-			go_string = tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
-			root = data.frame(genes=as.character(names(go_string)),goterms=as.character(go_string))
+			root = data.frame(genes=gene, goterms=as.character(go_string))
 		}
 	
 		# write root_data-files to tmp-directory
@@ -249,7 +249,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 
 		# read Func output
-		groupy=read.table(paste(directory,"_category_test_out",sep=""))
+		groupy = read.table(paste(directory,"_category_test_out",sep=""))
 		# for debugging: save output-files per root-node
 		#system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
 			
@@ -272,7 +272,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# add GO-names and sort
 	namen = term[match(out[,1],term[,4]),2:3]
 	out = data.frame(namen[,2],out[,1], namen[,1], out[,2:ncol(out)])
-	out = out[order(out[,7], out[,5]),]
+	out = out[order(out[,7], out[,5], out[,1], out[,2]),] # NEW: also sort on ontology and node_id
 	rownames(out) = 1:nrow(out)
 	
 	if (test == "hyper"){

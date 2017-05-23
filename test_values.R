@@ -2,6 +2,7 @@
 # check that results match the results created previously or store new results
 # needs to be executed in /FuncBlocks_package/   (to use on any computer)
 
+Sys.setlocale("LC_COLLATE","C")
 library(FuncBlocks)
 setwd("./tests")
 source("test_parallel.R")  # this does check on the fly when sourced

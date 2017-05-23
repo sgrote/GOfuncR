@@ -1,4 +1,7 @@
 
+# github
+git clone https://github.com/sgrote/FuncBlocks.git
+# local
 cd /r1/people/steffi_grote/R_packages/FuncBlocks_package
 
 
@@ -15,13 +18,15 @@ biocLite("BiocStyle")
 
 # help files for single function like ?go_enrich should be in FuncBlocks/man
 not done yet - I will copy some examples from ABAEnrichment
+# vignette with package usage examples in FuncBlocks/vignettes
+not there yet
 
 # build package
 cd /home/steffi_grote/R_packages/FuncBlocks_package 
 R CMD build FuncBlocks #--resave-data
 
 # install package
-R CMD INSTALL FuncBlocks_1.1.1.tar.gz
+R CMD INSTALL FuncBlocks_1.2.4.tar.gz
 
 # look at help page
 # in R:
@@ -34,17 +39,16 @@ setwd("/home/steffi_grote/R_packages/FuncBlocks_package/FuncBlocks")
 compileAttributes()
 
 # check that values of some sample anaylses still match "tests/saved_results.RData" (or set them)
+# (caution: can differ slightly between computers - randset_out can already be different)
 cd /home/steffi_grote/R_packages/FuncBlocks_package # needs to be executed there
 Rscript test_values.R
 #Rscript test_values.R set_values  		# to set the saved results ("tests/saved_results.RData")
 
 # TODO
-() modify tempfiles to make parallel possible (try multicore/parallel example)
 () add silent option
 () in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
 
-() print or return(!) version of ontology, annotations, (gene-coords for gene_len and regions)
-() rename get_names to get_node_name, get_parent_nodes? (oder statt nodes "gos", node allgemeiner) 
+() print or return version of ontology, annotations, (gene-coords for gene_len and regions)
 () also return total number of annotated genes
 () add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 () maybe use one generic plotting function instead of plot_odds / plot_scores...
