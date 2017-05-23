@@ -272,6 +272,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# add GO-names and sort
 	namen = term[match(out[,1],term[,4]),2:3]
 	out = data.frame(namen[,2],out[,1], namen[,1], out[,2:ncol(out)])
+	out[,1:3] = apply(out[,1:3], 2, as.character)
 	out = out[order(out[,7], out[,5], out[,1], out[,2]),] # NEW: also sort on ontology and node_id
 	rownames(out) = 1:nrow(out)
 	

@@ -107,6 +107,7 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	}
 	anno_gene = unlist(child_anno)
 	out = data.frame(go_id, anno_gene)
+	out = out[mixedorder(out$anno_gene),]
 	
 	if(!(missing(res))){
 		fwer = fwers[match(out[,1], fwers[,2]),7]
@@ -114,11 +115,12 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 		# replace NA with 0 for background genes
 		score[is.na(score)] = 0
 		out = cbind(out, fwer, score)
-		out = out[order(out$fwer, out$go_id, out$score, out$anno_gene),]
+		out = out[order(out$fwer, out$go_id, out$score),]
 	} else {
-		out = out[order(out$go_id, out$anno_gene),]
+		out = out[order(out$go_id),]
 	}
-		
+
+	out[,1:2] = apply(out[,1:2], 2, as.character)
 	row.names(out) = 1:nrow(out)
 	message("Done.")
 

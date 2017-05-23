@@ -20,6 +20,7 @@ get_child_nodes = function(go_ids){
 	children = term[match(go_children_id[,3],term[,1]) ,4]
 	out = data.frame(parent, children, go_children_id[,5])
 	colnames(out) = c("parent_go_id","child_go_id","distance")
+	out[,1:2] = apply(out[,1:2], 2, as.character)
 	# sort
 	out = out[order(out[,1],out[,3],out[,2]),]
 	rownames(out) = 1:nrow(out)

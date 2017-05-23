@@ -40,10 +40,12 @@ if (set_values){
 	load("saved_results.RData")
 	failed = 0
 	for (i in 1:length(test_results)){
-		if (!(isTRUE(all.equal(saved_results[[i]], test_results[[i]])))){
+		equ = all.equal(saved_results[[i]], test_results[[i]])
+		if (!(isTRUE(equ))){
 			failed = failed+1
 			message(paste("\ntest_results[[",i,"]] is failing (", names(saved_results)[i],").",sep=""))
 			if(is.data.frame(test_results[[i]])){
+				print(equ)
 				message("saved_results")
 				print(head(saved_results[[i]]))
 				message("test_results")
@@ -51,7 +53,9 @@ if (set_values){
 			} else { # assuming it's a go_enrich list then
 				# NEW: loop again: print only those that dont match from res[[1]],res[[2]],res[[3]]
 				for (j in 1:length(saved_results[[i]])){
-						if(!(isTRUE(all.equal(saved_results[[i]][[j]], test_results[[i]][[j]])))){
+					equ = all.equal(saved_results[[i]][[j]], test_results[[i]][[j]])
+					if(!(isTRUE(equ))){
+						print(equ)
 						message(paste("saved_results[[",j,"]]",sep=""))
 						print(head(saved_results[[i]][[j]]))
 						message(paste("test_results[[",j,"]]",sep=""))

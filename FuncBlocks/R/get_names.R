@@ -8,5 +8,6 @@ get_names=function(go_ids){
 	out = data.frame(go_ids, term[match(go_ids, term[,4]) ,2:3])
 	colnames(out) = c("go_id", "name", "root_node")
 	rownames(out) = 1:nrow(out)
+	out[,1] = as.character(out[,1]) 
 	return(out)
 }

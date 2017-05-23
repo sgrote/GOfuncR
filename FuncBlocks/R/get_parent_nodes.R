@@ -19,6 +19,7 @@ get_parent_nodes = function(go_ids){
 	children = term[match(go_parent_id[,3],term[,1]) ,4]
 	out = data.frame(children, parent, go_parent_id[,5])
 	colnames(out) = c("child_go_id","parent_go_id","distance")
+	out[,1:2] = apply(out[,1:2], 2, as.character)
 	# sort
 	out = out[order(out[,1],out[,3],out[,2]),]
 	# remove 'all'-root node

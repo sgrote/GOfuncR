@@ -39,7 +39,7 @@ setwd("/home/steffi_grote/R_packages/FuncBlocks_package/FuncBlocks")
 compileAttributes()
 
 # check that values of some sample anaylses still match "tests/saved_results.RData" (or set them)
-# (caution: can differ slightly between computers - randset_out can already be different)
+# (caution: might differ slightly between computers)
 cd /home/steffi_grote/R_packages/FuncBlocks_package # needs to be executed there
 Rscript test_values.R
 #Rscript test_values.R set_values  		# to set the saved results ("tests/saved_results.RData")
