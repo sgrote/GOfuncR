@@ -31,7 +31,7 @@ go_groups_hyper::go_groups_hyper( string &groups, string detected_s, string chan
 		changed_data.push_back( ch ) ; // vector<int> changed_data: # candidate genes in node
 		if ( name == root_go ) root_idx = names.size() - 1 ; // index of root node
 	}
-	Rcpp::Rcout << "GOs: " << names.size() << endl ;
+	//Rcpp::Rcout << "GOs: " << names.size() << endl ;
 //	Rcpp::Rcerr << detected.size() << endl ;
 //	Rcpp::Rcerr << changed_data.size() << endl ;
 

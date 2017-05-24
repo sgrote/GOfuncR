@@ -42,7 +42,7 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-void hyper_randset(std::string all_genes, int number_of_randomsets, std::string directory, std::string root, std::string mod){
+void hyper_randset(std::string all_genes, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent){
 	
 // 1) Build GO-Graph using different files from go_date_termdb-tables.tar.gz
 	
@@ -54,8 +54,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	}
 	idmap id_to_go( terms ) ;
 	terms.close(  ) ;
-	Rcout << "Read " << id_to_go.size() << " terms." << endl ;
-
+	if ( !silent ) {
+		Rcpp::Rcout << "Read " << id_to_go.size() << " terms." << endl ;
+	}
 	// read graph_path.txt
 	string graph_path = directory + "_graph_path.txt";
 	std::ifstream transition_graph( graph_path.c_str() ) ;
@@ -66,8 +67,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	string parent_id = id_to_go.get_id_for_go( parent_go ) ;
 	transitions trans( parent_id, transition_graph ) ;
 	transition_graph.close(  ) ;
-	Rcout << "Found " << trans.size() << " nodes." << endl ;
-
+	if ( !silent ){
+		Rcpp::Rcout << "Found " << trans.size() << " nodes." << endl ;
+	}
 	// read term2term.txt
 	string termtoterm = directory + "_term2term.txt";
 	std::ifstream term2term( termtoterm.c_str() ) ;
@@ -76,8 +78,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	}
 	go_graph_hyper graph( trans, term2term, id_to_go ) ;
 	term2term.close(  ) ;
-	Rcout << "Graph created." << endl ;
-	
+	if ( !silent ){
+		Rcpp::Rcout << "Graph created." << endl ;
+	}
 
 
 // 2) Read expressed genes, their positions and their annotated GO-categories
@@ -86,8 +89,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 
 	// maybe rename detected, changed to all_genes and cadidate_genes oder so	
 	std::ifstream in( all_genes.c_str() ) ;
-	Rcout << "Reading all_genes file... " << endl ;
-			
+	if ( !silent ){
+		Rcpp::Rcout << "Reading all_genes file... " << endl ;
+	}
 	// gens == genes. This vector is a simple representation of the go tree.
 	// every gene is 1 vector of int*, where the int* represents one go-node.
 	vector< vector<int*> > gens;
@@ -126,7 +130,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		{
 			// gos.add returns a unique int* for every string.
 			gen_vec.push_back( gos.add( *it ) ) ; 
-			//Rcout << "go: " << *it << endl ;
+			//Rcpp::Rcout << "go: " << *it << endl ;
 
 		}
 		// if the gene is annotated, add it to the gens-vector (vector of vectors with GOs for all exp. genes)
@@ -140,8 +144,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	
 	int n_background = gens.size();
 	
-	Rcout << "Found " << n_background << " usable entrys in " << all_genes
-		<< " with " << gos.size() << " GOs" << endl ;
+	if ( !silent ){
+		Rcpp::Rcout << "Found " << n_background << " usable entrys in " << all_genes << " with " << gos.size() << " GOs" << endl ;
+	}
 	
 	// write to file randset_out 
 	std::ostream *out ;
@@ -172,7 +177,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		std::istringstream is( line_s.c_str() ) ;
 		string gen_name ;
 		is >> gen_name ;
-		//Rcout << "expressed test gene: " << gen_name << endl;
+		//Rcpp::Rcout << "expressed test gene: " << gen_name << endl;
 		// genename_to_index: index of annotated GO-vec for a gene (gens[index])
 		if ( genename_to_index.find( gen_name ) != genename_to_index.end() ) {
 			// go through annotated GOs for the current gene and add 1
@@ -196,23 +201,25 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		candidate_bed = read_bed(directory + "_test_regions.bed");
 		background_bed = read_bed(directory+ "_bg_regions.bed");
 		// print regions 
-		//Rcout << endl << "Candidate regions: " << endl;
+		//Rcpp::Rcout << endl << "Candidate regions: " << endl;
 		//for (int k=0; k < candidate_bed.size(); k++){
-			//Rcout << candidate_bed[k].chrom << " " << candidate_bed[k].start << " " << candidate_bed[k].end  << " " << candidate_bed[k].len << " " << candidate_bed[k].cumu_len << endl;
+			//Rcpp::Rcout << candidate_bed[k].chrom << " " << candidate_bed[k].start << " " << candidate_bed[k].end  << " " << candidate_bed[k].len << " " << candidate_bed[k].cumu_len << endl;
 		//}	
-		//Rcout << endl << "Background regions: " << endl;
+		//Rcpp::Rcout << endl << "Background regions: " << endl;
 		//for (int k=0; k < background_bed.size(); k++){
-			//Rcout << background_bed[k].chrom << " " << background_bed[k].start << " " << background_bed[k].end  << " " << background_bed[k].len << " " << background_bed[k].cumu_len << endl;
+			//Rcpp::Rcout << background_bed[k].chrom << " " << background_bed[k].start << " " << background_bed[k].end  << " " << background_bed[k].len << " " << background_bed[k].cumu_len << endl;
 		//}	
 	}
 
 
 // 5) Create randomsets, randomly assign test genes among all expressed genes
-	if (mod=="roll" || mod=="block"){
-		Rcout << "Creating " << number_of_randomsets << " random gene sets from " << candidate_bed.size() << " random regions..." << endl ;	
-	} else {
-		Rcout << "Creating " << number_of_randomsets << " randomsets with size " << n_candidate << endl ;
-	}			
+	if ( !silent ){
+		if (mod=="roll" || mod=="block"){
+			Rcpp::Rcout << "Creating " << number_of_randomsets << " random gene sets from " << candidate_bed.size() << " random regions..." << endl ;	
+		} else {
+			Rcpp::Rcout << "Creating " << number_of_randomsets << " randomsets with size " << n_candidate << endl ;
+		}
+	}
 	// for all randomsets
 	for ( int i = 1 ; i <= number_of_randomsets ; ++i ) {
 		set<int> random_numbers ; // indices for the selected genes
@@ -229,7 +236,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 				ran = R::runif(0,1) * n_background;				
 				random_numbers.insert(ran) ;
 			}	
-			//Rcout << "Candidate genes: " << n_candidate << ", Random genes: " << random_numbers.size() << std::endl;
+			//Rcpp::Rcout << "Candidate genes: " << n_candidate << ", Random genes: " << random_numbers.size() << std::endl;
 		} 	
 		
 		// reset all go-nodes, set all go_vec counters to zero
@@ -237,9 +244,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 
 		// add 1 to every GO that a randomly choosen gene is part of
 		// go through all random numbers 
-		//Rcout << "random numbers: " << endl;
+		//Rcpp::Rcout << "random numbers: " << endl;
 		for (set<int>::const_iterator it = random_numbers.begin() ;it != random_numbers.end() ; ++it){
-			//Rcout << *it << ", ";
+			//Rcpp::Rcout << *it << ", ";
 			// gens == genes. This vector is a simple representation of the go tree.
 			// every gene is 1 vector of int*, where the int represents one go-node.
 			// gens[*it] = vector with all GOs that belong to the gene *it points at
@@ -254,5 +261,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	}
 	delete out;
 	genes_pos.clear();
-	Rcout << "\rFinished" << endl ;
+	if ( !silent ){
+		Rcpp::Rcout << "\rFinished" << endl ;
+	}
 }

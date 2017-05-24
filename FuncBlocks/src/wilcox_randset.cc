@@ -20,7 +20,7 @@ using namespace Rcpp;
 #define MAX_LINE_LENGTH 20000
 
 //[[Rcpp::export]]
-void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::string directory, std::string root) 
+void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::string directory, std::string root, bool silent) 
 {
 		
 	/*****************
@@ -34,9 +34,10 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	}
 	idmap id_to_go( terms ) ;
 	terms.close(  ) ;
-	Rcout << "Read " << id_to_go.size() << " terms." << endl ;
-	
-	// read graph_path	
+	if ( !silent ){
+		Rcpp::Rcout << "Read " << id_to_go.size() << " terms." << endl ;
+	}
+	// read graph_path
 	string graph_path = directory + "_graph_path.txt";
 	std::ifstream transition_graph( graph_path.c_str() ) ;
 	if ( ! transition_graph ) {
@@ -46,8 +47,9 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	string parent_id = id_to_go.get_id_for_go( parent_go ) ;
 	transitions trans( parent_id, transition_graph ) ;
 	transition_graph.close(  ) ;
-	Rcout << "Found " << trans.size() << " nodes." << endl ;
-	
+	if ( !silent ){
+		Rcpp::Rcout << "Found " << trans.size() << " nodes." << endl ;
+	}
 	// read term2term
 	string termtoterm = directory + "_term2term.txt";
 	std::ifstream term2term( termtoterm.c_str() ) ;
@@ -56,7 +58,9 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	}
 	go_graph graph( trans, term2term, id_to_go ) ;
 	term2term.close(  ) ;
-	Rcout << "Graph created." << endl ;
+	if ( !silent ){
+		Rcpp::Rcout << "Graph created." << endl ;
+	}
 
 	/*****************
          * read gene information and annotate to graph
@@ -74,13 +78,13 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	}
 
 	genes gns( graph, annf, dataf ) ;
-	Rcout << "Data and annotation file parsed." << endl ;
-
-	Rcout << "Number of randomsets: " << number_of_randomsets << "." <<endl;
 	
-	// steffi:
-	Rcout << "Computing randomsets..." << number_of_randomsets << "." <<endl;
-
+	if ( !silent ){
+		Rcpp::Rcout << "Data and annotation file parsed." << endl ;
+		Rcpp::Rcout << "Number of randomsets: " << number_of_randomsets << "." <<endl;	
+		// steffi:
+		Rcpp::Rcout << "Computing randomsets..." << number_of_randomsets << "." <<endl;
+	}
 	string outfile = directory + "_randset_out";
 	ofstream out;
 	out.open ( outfile.c_str() );

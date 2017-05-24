@@ -14,7 +14,7 @@ using namespace Rcpp;
 //steffi:
 //int main( int argc, char *argv[] )
 //[[Rcpp::export]]
-void wilcox_category_test(std::string input, std::string output, int cut, std::string root)
+void wilcox_category_test(std::string input, std::string output, int cut, std::string root, bool silent)
 	
 {
 	//steffi: veraltet: noch argument fuer profile-output: std::string output_profile, aber profile fuer R-package nicht noetig
@@ -105,11 +105,13 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 	for ( int i=0 ; i < 10 ; ++i ) nr_groups_ge[i] = 0 ;
 	int num_randdata = 0 ;
 	// randomsets
-	Rcpp::Rcout << endl << "Evaluating randomsets: " << endl;
-	Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
-	Rcpp::Rcout << "low ranks\t\t\t\thigh ranks" << endl ;
-	Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
-	Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
+	if ( !silent ){
+		Rcpp::Rcout << endl << "Evaluating randomsets: " << endl;
+		Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
+		Rcpp::Rcout << "low ranks\t\t\t\thigh ranks" << endl ;
+		Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
+		Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
+	}
 	while ( *in ) {
 		getline( *in, data ) ;
 		if ( data == "" ) { break ; } 
@@ -120,10 +122,12 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 				nr_groups_ge[i]++ ;
 			}
 		}
-		for ( int i=0 ; i < 10 ; ++i ) {
-			Rcpp::Rcout << randdata[i] << "\t" ;
+		if ( !silent ){
+			for ( int i=0 ; i < 10 ; ++i ) {
+				Rcpp::Rcout << randdata[i] << "\t" ;
+			}
+			Rcpp::Rcout << "\n" ;
 		}
-		Rcpp::Rcout << "\n" ;
 		//steffi
 		delete[] randdata ;
 		num_randdata++ ;
@@ -132,29 +136,30 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 	gos.print_pvals( num_randdata, out ) ;
 	
 	// write summary to console
-	Rcpp::Rcout << "Randomsets: " << num_randdata << endl << endl ;	
-	// number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001 for under- and over-rep -> 10 values
-	Rcpp::Rcout << "Real data:" << endl ;
-    Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
-	Rcpp::Rcout << "low ranks\t\t\t\thigh ranks" << endl ;
-	Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
-	Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
-	// Func original:
-	//Rcpp::Rcout << "Randomsets: " << num_randdata << endl ;
-	//Rcpp::Rcout << "less\t\t\t\t\tgreater" << endl ;
-	//Rcpp::Rcout << "# sig. groups dataset" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		Rcpp::Rcout << realdata[i] << "\t" ;
-	Rcpp::Rcout << endl ;
-	Rcpp::Rcout << "mean No. of significant groups in randomsets:" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
-	Rcpp::Rcout << endl ;
-	Rcpp::Rcout << "p value" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		Rcpp::Rcout << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
-	Rcpp::Rcout << endl << endl;
-	
+	if ( !silent ){
+		Rcpp::Rcout << "Randomsets: " << num_randdata << endl << endl ;	
+		// number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001 for under- and over-rep -> 10 values
+		Rcpp::Rcout << "Real data:" << endl ;
+		Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
+		Rcpp::Rcout << "low ranks\t\t\t\thigh ranks" << endl ;
+		Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
+		Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
+		// Func original:
+		//Rcpp::Rcout << "Randomsets: " << num_randdata << endl ;
+		//Rcpp::Rcout << "less\t\t\t\t\tgreater" << endl ;
+		//Rcpp::Rcout << "# sig. groups dataset" << endl ;
+		for ( int i = 0 ; i < 10 ; ++i ) 
+			Rcpp::Rcout << realdata[i] << "\t" ;
+		Rcpp::Rcout << endl ;
+		Rcpp::Rcout << "mean No. of significant groups in randomsets:" << endl ;
+		for ( int i = 0 ; i < 10 ; ++i ) 
+			Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
+		Rcpp::Rcout << endl ;
+		Rcpp::Rcout << "p value" << endl ;
+		for ( int i = 0 ; i < 10 ; ++i ) 
+			Rcpp::Rcout << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
+		Rcpp::Rcout << endl << endl;
+	}
 	// steffi: Fuer R-package nicht noetig:
 	// write outfile
 	/*

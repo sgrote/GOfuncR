@@ -14,7 +14,7 @@ using namespace Rcpp;
 //steffi:
 //int main( int argc, char *argv[] )
 //[[Rcpp::export]]
-void hyper_category_test(std::string input, std::string output, int cutoff, std::string root)
+void hyper_category_test(std::string input, std::string output, int cutoff, std::string root, bool silent)
 
 {
 	/*steffi: veraltet: noch argument fuer profile-output: std::string output_profile, aber profile fuer R-package nicht noetig
@@ -102,11 +102,13 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	for ( int i=0 ; i < 10 ; ++i ) nr_groups_ge[i] = 0 ;
 	int num_randdata = 0 ;
 	// randomsets
-	Rcpp::Rcout << endl << "Evaluating randomsets: " << endl;
-	Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
-	Rcpp::Rcout << "under-representation\t\t\tover-representation" << endl ;
-	Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
-	Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
+	if (!silent){
+		Rcpp::Rcout << endl << "Evaluating randomsets: " << endl;
+		Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
+		Rcpp::Rcout << "under-representation\t\t\tover-representation" << endl ;
+		Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
+		Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
+	}
 	string data ;
 	while ( *in ) {
 		getline( *in, data ) ;
@@ -118,10 +120,12 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 				nr_groups_ge[i]++ ;
 			}
 		}
-		for ( int i=0 ; i < 10 ; ++i ) {
-			Rcpp::Rcout << randdata[i] << "\t" ;
+		if (!silent){
+			for ( int i=0 ; i < 10 ; ++i ) {
+				Rcpp::Rcout << randdata[i] << "\t" ;
+			}
+			Rcpp::Rcout << "\n" ;
 		}
-		Rcpp::Rcout << "\n" ;
 		//steffi:
 		delete[] randdata ;
 		num_randdata++ ;
@@ -130,29 +134,30 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	gos.print_pvals( num_randdata, out ) ;
 
 	// write summary to console
-	Rcpp::Rcout << "Randomsets: " << num_randdata << endl << endl ;	
-	// number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001 for under- and over-rep -> 10 values
-	Rcpp::Rcout << "Real data:" << endl ;
-    Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
-	Rcpp::Rcout << "under-representation\t\t\tover-representation" << endl ;
-	Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
-	Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		Rcpp::Rcout << realdata[i] << "\t" ;
-	Rcpp::Rcout << endl ;
-	// Mean number of significant nodes across all randomsets for different p-value cutoffs 0.1, 0.05, 0.01, 0.001, 0.0001; under- and overrep
-	//Rcpp::Rcout << "# sig. groups mean randomsets" << endl ;
-	Rcpp::Rcout << endl << "mean No. of significant groups in randomsets:" << endl ;
+	if (!silent){
+		Rcpp::Rcout << "Randomsets: " << num_randdata << endl << endl ;	
+		// number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001 for under- and over-rep -> 10 values
+		Rcpp::Rcout << "Real data:" << endl ;
+		Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
+		Rcpp::Rcout << "under-representation\t\t\tover-representation" << endl ;
+		Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
+		Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
+		for ( int i = 0 ; i < 10 ; ++i ) 
+			Rcpp::Rcout << realdata[i] << "\t" ;
+		Rcpp::Rcout << endl ;
+		// Mean number of significant nodes across all randomsets for different p-value cutoffs 0.1, 0.05, 0.01, 0.001, 0.0001; under- and overrep
+		//Rcpp::Rcout << "# sig. groups mean randomsets" << endl ;
+		Rcpp::Rcout << endl << "mean No. of significant groups in randomsets:" << endl ;
 
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
-	Rcpp::Rcout << endl ;
-	// proportion of randomsets where number of significant nodes at p 0.1, 0.05, 0.01, 0.001, 0.0001 is >= in original data
-	Rcpp::Rcout << "p value" << endl ;
-	for ( int i = 0 ; i < 10 ; ++i ) 
-		Rcpp::Rcout << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
-	Rcpp::Rcout << endl << endl ;
-
+		for ( int i = 0 ; i < 10 ; ++i ) 
+			Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
+		Rcpp::Rcout << endl ;
+		// proportion of randomsets where number of significant nodes at p 0.1, 0.05, 0.01, 0.001, 0.0001 is >= in original data
+		Rcpp::Rcout << "p value" << endl ;
+		for ( int i = 0 ; i < 10 ; ++i ) 
+			Rcpp::Rcout << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
+		Rcpp::Rcout << endl << endl ;
+	}
 
 	// steffi: delete ifstream and realdata
 	delete in;

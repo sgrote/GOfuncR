@@ -24,7 +24,7 @@ go_groups::go_groups( string &groups, string &sgenes, int co, string root_go )
 		// check.push_back( groups_to_check[name] ) ;
 		if ( name == root_go ) root_idx = names.size() - 1 ; 
 	}
-	Rcpp::Rcerr << "GOs: " << names.size() << endl ;
+	//Rcpp::Rcout << "GOs: " << names.size() << endl ;
 	istringstream is2( sgenes.c_str() ) ;
 	int nrgenes_per_group;
 	while ( is2 >> nrgenes_per_group ) nr_of_genes.push_back( nrgenes_per_group ) ;

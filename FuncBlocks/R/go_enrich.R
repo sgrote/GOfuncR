@@ -9,14 +9,14 @@
 # circ_chrom: for regions input: random regions are on same chrom and allowed to overlap multiple bg-regions
 # ref_genome: "grch37" (hg19), "grch38" (hg20) or "grcm38" (mouse)
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37")
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE)
 {
 	
 	#####	1. Check arguments and define parameters
 	
 	## Check arguments
 	# general
-	message("Checking arguments...")
+	if (!silent) message("Checking arguments...")
 	if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
 		stop("Please use 'ref_genome=grch37', 'ref_genome=grch38' or 'ref_genome=grcm38'")
 	}
@@ -98,11 +98,13 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		test_regions = format(test_regions, scientific=FALSE, trim=TRUE)
 		bg_regions = format(bg_regions, scientific=FALSE, trim=TRUE)
 
-		message("Candidate regions:")
-		print(test_regions)
-		message("Background regions:")
-		print(bg_regions)		
-	
+		if (!silent){
+			message("Candidate regions:")
+			print(test_regions)
+			message("Background regions:")
+			print(bg_regions)
+		}
+
 		# write regions to files
 		write.table(test_regions,file=paste(directory, "_test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 		write.table(bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
@@ -119,7 +121,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 	} 	
 	
-	message("get GOs for genes...")
+	if (!silent) message("get GOs for genes...")
 	# remove obsolete terms
 	term = term[term[,5]==0,]
 	# subset to GOs present in term.txt and flip colums
@@ -185,7 +187,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	for (r in 1:length(root_nodes)){		
 		root_node = root_nodes[r]
 		root_id = root_node_ids[r]
-		message(paste("\n\nProcessing root node: ", root_node,"...\n", sep=""))
+		if (!silent) message(paste("\n\nProcessing root node: ", root_node,"...\n", sep=""))
 		
 		# subset the input data to GOs that belong to current root node (col 3 in term.txt is root-node)
 		input = go[term[match(go[,2],term[,4]),3]==root_node,]
@@ -227,25 +229,25 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# for debugging: save input-files
 #		system(paste("cp ",directory,"_infile-data ", directory, "_infile_data_", root_id, sep=""))
 		
-		message("Run Func...\n")
+		if (!silent) message("Run Func...\n")
 		if (test=="hyper"){
 			# randomset
 			if (blocks & circ_chrom){
-				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll")
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll" , silent)
 			} else if (blocks){
-				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id,"block")
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id,"block", silent)
 			} else if (gene_len){
-				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "gene_len")
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "gene_len", silent)
 			} else {
-				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic")
+				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic", silent)
 			}
 #			stop("only randomset")
 			# category test
-			hyper_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id)
+			hyper_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
 		} else if (test=="wilcoxon"){
-			wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id)
+			wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
 			# category test
-			wilcox_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id)
+			wilcox_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
 		}
 
 		# read Func output
@@ -284,7 +286,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
 	final_output = list(results=out, genes=remaining_genes, ref_genome=ref_genome)
-	message("\nDone.")
+	if (!silent) message("\nDone.")
 
 	return(final_output)
 }	

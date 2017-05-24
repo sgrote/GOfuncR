@@ -1,5 +1,5 @@
 # install
-system('R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.3.tar.gz')
+system('R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.4.tar.gz')
 
 # load
 library(FuncBlocks)

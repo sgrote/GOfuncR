@@ -28,9 +28,10 @@ R CMD build FuncBlocks #--resave-data
 # install package
 R CMD INSTALL FuncBlocks_1.2.4.tar.gz
 
-# look at help page
+# look at help page and news
 # in R:
 vignette("FuncBlocks",package="FuncBlocks")
+news(package="FuncBlocks")
 
 # if new .cpp files are added, Rcpp's compileAttributes must be run once:
 # in R:

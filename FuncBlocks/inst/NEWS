@@ -1,4 +1,18 @@
 
+CHANGES IN VERSION 1.2.4
+------------------------
+
+NEW FEATURES
+
+	o new 'silent' option represses all output to the screen
+	  except for warnings and error messages
+
+IMPROVEMENTS
+	  
+	o modified generation of temporary files allows 
+	  parallel processing with mclapply
+
+
 CHANGES IN VERSION 1.2.3
 ------------------------
 
