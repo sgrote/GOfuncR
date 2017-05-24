@@ -11,6 +11,13 @@ IMPROVEMENTS
 	  
 	o modified generation of temporary files allows 
 	  parallel processing with mclapply
+	  
+USER-LEVEL CHANGES
+
+	o convert all output-columns that were factors to characters
+	o sort 'go_enrich' output also on ontology and GO-ID
+	  (after sorting on FWER and p-value)
+	o sort genes in 'get_anno_genes' output (mixedsort)
 
 
 CHANGES IN VERSION 1.2.3
