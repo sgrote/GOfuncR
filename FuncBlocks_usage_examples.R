@@ -81,7 +81,25 @@ go_region_mus = go_enrich(genes, n_randsets=100, ref_genome='grcm38')
 go_region_circ = go_enrich(genes, n_randsets=100, circ_chrom=TRUE)
 
 
-
+## NEW: since version 1.2.4 parallel processing is possible
+library("parallel")
+# create a list with 3 different input 'genes' vectors
+candi1_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'NPHP1', 'DRD2', 'FN1', 'NODAL')
+candi2_gene_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'ABCC10', 'PTBP2', 'CYP1A2', 'ACSS1')
+candi3_gene_ids = c('BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'JPH4', 'SMARCC2', 'CDHR1', 'SLC25A36')
+bg_gene_ids = c('FGR', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2', 'GAPDHS')
+input=list()
+input[["genes1"]] = c(rep(1,length(candi1_gene_ids)), rep(0,length(bg_gene_ids)))
+names(input[["genes1"]]) = c(candi1_gene_ids, bg_gene_ids)
+input[["genes2"]] = c(rep(1,length(candi2_gene_ids)), rep(0,length(bg_gene_ids)))
+names(input[["genes2"]]) = c(candi2_gene_ids, bg_gene_ids)
+input[["genes3"]] = c(rep(1,length(candi3_gene_ids)), rep(0,length(bg_gene_ids)))
+names(input[["genes3"]]) = c(candi3_gene_ids, bg_gene_ids)
+# run go_enrich for all 3 input-vectors in parallel
+parares = mclapply(1:3, function(x){
+	set.seed(123)
+	go_enrich(input[[x]], n_randset=50)
+})
 
 ####### GO-graph functions (more to come)
 
