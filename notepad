@@ -17,7 +17,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("BiocStyle")
 
 # help files for single function like ?go_enrich should be in FuncBlocks/man
-not done yet - I will copy some examples from ABAEnrichment
+
 # vignette with package usage examples in FuncBlocks/vignettes
 not there yet
 
@@ -30,7 +30,10 @@ R CMD INSTALL FuncBlocks_1.2.4.tar.gz
 
 # look at help page and news
 # in R:
-vignette("FuncBlocks",package="FuncBlocks")
+options("help_type"="html") # to check links
+?go_enrich
+?get_anno_genes
+#vignette("FuncBlocks",package="FuncBlocks")  ## not there yet
 news(package="FuncBlocks")
 
 # if new .cpp files are added, Rcpp's compileAttributes must be run once:
@@ -46,10 +49,11 @@ Rscript test_values.R
 #Rscript test_values.R set_values  		# to set the saved results ("tests/saved_results.RData")
 
 # TODO
-() add silent option
+() get_anno_categories: find all annotations of a gene
+() print, return or attribute(!) version of ontology, annotations, (gene-coords for gene_len and regions)
+() print ontology, annotations versions in get_anno_genes (or as attribute?)
 () in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
 
-() print or return version of ontology, annotations, (gene-coords for gene_len and regions)
 () also return total number of annotated genes
 () add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 () maybe use one generic plotting function instead of plot_odds / plot_scores...
@@ -58,8 +62,6 @@ Rscript test_values.R
 () refinement from Func (either use c++ or reimplement in R)
 () FDR?
 () overall-significance?
-
-() GRCh38 option for gene-coordinates
 
 () allow user-defined term-tables (GO-graph) (-> roots named explicitly or infer from term[,3]?)
 () allow user-defined GO-annotations
