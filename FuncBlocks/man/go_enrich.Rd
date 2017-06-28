@@ -5,7 +5,7 @@ Test human or mouse genes for enrichment in GO-categories
 }
 \description{
 Tests all GO-categories from the three domains 'biological process', 'cellular component' and 'molecular function' for enrichment of user defined candidate genes compared to a set of background genes [1]. The statistical analysis is based on the ontology enrichment software FUNC [2].\cr
-Besides naming candidate genes explicitly it is also possible to provide entire genomic regions as input. The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes. Note that this option requires the input of background regions.\cr
+Besides naming candidate genes explicitly, it is also possible to provide entire genomic regions as input. The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes. Note that this option requires the input of background regions.\cr
 The gene ontology, the annotations and the gene-coordinates are integrated in the package and updated regularly.
 }
 \usage{
@@ -40,9 +40,9 @@ logical. If TRUE all output to the screen except for warnings and errors is supp
 }
 
 }
-\details{
-#For details please refer to \code{vignette("ABAEnrichment", package="ABAEnrichment")}.
-}
+%\details{
+%For details please refer to \code{vignette("ABAEnrichment", package="ABAEnrichment")}.
+%}
 \value{
 A list with components
 \item{results}{
@@ -54,7 +54,7 @@ the reference genome used.}
 }
 
 \references{
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25–29. \doi{10.1038/75556}
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25–29. \doi{10.1038/75556}\cr
 [2] Pruefer, K. et al. (2007). FUNC: A package for detecting significant associations between gene
 sets and ontological. BMC Bioinformatics 8: 41. \doi{10.1186/1471-2105-8-41}
 }
