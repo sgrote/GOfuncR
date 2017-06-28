@@ -113,7 +113,7 @@ anno_willi = get_anno_genes(go_willi, fwer_threshold=0.5)
 anno
 anno_willi
 
-# including background genes and using a different FWER-threshold
+# including background genes
 anno_bg = get_anno_genes(go_res, background=TRUE)
 head(anno_bg)
 
@@ -140,25 +140,28 @@ anno_all
 #### (2) get name 
 get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 
-### (3) GO->children
+### (3) GO -> children
 children = get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 head(children)
 
-### (4) GO->parents
+### (4) GO -> parents
 parents = get_parent_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 parents
 
-### (5) go_enrich-output and (fwer_threshold or go_ids)-> plot odds-ratios (hyper)
+### (5) go_enrich-output and (fwer_threshold or go_ids) -> plot odds-ratios (hyper)
 plot_odds_ratio(go_res, fwer_threshold=0.02)
 plot_odds_ratio(go_bg,fwer_threshold=0.8)
 plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
 plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','0.05309471','GO:0008289','GO:0005737','GO:0071495'))
 
+### (6) genes -> GO
+get_anno_categories(c('NCAPG', 'APOL4'))
+get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
 
 
 
 #### future functions:
-# (6) go_enrich-output and (fwer_threshold or go_ids)-> plot score-distribution (wilcoxon)
+# (7) go_enrich-output and (fwer_threshold or go_ids)-> plot score-distribution (wilcoxon)
 
 
 
