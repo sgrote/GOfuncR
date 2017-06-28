@@ -255,18 +255,18 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# for debugging: save output-files per root-node
 		#system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
 			
-		# NEW check that FWER order follows p-value order (per root_node)
-		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
-		groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
-		if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
-			print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
-			stop("FWER_over does not strictly follow p_over. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de or david_reher@eva.mpg.de.")
-		}
-		groupy_sorted = groupy[order(signif (groupy$p_under,12), -groupy$FWER_under),]
-		if (any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
-			print(data.frame(groupy_sorted[,c(1,2,4)], FWER_check=groupy_sorted$FWER_under == cummax(groupy_sorted$FWER_under)))
-			stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de or david_reher@eva.mpg.de.")
-		}
+#		# check that FWER order follows p-value order (per root_node)
+#		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
+#		groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
+#		if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
+#			print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
+#			stop("FWER_over does not strictly follow p_over. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de")
+#		}
+#		groupy_sorted = groupy[order(signif (groupy$p_under,12), -groupy$FWER_under),]
+#		if (any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
+#			print(data.frame(groupy_sorted[,c(1,2,4)], FWER_check=groupy_sorted$FWER_under == cummax(groupy_sorted$FWER_under)))
+#			stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de.")
+#		}
 				
 		out = rbind(out, groupy)
 	} # end root_nodes
