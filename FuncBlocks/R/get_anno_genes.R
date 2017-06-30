@@ -1,62 +1,21 @@
 
+# return a dataframe with genes annotated to GOs 
 
-# return a dataframe with genes annotated to (enriched) GOs 
+# input: go_ids, optional: genes, ref_genome
 
-# input: result list produced by go_enrich, optional: FWER, background
-# alternative input: go_ids, optional: genes
-
-# output: go_id, gene, (FWER, candiate/score)
+# output: go_id, gene
 
 
-get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NULL, ref_genome=NULL, genes=NULL){
+get_anno_genes = function(go_ids, ref_genome="grch37", genes=NULL){
 	
 	## Check input	
-	# given res as input:
-	if(!(missing(res))){
-		## checks
-		# check that it is really a res-object
-		if(!(is.list(res)) || is.null(names(res)) || !(all(names(res) == c("results","genes","ref_genome")))){
-			stop("Please use an object returned from go_enrich as input (list with 3 elements).\n Alternatively go_ids need to be defined.")
-		}
-		if(!is.null(go_ids)){
-			warning("Unused argument: go_ids")
-		}		
-		if(!is.null(genes)){
-			warning("Unused argument: genes")
-		}
-		if(!is.null(ref_genome)){
-			warning(paste("Unused argument: ref_genome."))
-		}
-		## get significant GOs given the fwer_threshold
-		message("extract enriched GOs...")
-		fwers = res[[1]]
-		go_ids = fwers[fwers[,7] < fwer_threshold, "node_id"]
-		if(length(go_ids) == 0){
-			warning(paste("No significantly enriched GOs at FWER-threshold ",fwer_threshold,sep=""))
-			return(NULL)
-		}
-		## get genes
-		res_genes = res[[2]]
-		## get reference genome
-		ref_genome = res[[3]]
-	# without res as input	
-	} else {
-		## checks
-		# GO-IDs
-		if(is.null(go_ids)){
-			stop("Please define go_ids.")
-		}
-		# reference genome
-		if(is.null(ref_genome)){
-			stop("Please define a ref_genome ('grch37','grch38','grcm38').")
-		}
-		# background
-		if(background){
-			warning("Unused argument: background")
-		}
+	# GO-IDs
+	if (!is.vector(go_ids) || !all(substr(go_ids,1,3) == "GO:")){
+		stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0005634','GO:0004945')")
 	}
+	# reference genome
 	if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
-		stop("Please use 'ref_genome=grch37', 'ref_genome=grch38' or 'ref_genome=grcm38'")
+		stop("Please use ref_genome='grch37', ref_genome='grch38' or ref_genome='grcm38'")
 	}
 
 	## GO-graph and GO-annotations	
@@ -79,15 +38,6 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	# restrict annotations to GOs present in term
 	anno = go_anno[go_anno[,1] %in% term[,4],]
 	# restrict to genes
-	if (!missing(res)){
-		if(!background && all(res_genes %in% c(0,1))){ # reduce to candidate genes (hyper, background=FALSE)
-			genes = names(res_genes[res_genes==1])
-		} else if(background & all(res_genes==1)){ # dont reduce (hyper, backgr=TRUE, no bg defined)
-			genes = NULL
-		} else { # reduce to input genes (hyper, background=TRUE and defined, wilcoxon)
-			genes = names(res_genes)
-		}
-	}
 	if(!is.null(genes)){
 		anno = anno[anno[,2] %in% genes, ]  
 	}
@@ -107,18 +57,10 @@ get_anno_genes = function(res, fwer_threshold=0.05, background=FALSE, go_ids=NUL
 	}
 	anno_gene = unlist(child_anno)
 	out = data.frame(go_id, anno_gene)
+
+	# sort	
 	out = out[mixedorder(out$anno_gene),]
-	
-	if(!(missing(res))){
-		fwer = fwers[match(out[,1], fwers[,2]),7]
-		score = res_genes[as.character(out$anno_gene)]
-		# replace NA with 0 for background genes
-		score[is.na(score)] = 0
-		out = cbind(out, fwer, score)
-		out = out[order(out$fwer, out$go_id, out$score),]
-	} else {
-		out = out[order(out$go_id),]
-	}
+	out = out[order(out$go_id),]
 
 	out[,1:2] = apply(out[,1:2], 2, as.character)
 	row.names(out) = 1:nrow(out)

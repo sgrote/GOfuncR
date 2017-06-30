@@ -48,31 +48,55 @@ cd /home/steffi_grote/R_packages/FuncBlocks_package # needs to be executed there
 Rscript test_values.R
 #Rscript test_values.R set_values  		# to set the saved results ("tests/saved_results.RData")
 
+
+
+
 # TODO
-() get_anno_categories: find all annotations of a gene
+# version 1.2.6
+(*) ref-genome default in get_anno_genes
+(*) only go-ids as input for get_anno_genes (remove res default option)
+() change col-name in get_names to "go_name"
+() root-nodes as optional input parameter for go_enrich
+
+
+() add GO-names to get_parent, get_child, [get_anno_genes - eher nicht, vllt. ein beispiel mit get_names in man-page, es reicht schon wenn sich die ID immer wiederholt]
+() add in man-page get_categories an example that uses get_parent_nodes
+() sort go_enrich res by n-candidate expected (tail is unordered)
+() update testing scripts with modified go-sort and helper functions
+() data.table in go_enrich
+() get_ids
+() vignette [also show example get_anno_genes for input candidate and background genes]
+
+# binomial test, contigany tables (1.3.0)
+() binomial test and contingancy tests
+
+# refinement from Func (1.4.0)
+() refinement from Func (either use c++ or reimplement in R)
+
+# ontology  stuff (1.5.0)
 () print, return or attribute(!) version of ontology, annotations, (gene-coords for gene_len and regions)
 () print ontology, annotations versions in get_anno_genes (or as attribute?)
-() in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
-
-() also return total number of annotated genes
-() add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
-() maybe use one generic plotting function instead of plot_odds / plot_scores...
-() wilcoxon for genomic regions? - try out if easy to implement
-() add binomial and contingancy tests
-() refinement from Func (either use c++ or reimplement in R)
-() FDR?
-() overall-significance?
-
 () allow user-defined term-tables (GO-graph) (-> roots named explicitly or infer from term[,3]?)
 () allow user-defined GO-annotations
 () allow user-defined gene_coordinates (?)
 () update-functions for the previous 3? (biomaRt, ensembldb packages?)
 
+
+() add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
+
+() in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
+
+() also return total number of annotated genes
+() maybe use one generic plotting function instead of plot_odds / plot_scores...
+() wilcoxon for genomic regions? - try out if easy to implement
+() FDR?
+() overall-significance?
+
+
 () e.g. in get_anno_genes return NULL (as now) or rather an empty dataframe identical to normal output?
 () visualization (email janet - plotting GO-categories)
 
 () add testthat scripts
-() add help-pages 
 () add vignette (include table with versions of GO-tree and annotations)
 () remove check for FWER-order before publication
 

@@ -1,13 +1,9 @@
 
 # check that results match the results created previously or store new results
 # needs to be executed in /FuncBlocks_package/   (to use on any computer)
-
 Sys.setlocale("LC_COLLATE","C")
 library(FuncBlocks)
 setwd("./tests")
-source("test_parallel.R")  # this does check on the fly when sourced
-source("test_go_enrich_values.R")
-source("test_get_functions_values.R")
 
 # one optional Command Line argument "set_values" if not, then default *test values*
 args = commandArgs(trailingOnly=TRUE)
@@ -21,6 +17,12 @@ if (length(args)==0){
 } else {
 	stop ("Please use 'set_values' or nothing as command line argument (nothing = test-values)")
 }
+
+source("test_go_enrich_values.R")
+source("test_get_functions_values.R")
+
+### test parallel
+source("test_parallel.R")  # this does check on the fly when sourced
 
 ### compute values
 # get go_enrich test-set values (lists of 3)

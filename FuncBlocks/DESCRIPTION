@@ -1,8 +1,8 @@
 Package: FuncBlocks
 Type: Package
 Title: Gene ontology enrichment using FUNC
-Version: 1.2.5
-Date: 2017-05-13
+Version: 1.2.6
+Date: 2017-06-30
 Author: Steffi Grote & David Reher
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
 Description: The package FuncBlocks performs GO-enrichment analyses 

@@ -1,6 +1,8 @@
 library("FuncBlocks")
 library("parallel")
 
+message("test parallel...")
+
 candi1_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'NPHP1', 'DRD2', 'FN1', 'NODAL')
 candi2_gene_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'ABCC10', 'PTBP2', 'CYP1A2', 'ACSS1')
 candi3_gene_ids = c('BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'JPH4', 'SMARCC2', 'CDHR1', 'SLC25A36')
@@ -21,19 +23,19 @@ names(input[["genes3"]]) = c(candi3_gene_ids, bg_gene_ids)
 res = list()
 for(i in 1:3){
 	set.seed(123)
-	res[[i]] = go_enrich(input[[i]], n_randset=50)
+	res[[i]] = go_enrich(input[[i]], n_randset=50, silent=T)
 }
 
 # b) parallel 
 parares = mclapply(1:3, function(x){
 	set.seed(123)
-	go_enrich(input[[x]], n_randset=50)
+	go_enrich(input[[x]], n_randset=50, silent=T)
 })
 
 # all 3 parares results are like res[[3]] # does not work with FuncBlocks_1.2.3
 for (i in 1:3){
 	if(!(isTRUE(all.equal(res[[i]], parares[[i]])))){
-		stop("Error in test_parallel.R (hypergeometric)")
+		stop("Error in test_parallel.R (hypergeometric)", silent=T)
 	}
 }
 
@@ -51,13 +53,13 @@ names(input[["genes3"]]) = c(candi3_gene_ids, bg_gene_ids)
 res = list()
 for(i in 1:3){
 	set.seed(123)
-	res[[i]] = go_enrich(input[[i]], n_randset=50, test="wilcoxon")
+	res[[i]] = go_enrich(input[[i]], n_randset=50, test="wilcoxon", silent=T)
 }
 
 # b) parallel
 parares = mclapply(1:3, function(x){
 	set.seed(123)
-	go_enrich(input[[x]], n_randset=50, test="wilcoxon")
+	go_enrich(input[[x]], n_randset=50, test="wilcoxon", silent=T)
 })
 
 # all 3 parares results are like res[[3]] # does not work with FuncBlocks_1.2.3
