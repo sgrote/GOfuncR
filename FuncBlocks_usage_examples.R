@@ -1,5 +1,5 @@
 # install
-system('R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.4.tar.gz')
+system('R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.6.tar.gz')
 
 # load
 library(FuncBlocks)
@@ -101,62 +101,73 @@ parares = mclapply(1:3, function(x){
 	go_enrich(input[[x]], n_randset=50)
 })
 
+
+
+
 ####### GO-graph functions (more to come)
 
-#### (1) get gene annotations
 
-## A) given a go_enrich result for GO-IDs with FWER<0.05 (FWER for overrepresentation / high_rank)
-anno = get_anno_genes(go_res)
-# using a different FWER-threshold
-anno_willi = get_anno_genes(go_willi, fwer_threshold=0.5) 
-# 'score' refers to candidate(1) or background(0) gene (or score in the wilcoxon test)
-anno
-anno_willi
+#### (1) GO-ID -> genes
 
-# including background genes
-anno_bg = get_anno_genes(go_res, background=TRUE)
-head(anno_bg)
+# find all genes that are annotated to GO:0000109
+# ("nucleotide-excision repair complex")
+get_anno_genes(go_ids='GO:0000109', ref_genome='grch38')
 
-# also works with genomic regions as input
-anno_region = get_anno_genes(go_region, fwer_threshold=0.1)
-anno_region
+# find out wich genes from a set of genes
+# are annotated to some GO-categories
+genes = c('AGTR1', 'ANO1', 'CALB1', 'GYG1', 'PAX2')
+gos = c('GO:0001558', 'GO:0005536', 'GO:0072205', 'GO:0006821')
+anno_genes = get_anno_genes(go_ids=gos, genes=genes)
+# and add the names and domains of the GO-categories
+cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
 
-## B) given GOs, ref_genome and (optionally) genes directly
-gos = c('GO:0072025','GO:0072221','GO:0072205','GO:0072235')
-genes = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
- 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-anno_genes = get_anno_genes(go_ids=gos, ref_genome='grch38', genes=genes)
-anno_genes
+# find all mouse-gene annotations to two GO-categories 
+gos = c('GO:0072205', 'GO:0000109')
+get_anno_genes(go_ids=gos, ref_genome='grcm38')
 
-# get all genes annotated to these GOs
-anno_all = get_anno_genes(go_ids=gos, ref_genome='grch37')
-anno_all
-# does not work with regions 
-# (maybe 'yet', but its easy to get genes from regions and use those)
-# (go_region[[2]] e.g. has all genes contained in the input regions for that go_enrich analysis)
+# extract categories with a FWER<0.05 from an enrichment analysis
+# and find the candidate genes annotated to those top-hits
+stats = go_res[[1]]
+candidate_genes = names(go_res[[2]][go_res[[2]]==1])
+ref_genome = go_res[[3]]
+top_hits = stats[stats$FWER_overrep < 0.05, 'node_id']
+anno_top = get_anno_genes(go_ids=top_hits, ref_genome=ref_genome, genes=candidate_genes)
+# and add the names and domains of the GO-categories
+cbind(anno_top ,get_names(anno_top$go_id)[,2:3])
+
+# extract categories with a FWER<0.05 from an enrichment analysis
+# and find the candidate genes annotated to those top-hits
+# (this works the same way for an analysis with genomic regions)
+stats = go_res[[1]]
+candidate_genes = names(go_res[[2]][go_res[[2]]==1])
+ref_genome = go_res[[3]]
+top_hits = stats[stats$FWER_overrep < 0.05, 'node_id']
+anno_top = get_anno_genes(go_ids=top_hits, ref_genome=ref_genome, genes=candidate_genes)
+# and add the names and domains of the GO-categories
+cbind(anno_top ,get_names(anno_top$go_id)[,2:3])
 
 
+#### (2) gene -> GO-IDs
+get_anno_categories(c('NCAPG', 'APOL4'))
+get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
 
-#### (2) get name 
+#### (3) GO-ID -> GO-name 
 get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 
-### (3) GO -> children
+#### (4) GO-ID -> children
 children = get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 head(children)
 
-### (4) GO -> parents
+#### (5) GO-ID -> parents
 parents = get_parent_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 parents
 
-### (5) go_enrich-output and (fwer_threshold or go_ids) -> plot odds-ratios (hyper)
+#### (6) go_enrich-output and (fwer_threshold or go_ids) -> plot odds-ratios (hyper)
 plot_odds_ratio(go_res, fwer_threshold=0.02)
 plot_odds_ratio(go_bg,fwer_threshold=0.8)
 plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
 plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','0.05309471','GO:0008289','GO:0005737','GO:0071495'))
 
-### (6) genes -> GO
-get_anno_categories(c('NCAPG', 'APOL4'))
-get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
 
 
 

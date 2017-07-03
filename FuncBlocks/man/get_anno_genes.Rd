@@ -47,7 +47,7 @@ Steffi Grote
 
 ## find all genes that are annotated to GO:0000109
 ## ("nucleotide-excision repair complex")
-get_anno_genes(go_ids='GO:0000109', ref_genome='grch38')
+get_anno_genes(go_ids='GO:0000109')
 
 ## find out wich genes from a set of genes
 ## are annotated to some GO-categories
@@ -59,7 +59,7 @@ cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
 
 ## find all mouse-gene annotations to two GO-categories 
 gos = c('GO:0072205', 'GO:0000109')
-get_anno_genes(go_ids=gos, ref_genome="grcm38")
+get_anno_genes(go_ids=gos, ref_genome='grcm38')
 
 }
 

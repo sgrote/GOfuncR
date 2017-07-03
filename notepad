@@ -58,7 +58,7 @@ Rscript test_values.R
 () change col-name in get_names to "go_name"
 () root-nodes as optional input parameter for go_enrich
 
-
+() data.table in go_enrich for 'get annotated GOs'
 () add GO-names to get_parent, get_child, [get_anno_genes - eher nicht, vllt. ein beispiel mit get_names in man-page, es reicht schon wenn sich die ID immer wiederholt]
 () add in man-page get_categories an example that uses get_parent_nodes
 () sort go_enrich res by n-candidate expected (tail is unordered)
