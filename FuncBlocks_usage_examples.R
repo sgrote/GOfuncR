@@ -48,6 +48,7 @@ names(genes) = gene_ids
 go_mouse = go_enrich(genes, ref_genome='grcm38', n_randsets=100)
 
 # define background
+set.seed(123)
 candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'FN1', 'NODAL', 'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2', 'GAPDHS')
 genes = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
@@ -107,7 +108,8 @@ parares = mclapply(1:3, function(x){
 ####### GO-graph functions (more to come)
 
 
-#### (1) GO-ID -> genes
+#### (1) GO-ID -> genes  
+# (NEW: since version 1.2.6 this function does not support go_enrich()-result as input anymore (simpler))
 
 # find all genes that are annotated to GO:0000109
 # ("nucleotide-excision repair complex")

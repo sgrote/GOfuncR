@@ -3,8 +3,11 @@ CHANGES IN VERSION 1.2.6
 
 USER-LEVEL CHANGES
 
-	o simplify get_anno_genes (only GO-IDs as input,
+	o simplified get_anno_genes (only GO-IDs as input,
 	  go_enrich()-result is no longer supported as input)
+	o get_parent_nodes and get_child_nodes now also return
+	  the name of the parent or child; also duplicates are
+	  removed and only the shortest distance is kept
 	  
 	  
 CHANGES IN VERSION 1.2.5
