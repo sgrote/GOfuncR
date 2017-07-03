@@ -67,6 +67,6 @@ if (set_values){
 			}	
 		}
 	}
-	message(paste("\nNumer of failed tests:",failed))		
+	message(paste("\nNumber of failed tests:",failed))		
 }
 
