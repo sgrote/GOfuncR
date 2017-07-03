@@ -15,7 +15,7 @@ a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
 }
 }
 \value{
-a dataframe with columns go_id, name and root_node (domain).
+a dataframe with columns go_id, go_name and root_node (domain).
 }
 \references{
 [1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25–29.

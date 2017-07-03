@@ -39,7 +39,7 @@ get_anno_categories = function(genes, ref_genome="grch37"){
 	colnames(out) = c("go_id", "gene")
 	out = out[,c(2,1)]
 	# add category name
-	out = cbind(out, get_names(out$go_id)[,c("name","root_node")])
+	out = cbind(out, get_names(out$go_id)[,c("go_name","root_node")])
  	# sort
  	out = out[order(out$gene, out$root_node, out$go_id),]
  	rownames(out) = 1:nrow(out)
