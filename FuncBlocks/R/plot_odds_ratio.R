@@ -28,24 +28,24 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	### define GOs and get annotated genes
 	if(is.null(go_ids)){
 		# get GOs under FWER-threshold
-		anno = get_anno_genes(res, fwer_threshold, background=TRUE)
-		if(is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
-		anno = anno[,-3]
-	} else {
-		# get custom GOs, add score 1/0
-		# TODO: warn in fwer_threshold was modified
-		go_ids = as.character(go_ids)
-		if (bgdef){
-			# background defined: restrict to input genes
-			anno = get_anno_genes(go_ids=go_ids, genes=names(in_genes), ref_genome=res[[3]])
-		} else {
-			# background not defined: get all genes annotations
-			anno = get_anno_genes(go_ids=go_ids, ref_genome=res[[3]])
+		go_ids = res[[1]][res[[1]][,"FWER_overrep"] < fwer_threshold, "node_id"]
+		if(length(go_ids) == 0){
+			stop(paste("No GO-categories with FWER_overrep below", fwer_threshold))
 		}
-		if(is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
-		anno$score = 0
-		anno[anno[,2] %in% names(in_genes[in_genes==1]), "score"] = 1
+	} else {
+		# get custom GOs
+		go_ids = as.character(go_ids)
 	}
+	if (bgdef){
+		# background defined: restrict to input genes
+		anno = get_anno_genes(go_ids=go_ids, genes=names(in_genes), ref_genome=res[[3]])
+	} else {
+		# background not defined: get all genes annotations
+		anno = get_anno_genes(go_ids=go_ids, ref_genome=res[[3]])
+	}
+	if(is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
+	anno$score = 0
+	anno[anno[,2] %in% names(in_genes[in_genes==1]), "score"] = 1
 	
 	# find root-node for every GO
 	go_ids = unique(anno[,1]) # if is.null(go_ids) define GOs; else remove any GO without annotations
