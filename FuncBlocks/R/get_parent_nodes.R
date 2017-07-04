@@ -21,11 +21,11 @@ get_parent_nodes = function(go_ids){
 	names = get_names(parent)[,"go_name"]
 	out = data.frame(children, parent, names, go_parent_id[,5])
 	colnames(out) = c("child_go_id","parent_go_id","parent_name","distance")
-	out[,1:2] = apply(out[,1:3], 2, as.character)
-	# sort
-	out = out[order(out[,1],out[,4],out[,2],out[,3]),]
+	out[,1:3] = apply(out[,1:3], 2, as.character)
 	# remove 'all'-root node
 	out = out[out[,2] != "all",]
+	# sort
+	out = out[order(out[,1],out[,4],out[,2],out[,3]),]
 	# NEW: remove duplicates (ordered by distance, so shortest dist is kept)
 	out = out[!(duplicated(paste(out[,1],out[,2]))),]
 	
