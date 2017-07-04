@@ -10,7 +10,7 @@ The gene ontology, the annotations and the gene-coordinates are integrated in th
 }
 \usage{
 go_enrich(genes, test = 'hyper', n_randsets = 1000, gene_len = FALSE, 
-  circ_chrom = FALSE, ref_genome = 'grch37', silent = FALSE)
+  circ_chrom = FALSE, ref_genome = 'grch37', silent = FALSE, domains = NULL)
 }
 \arguments{
   \item{genes}{
@@ -37,6 +37,9 @@ logical. When \code{genes} defines chromosomal regions, \code{circ_chrom=TRUE} u
 }
   \item{silent}{
 logical. If TRUE all output to the screen except for warnings and errors is suppressed.
+}
+  \item{domains}{
+optional vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
 }
 
 }
@@ -97,14 +100,16 @@ go_res[[3]]
 
 
 #### Perform a GO-enrichment analysis for some random mouse genes
-#### also account for gene-length
+#### and account for gene-length
+#### and consider only root nodes 'molecular function' and 'biological process'
 # create input vector
 gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
 genes
 # run enrichment analysis
-go_mouse = go_enrich(genes, n_randsets=100, ref_genome='grcm38', gene_len=TRUE)
+go_mouse = go_enrich(genes, n_randsets=100, ref_genome='grcm38',
+ gene_len=TRUE, domains=c('molecular_function','biological_process'))
 # look at top results
 head(go_mouse[[1]])
 

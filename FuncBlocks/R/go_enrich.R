@@ -9,7 +9,7 @@
 # circ_chrom: for regions input: random regions are on same chrom and allowed to overlap multiple bg-regions
 # ref_genome: "grch37" (hg19), "grch38" (hg20) or "grcm38" (mouse)
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE)
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE, domains=NULL)
 {
 	
 	#####	1. Check arguments and define parameters
@@ -38,6 +38,13 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	}
 	if (!is.logical(circ_chrom)){
 		stop("Please set circ_chrom to TRUE or FALSE.")
+	}
+	root_nodes = c("molecular_function","biological_process","cellular_component")
+	if (!is.null(domains)){
+		if (!all(domains %in% root_nodes)){
+			stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
+		}
+		root_nodes = domains
 	}
 	# test-specific arguments
 	if (test=="hyper"){
@@ -177,11 +184,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 
 
 	#####	3. Loop over GO root-nodes and run FUNC
+
+	root_node_ids = term[match(root_nodes, term[,2]),4]
+
+	## check that all root nodes in term (for custom ontology) 
+	# TODO: activate for custom onto
+#	if (length(root_node_ids) != length(root_nodes)){
+#		stop("Not all root_nodes present in term.txt")
+#	}
 	
-	## loop over different root-nodes
-	# #TODO: allow different root nodes (term has "all" root...,remove that) -> require root nodes-vector as input from user with default values 
-	root_node_ids= c("GO:0003674","GO:0008150","GO:0005575")
-	root_nodes = term[match(root_node_ids, term[,4]),2]
 	out = data.frame()
 
 	for (r in 1:length(root_nodes)){		

@@ -28,6 +28,11 @@ R CMD build FuncBlocks #--resave-data
 # install package
 R CMD INSTALL FuncBlocks_1.2.4.tar.gz
 
+# check package
+R CMD check FuncBlocks_1.2.6.tar.gz
+R CMD BiocCheck FuncBlocks_1.2.6.tar.gz
+R CMD check --as-cran --use-valgrind FuncBlocks_1.2.6.tar.gz # find memory leaks, dauert lange
+
 # look at help page and news
 # in R:
 options("help_type"="html") # to check links

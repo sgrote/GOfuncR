@@ -1,6 +1,12 @@
 CHANGES IN VERSION 1.2.6
 ------------------------
 
+IMPROVEMENTS
+
+	o go_enrich has new 'domains' argument which allows
+	  to restrict the analysis to one or two of the three
+	  GO-domains to save time
+
 USER-LEVEL CHANGES
 
 	o simplified get_anno_genes (only GO-IDs as input,
@@ -8,8 +14,8 @@ USER-LEVEL CHANGES
 	o get_parent_nodes and get_child_nodes now also return
 	  the name of the parent or child; also duplicates are
 	  removed and only the shortest distance is kept
-	  
-	  
+
+
 CHANGES IN VERSION 1.2.5
 ------------------------
 

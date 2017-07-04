@@ -19,6 +19,9 @@ go_enrich_values = function(){
 	### corner cases
 	# one gene
 	test_results[["res2"]] = go_enrich(genes[1], n_randsets=20, silent=T)
+	### restrict domains
+	test_results[["res_molec"]] = go_enrich(genes, n_randsets=20, domains='molecular_function', silent=T)
+	test_results[["res_cell_bio"]] = go_enrich(genes, n_randsets=20, domains=c('biological_process','cellular_component'), silent=T)
 	### mouse
 	gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
 	genes = rep(1, length(gene_ids))

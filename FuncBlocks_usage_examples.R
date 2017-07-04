@@ -47,6 +47,10 @@ genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
 go_mouse = go_enrich(genes, ref_genome='grcm38', n_randsets=100)
 
+# only look at GO-domains "biological process" and "cellular component"
+# (to save computation time)
+go_2dom = go_enrich(genes, n_randsets=100, domains=c('biological_process','cellular_component'))
+
 # define background
 set.seed(123)
 candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -82,7 +86,7 @@ go_region_mus = go_enrich(genes, n_randsets=100, ref_genome='grcm38')
 go_region_circ = go_enrich(genes, n_randsets=100, circ_chrom=TRUE)
 
 
-## NEW: since version 1.2.4 parallel processing is possible
+## since version 1.2.4 parallel processing is possible
 library("parallel")
 # create a list with 3 different input 'genes' vectors
 candi1_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'NPHP1', 'DRD2', 'FN1', 'NODAL')
