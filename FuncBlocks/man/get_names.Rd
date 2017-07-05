@@ -23,12 +23,9 @@ a dataframe with columns go_id, go_name and root_node (domain).
 \author{
 Steffi Grote
 }
-\note{
-The acronym is added because the names alone are not unique.
-}
-
 
 \seealso{
+\code{\link{get_ids}}\cr
 \code{\link{get_child_nodes}}\cr
 \code{\link{get_parent_nodes}}\cr
 }

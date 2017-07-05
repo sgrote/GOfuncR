@@ -10,6 +10,10 @@ get_values = function(){
 	test_results[["get_names"]] = get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 	test_results[["get_names_one"]] = get_names('GO:0051082')
 
+	##### get ids
+	test_results[["get_ids1"]] = get_ids('gaba')
+	test_results[["get_ids2"]] = get_ids('blood-brain')
+
 	##### get_child_nodes
 	test_results[["get_children"]] = get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 	test_results[["get_children_one"]] = get_child_nodes('GO:0051082')

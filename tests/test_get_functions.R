@@ -9,6 +9,13 @@ get_names('GO:0051082')
 get_names(c('GO:123'))
 get_names(c('bla','bla'))
 
+##### get ids
+get_ids('gaba')
+get_ids('123')
+get_ids(c('gaba','neuron'))
+head(get_ids(''))
+nrow(get_ids(''))
+
 ##### get_child_nodes
 get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 get_child_nodes('GO:0051082')

@@ -1,17 +1,19 @@
 CHANGES IN VERSION 1.2.6
 ------------------------
 
-IMPROVEMENTS
+NEW FEATURES
 
-	o go_enrich has new 'domains' argument which allows
+	o 'go_enrich' has new 'domains' argument which allows
 	  to restrict the analysis to one or two of the three
 	  GO-domains to save time
+	o new function 'get_ids' returns GO-categories that partially
+	  match the input string, together with ID and GO-domain
 
 USER-LEVEL CHANGES
 
-	o simplified get_anno_genes (only GO-IDs as input,
+	o simplified 'get_anno_genes' (only GO-IDs as input,
 	  go_enrich()-result is no longer supported as input)
-	o get_parent_nodes and get_child_nodes now also return
+	o 'get_parent_nodes' and 'get_child_nodes' now also return
 	  the name of the parent or child; also duplicates are
 	  removed and only the shortest distance is kept
 
@@ -21,7 +23,7 @@ CHANGES IN VERSION 1.2.5
 
 NEW FEATURES
 
-	o new function get_anno_categories returns 
+	o new function 'get_anno_categories' returns 
 	  associated GO-categories given genes
 	o added man-pages for all R-functions
 	  e.g. '?go_enrich'
