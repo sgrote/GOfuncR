@@ -25,12 +25,17 @@ vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254'). If defined, this specifies
 }
 }
 
+\details{
+The odds ratios and the 95%-CIs are computed with Fisher's exact test (two-sided).
+}
+
 \author{
 Steffi Grote
 }
 
 
 \seealso{
+\code{\link{fisher.test}}\cr
 \code{\link{go_enrich}}\cr
 \code{\link{get_anno_genes}}\cr
 \code{\link{get_names}}\cr

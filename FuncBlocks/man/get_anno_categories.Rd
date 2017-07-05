@@ -28,6 +28,10 @@ a dataframe with four columns: gene, GO-ID, GO-name and GO-domain.
 Steffi Grote
 }
 
+\note{
+This gives only direct annotations of genes to GO-categories. By definition genes are also indirectly annotated to all parent nodes of those categories. Use \code{\link{get_parent_nodes}} to get a complete list of annotations (see examples).
+}
+
 \seealso{
 \code{\link{get_anno_genes}}\cr
 \code{\link{get_parent_nodes}}\cr
@@ -39,5 +43,14 @@ get_anno_categories(c('BTC', 'SPAG5'))
 
 ## get the GO-annotations for two random mouse genes
 get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
+
+## get all annotations of NXPH4, inlcuding higher-level GO-categories
+direct_anno = get_anno_categories('NXPH4')
+direct_anno
+parent_ids = unique(get_parent_nodes(direct_anno$go_id)[,2])
+# add GO-domain
+full_anno = get_names(parent_ids)
+full_anno
+
 }
 

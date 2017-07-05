@@ -38,6 +38,7 @@ Steffi Grote
 
 \seealso{
 \code{\link{get_anno_categories}}\cr
+\code{\link{get_ids}}\cr
 \code{\link{get_names}}\cr
 \code{\link{get_child_nodes}}\cr
 \code{\link{get_parent_nodes}}\cr
@@ -54,12 +55,19 @@ get_anno_genes(go_ids='GO:0000109')
 genes = c('AGTR1', 'ANO1', 'CALB1', 'GYG1', 'PAX2')
 gos = c('GO:0001558', 'GO:0005536', 'GO:0072205', 'GO:0006821')
 anno_genes = get_anno_genes(go_ids=gos, genes=genes)
-## and add the names and domains of the GO-categories
+# add the names and domains of the GO-categories
 cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
 
 ## find all mouse-gene annotations to two GO-categories 
 gos = c('GO:0072205', 'GO:0000109')
 get_anno_genes(go_ids=gos, ref_genome='grcm38')
 
+## find all annotations to GO-categories containing 'serotonin receptor'
+sero_ids = get_ids('serotonin receptor')
+sero_anno = get_anno_genes(go_ids=sero_ids$go_id)
+# annotated genes
+sero_anno
+# names of GO-categories with annotations
+get_names(unique(sero_anno$go_id))
 }
 

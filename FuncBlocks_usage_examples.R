@@ -160,6 +160,10 @@ get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
 #### (3) GO-ID -> GO-name 
 get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 
+#### (3) GO-name -> GO-ID  (all partial perfect matches of the input string, not case sensitive) 
+get_ids(c('ribosome'))
+get_ids(c('gaba'))
+
 #### (4) GO-ID -> children
 children = get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 head(children)

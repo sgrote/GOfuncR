@@ -61,19 +61,22 @@ Rscript test_values.R
 (*) ref-genome default in get_anno_genes
 (*) only go-ids as input for get_anno_genes (remove res default option)
 (*) change col-name in get_names to "go_name"
-() GO-domains as optional input parameter for go_enrich
+(*) GO-domains as optional input parameter for go_enrich
 
-() add GO-names to get_parent, get_child, [get_anno_genes - eher nicht, vllt. ein beispiel mit get_names in man-page, es reicht schon wenn sich die ID immer wiederholt]
-() get_parent, get_child -> reduce to shortest distance, say that in man-page
+(*) add GO-names to get_parent, get_child, [get_anno_genes - eher nicht, vllt. ein beispiel mit get_names in man-page, es reicht schon wenn sich die ID immer wiederholt]
+(*) get_parent, get_child -> reduce to shortest distance, say that in man-page
 
-() data.table in go_enrich for 'get annotated GOs' and maybe in get_anno_genes in 'find child nodes'
-() add in man-page get_categories an example that uses get_parent_nodes
-() sort go_enrich res by n-candidate expected (tail is unordered)
-() update testing scripts with modified go-sort and helper functions
-() get_ids
-() vignette [also show example get_anno_genes for input candidate and background genes]
+(*) get_ids
+(*) add in man-page get_categories an example that uses get_parent_nodes
+(*) sort go_enrich res by -fwer-under [n-candidate expected would always put the root nodes to the tail]
+(*) in plot_odds_ratio.Rd say how odds ratio is computed
+() add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 
-# binomial test, contigany tables (1.3.0)
+() data.table fuer get_anno_genes in 'find child nodes' and 'find genes annotated' dauert sehr lange wenn alle GO-IDs als input (vielleicht aus aba_enrich uebernehmen)
+
+
+# binomial test, contingancy tables (1.3.0)
+() pull func source from github
 () binomial test and contingancy tests
 
 # refinement from Func (1.4.0)
@@ -87,12 +90,11 @@ Rscript test_values.R
 () allow user-defined gene_coordinates (?)
 () update-functions for the previous 3? (biomaRt, ensembldb packages?)
 
+() vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain]
 
-() add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 
 () in get children and get parents multiple entries for the same parent/child with differing distances are possible - is that still the case? if so, delete duplicates and keep only shortest distance
 
-() in plot_odds_ratio.Rd say excactly how odds ratio is computed
 () also return total number of annotated genes
 () maybe use one generic plotting function instead of plot_odds / plot_scores...
 () wilcoxon for genomic regions? - try out if easy to implement
