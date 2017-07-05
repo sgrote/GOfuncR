@@ -49,7 +49,7 @@ optional vector containing one or more of the three GO-domains 'cellular_compone
 \value{
 A list with components
 \item{results}{
-a dataframe with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep','ontology' and 'node_id'. This table contains the combined results for all three ontology domains.}
+a dataframe with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep', -'FWER_underrep', -'raw_p_underrep', 'ontology' and 'node_id'. This table contains the combined results for all three ontology domains. Note that GO-categories without any annotations of candidate or background genes are not listed.}
 \item{genes}{
 a vector of the requested genes, excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}
 \item{ref_genome}{
@@ -66,11 +66,12 @@ Steffi Grote
 }
 
 \seealso{
-\code{\link{get_names}}\cr
 \code{\link{get_parent_nodes}}\cr
 \code{\link{get_child_nodes}}\cr
 \code{\link{get_anno_genes}}\cr
 \code{\link{plot_odds_ratio}}\cr
+\code{\link{get_names}}\cr
+\code{\link{get_ids}}\cr
 }
 
 \examples{

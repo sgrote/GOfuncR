@@ -16,6 +16,8 @@ USER-LEVEL CHANGES
 	o 'get_parent_nodes' and 'get_child_nodes' now also return
 	  the name of the parent or child; also duplicates are
 	  removed and only the shortest distance is kept
+	o sort 'go_enrich' output also on FWER and p-value 
+	  for under-representation
 
 
 CHANGES IN VERSION 1.2.5

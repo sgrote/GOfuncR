@@ -134,6 +134,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# subset to GOs present in term.txt and flip colums
 	go = go_anno[go_anno[,1] %in% term[,4] & go_anno[,1]!="", 2:1]
 	
+	if (!silent) message("Remove invalid genes...")
 	# check which genes dont have GOs annotated (GOs contained in the ontology)
 	remaining_genes = genes[names(genes) %in% go[,1]] # restrict
 	not_in = unique(names(genes)[!(names(genes) %in% names(remaining_genes))]) # removed	
@@ -178,6 +179,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	go$value = genes[match(go[,1], names(genes))]	
 	
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
+	if (!silent) message("Write temporary files...")
 	write.table(term,file=paste(directory, "_term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(term2term,file=paste(directory, "_term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 	write.table(graph_path,file=paste(directory, "_graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
@@ -286,7 +288,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	namen = term[match(out[,1],term[,4]),2:3]
 	out = data.frame(namen[,2],out[,1], namen[,1], out[,2:ncol(out)])
 	out[,1:3] = apply(out[,1:3], 2, as.character)
-	out = out[order(out[,7], out[,5], out[,1], out[,2]),] # NEW: also sort on ontology and node_id
+	# NEW: also sort on FWER_underrep and raw_p_underrep and GO-ID (ties in tail) 
+	out = out[order(out[,7], out[,5], -out[,6], -out[,4], out[,1], out[,2]),] 
 	rownames(out) = 1:nrow(out)
 	
 	if (test == "hyper"){
