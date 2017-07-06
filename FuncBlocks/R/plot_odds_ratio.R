@@ -47,8 +47,11 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	anno$score = 0
 	anno[anno[,2] %in% names(in_genes[in_genes==1]), "score"] = 1
 	
+	# keep order of input GO's (which gets messed up in get_anno_genes by *apply)
+	ordere = data.frame(go_ids, rank=1:length(go_ids))
+
 	# find root-node for every GO
-	go_ids = unique(anno[,1]) # if is.null(go_ids) define GOs; else remove any GO without annotations
+	go_ids = unique(anno[,1]) # remove any GO without annotations
 	roots = get_names(go_ids) # also states the root_node
 	roots$root_id = term[match(roots$root_node, term[,2]),4]
 
@@ -75,8 +78,11 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	fish_odds = data.frame(fish_table, t(apply(fish_table, 1, fisher)))
 	fish_odds = fish_odds[,c(1,2,6,5,4,3,8,7,10:13)]
 	colnames(fish_odds)[c(2,6,9:12)] = c("go_name","root_name","odds_ratio","ci95_low","ci95_high","p")
-	# replace Inf or -Inf CI for plotting
+	# recreate original order of Go-ids
+	fish_odds = fish_odds[order(ordere[match(fish_odds$go_id, ordere$go_ids),"rank"]),]
 	out = fish_odds
+
+	# replace Inf or -Inf CI for plotting
 	inf_go = fish_odds[is.infinite(fish_odds$odds_ratio),"go_id"]
 	if(length(inf_go) > 0){
 		warning(paste("The following GOs have an infinite odds ratio due to no background gene annotation: "), paste(inf_go, collapse=", "), sep="")

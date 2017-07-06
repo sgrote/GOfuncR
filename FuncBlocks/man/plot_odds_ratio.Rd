@@ -4,7 +4,7 @@
 Plot proportions of candidate and background genes in enriched or user-defined GO-categories
 }
 \description{
-Uses an object returned from \code{\link{go_enrich}} and extracts the GO-categories that are significantly (given a FWER-threshold) enriched in candidate genes. Alternatively GO-IDs can be defined explicitly.\cr
+Uses the result of a hypergeometric test performed with \code{\link{go_enrich}} and extracts the GO-categories that are significantly (given a FWER-threshold) enriched in candidate genes. Alternatively GO-IDs can be defined explicitly.\cr
 \code{plot_odds_ratio} then plots for each GO-category the proportion of annotated candidate and background genes in pie charts, whose size is dependent on the total number annotated genes.\cr
 The plot also shows pie charts with the proportions of candidate and background genes annotated to the three root nodes (domains) of the gene ontology; as well as the odds ratios for the proportion of candidate genes in the GO-categories given the proportion in the root node.
 
