@@ -11,7 +11,7 @@ get_anno_genes = function(go_ids, ref_genome="grch37", genes=NULL){
 	## Check input	
 	# GO-IDs
 	if (!is.vector(go_ids) || !all(substr(go_ids,1,3) == "GO:")){
-		stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0005634','GO:0004945')")
+		stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0072221','GO:0004945')")
 	}
 	# reference genome
 	if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
@@ -23,9 +23,6 @@ get_anno_genes = function(go_ids, ref_genome="grch37", genes=NULL){
 	message("find child nodes of GOs...")
 	children = get_child_nodes(go_ids)
 	children = tapply(children[,2], children[,1], as.character, simplify=FALSE)
-	# uniqueness is not required, takes long. duplicates due to different distances to same child node
-#	children = tapply(children[,2], children[,1], function(x){as.character(unique(x))}, simplify=FALSE)
-
 
 	# 3) find genes annotated to child nodes
 	message(paste("find genes annotated to child nodes using ref_genome ",ref_genome,"...",sep=""))
