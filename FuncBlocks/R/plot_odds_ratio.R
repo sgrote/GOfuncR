@@ -12,7 +12,7 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	### check input
 	# check that res could be go_enrich-output
 	if(!(is.list(res) && all(names(res) == c("results","genes","ref_genome")))){
-		stop("Please use an object returned from go_enrich as input (list with 3 elements).\n Alternatively go_ids need to be defined.")
+		stop("Please use an object returned from go_enrich as input (list with 3 elements).")
 	}
 	# check that it's a hypergeometric test
 	in_genes = res[[2]]

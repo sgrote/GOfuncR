@@ -29,6 +29,10 @@ vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254'). If defined, this specifies
 The odds ratios and the 95%-CIs are computed with Fisher's exact test (two-sided).
 }
 
+\value{
+A data frame with the results of Fisher's excact test for every GO-category (invisible).
+}
+
 \author{
 Steffi Grote
 }
