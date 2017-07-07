@@ -20,7 +20,7 @@ a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
 a dataframe with four columns: parent GO-ID, child GO-ID, child GO-name and distance.
 }
 \references{
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25–29.
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.
 }
 \author{
 Steffi Grote

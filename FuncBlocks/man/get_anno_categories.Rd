@@ -10,7 +10,7 @@ Returns all associated GO-categories given a vector of gene-symbols, e.g. c('SPA
 get_anno_categories(genes, ref_genome = 'grch37')
 }
 \arguments{
-  \item{go_ids}{
+  \item{genes}{
 a vector of gene-symbols, e.g. c('SPAG5', 'BTC').
 }
   \item{ref_genome}{
@@ -22,7 +22,7 @@ One of 'grch37', 'grch38' or 'grcm38'. This specifies the reference genome used 
 a dataframe with four columns: gene, GO-ID, GO-name and GO-domain.
 }
 \references{
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25–29.
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.
 }
 \author{
 Steffi Grote

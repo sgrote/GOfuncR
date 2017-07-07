@@ -20,7 +20,7 @@ get_ids(go_name)
 a data frame with the full names of the GO-categories that contain \code{go_name}; together with the GO-domain ('cellular_component', 'biological_process' or 'molecular_function') and the GO-category IDs.
 }
 \references{
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25–29.
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.
 
 }
 \author{

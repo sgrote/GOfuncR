@@ -29,6 +29,6 @@ Depends: R (>= 3.2), vioplot (>= 0.2)
 LinkingTo: Rcpp
 Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr
-biocViews: GeneSetEnrichment
+biocViews: GeneSetEnrichment, GO
 NeedsCompilation: yes
 Packaged: 2016-08-08 15:40:43 UTC; steffi_grote

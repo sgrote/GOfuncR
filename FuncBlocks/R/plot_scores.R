@@ -99,7 +99,7 @@ violin = function(plotty, root_cols, ylim, root=FALSE){
 		if (length(scores)==1) {
 			points(x=i, y=scores, col=colore[i], pch=16, cex=1.5)
 		} else {
-			vioplot(scores, at=i, col=colore[i], add=T)
+			vioplot(scores, at=i, col=colore[i], add=TRUE)
 		}
 	}
 	# n genes

@@ -30,7 +30,7 @@ A data frame with the GO-IDs and the annotated genes. The output is ordered by G
 }
 
 \references{
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25–29.
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.
 }
 \author{
 Steffi Grote

@@ -33,6 +33,10 @@ R CMD check FuncBlocks_1.2.6.tar.gz
 R CMD BiocCheck FuncBlocks_1.2.6.tar.gz
 R CMD check --as-cran --use-valgrind FuncBlocks_1.2.6.tar.gz # find memory leaks, dauert lange
 
+# if check says e.g. 'get_ids.Rd: non-ASCII input and no declared encoding', to find non-ASCII:
+tools::showNonASCII(readLines("FuncBlocks/man/get_ids.Rd"))
+
+
 # look at help page and news
 # in R:
 options("help_type"="html") # to check links

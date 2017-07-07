@@ -57,7 +57,7 @@ the reference genome used.}
 }
 
 \references{
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25–29. \doi{10.1038/75556}\cr
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25-29. \doi{10.1038/75556}\cr
 [2] Pruefer, K. et al. (2007). FUNC: A package for detecting significant associations between gene
 sets and ontological. BMC Bioinformatics 8: 41. \doi{10.1186/1471-2105-8-41}
 }
