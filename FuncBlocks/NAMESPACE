@@ -1,9 +1,9 @@
 useDynLib(FuncBlocks)
-export("go_enrich", "get_names", "get_anno_genes", "get_child_nodes", "get_parent_nodes", "plot_odds_ratio", "get_anno_categories", "get_ids")
+export("go_enrich", "get_names", "get_anno_genes", "get_child_nodes", "get_parent_nodes", "plot_odds_ratio", "get_anno_categories", "get_ids", "plot_scores")
 importFrom("Rcpp", "evalCpp")
 importFrom("utils", "read.table", "write.table")
 importFrom("grDevices", "colors")
 importFrom("graphics", "abline", "arrows", "axis", "grid", "layout", "par", "plot", "text")
 importFrom("stats", "fisher.test")
 
-import("mapplots", "gtools")
+import("mapplots", "gtools", "vioplot")

@@ -5,7 +5,7 @@ Plot proportions of candidate and background genes in enriched or user-defined G
 }
 \description{
 Uses the result of a hypergeometric test performed with \code{\link{go_enrich}} and extracts the GO-categories that are significantly (given a FWER-threshold) enriched in candidate genes. Alternatively GO-IDs can be defined explicitly.\cr
-\code{plot_odds_ratio} then plots for each GO-category the proportion of annotated candidate and background genes in pie charts, whose size is dependent on the total number annotated genes.\cr
+\code{plot_odds_ratio} then plots for each GO-category the proportion of annotated candidate and background genes in pie charts, whose size is dependent on the total number annotated genes. The colors of the pie charts indicate the GO-domain.\cr
 The plot also shows pie charts with the proportions of candidate and background genes annotated to the three root nodes (domains) of the gene ontology; as well as the odds ratios for the proportion of candidate genes in the GO-categories given the proportion in the root node.
 
 }
@@ -21,7 +21,7 @@ an object returned from \code{\link{go_enrich}} (list of 3 elements).
 numeric defining the FWER-threshold. \code{plot_odds_ratio} extracts all GO-categories from \code{res} that have a FWER < \code{fwer_threshold} and plots the proportions of annotated candidate and background genes for those GO-categories. Only used when \code{go_ids} are not specified.
 }
   \item{go_ids}{
-vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254'). If defined, this specifies the GO-categories directly and the \code{fwer_threshold} is not used.
+optional vector of GO-IDs, e.g. c('GO:0005737','GO:0071495'). If defined, this specifies the GO-categories directly and the \code{fwer_threshold} is not used.
 }
 }
 
@@ -43,6 +43,7 @@ Steffi Grote
 \code{\link{go_enrich}}\cr
 \code{\link{get_anno_genes}}\cr
 \code{\link{get_names}}\cr
+\code{\link{plot_scores}}\cr
 }
 
 \examples{ 
@@ -78,7 +79,7 @@ plot_odds_ratio(go_bg, fwer_threshold=0.8)
 
 ## plot user-defined GO-IDs 
 plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945',
- '0.05309471','GO:0008289','GO:0005737','GO:0071495'))
+ 'GO:0008289','GO:0005737','GO:0071495'))
 
 }
 

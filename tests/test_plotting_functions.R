@@ -1,4 +1,8 @@
+
 library(FuncBlocks)
+
+################## (1) plot_odds_ratio
+
 set.seed(123)
 
 ## run Func
@@ -15,21 +19,61 @@ genes = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
 names(genes) = c(candi_gene_ids, bg_gene_ids)
 go_bg = go_enrich(genes, n_randsets=100)
 
-
-##### plot_odds ratio
 # normal input
-plot_odds_ratio(go_res, fwer_threshold=0.02)
+x = plot_odds_ratio(go_res, fwer_threshold=0.02)
+x
 plot_odds_ratio(go_bg,fwer_threshold=0.8)
-plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
+plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check order-preserve
 plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
 # erroneous input
 plot_odds_ratio(go_bg, go_ids=c('GO:0000009', 'GO:0000010', 'GO:0000014')) # no genes annotated
 plot_odds_ratio(go_bg, fwer_threshold=0.001) # no gos with fwer below threshold
 plot_odds_ratio("bla")
 plot_odds_ratio(go_bg, fwer_threshold=2) # all GOs
+# corner case
+plot_odds_ratio(go_bg, go_ids=c('GO:0005623')) # only one GO
+plot_odds_ratio(go_bg, go_ids=c('GO:0000166', 'GO:0000287', 'GO:0000981')) # no candidate annotated
+plot_odds_ratio(go_res, fwer_threshold=-1)
+plot_odds_ratio(go_res, fwer_threshold='bla')
 
-##### corner case
-# only one GO
-plot_odds_ratio(go_bg, go_ids=c('GO:0005623'))
-# no candidate annotated
-plot_odds_ratio(go_bg, go_ids=c('GO:0000166', 'GO:0000287', 'GO:0000981'))
+
+
+################## (2) plot_scores
+library(FuncBlocks)
+set.seed(123)
+high_score_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+genes = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
+names(genes) = c(high_score_genes, low_score_genes)
+go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
+head(go_willi[[1]])
+go_willi[[2]]
+
+# normal input
+w = plot_scores(go_willi, fwer_threshold=0.21)
+w
+plot_scores(go_willi, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check order-preserve
+plot_scores(go_willi, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
+plot_scores(go_willi, go_ids=c('GO:0005634')) # only one GO
+# erroneous input
+plot_scores(go_willi, go_ids=c('GO:0000009', 'GO:0000010', 'GO:0000014')) # no genes annotated
+plot_scores(go_willi, fwer_threshold=0.001) # no gos with fwer below threshold
+plot_scores("bla")
+plot_scores(go_willi, fwer_threshold=2) # all GOs
+plot_scores(go_willi, fwer_threshold=-1) # all GOs
+plot_scores(go_willi, fwer_threshold='bla') # all GOs
+
+# mouse
+set.seed(123)
+high_score_genes = c('G6pd', 'Gck', 'Gys1', 'Hk2', 'Pygl', 'Slc2a8', 'Ugp2', 'Zwint', 'Engase')
+low_score_genes = c('Cacng2', 'Agtr1', 'Ano1', 'Btbd3', 'Mtus1', 'Calb1', 'Gyg1', 'Pax2')
+genes = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
+names(genes) = c(high_score_genes, low_score_genes)
+go_willi_mus = go_enrich(genes, test='wilcoxon', n_randsets=100, ref_genome='grcm38')
+plot_scores(go_willi_mus, fwer_threshold=0.21)
+
+
+
+
+
+

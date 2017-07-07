@@ -8,6 +8,9 @@ NEW FEATURES
 	  GO-domains to save time
 	o new function 'get_ids' returns GO-categories that partially
 	  match the input string, together with ID and GO-domain
+	o new function 'plot_scores' creates violin plots for 
+	  GO-categories with the distributions of annotated scores from
+	  the wilcoxon rank-sum test
 
 USER-LEVEL CHANGES
 

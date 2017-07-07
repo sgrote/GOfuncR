@@ -25,7 +25,7 @@ Description: The package FuncBlocks performs GO-enrichment analyses
 		analyses. 
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.5), mapplots (>= 1.5), gtools (>= 3.5.0)
-Depends: R (>= 3.2)
+Depends: R (>= 3.2), vioplot (>= 0.2)
 LinkingTo: Rcpp
 Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr

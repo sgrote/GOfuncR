@@ -19,6 +19,10 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	if(!(all(in_genes %in% c(1,0)))){
 		stop("Please use the result of an hypergeometric test performed with go_enrich as input.")
 	}
+	# check that fwer_threshold is numeric
+	if(!is.numeric(fwer_threshold)){
+		stop("Please use a numeric fwer_threshold.")
+	}
 	# check if background is defined
 	bgdef = TRUE
 	if(all(in_genes==1)){

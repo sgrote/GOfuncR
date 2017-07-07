@@ -61,11 +61,11 @@ genes
 go_bg = go_enrich(genes, n_randsets=100)
 
 # scores for genes and wilcoxon rank sum test
-gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
- 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = sample(1:30, length(gene_ids))
-names(genes) = gene_ids
-genes
+set.seed(123)
+high_score_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+genes = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
+names(genes) = c(high_score_genes, low_score_genes)
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 
 
@@ -176,15 +176,12 @@ parents
 plot_odds_ratio(go_res, fwer_threshold=0.02)
 plot_odds_ratio(go_bg,fwer_threshold=0.8)
 plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
-plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','0.05309471','GO:0008289','GO:0005737','GO:0071495'))
+plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
 
 
-
-
-#### future functions:
-# (7) go_enrich-output and (fwer_threshold or go_ids)-> plot score-distribution (wilcoxon)
-
-
+#### (7) go_enrich-output and (fwer_threshold or go_ids)-> plot score-distribution (wilcoxon)
+plot_scores(go_willi, fwer_threshold=0.2)
+plot_scores(go_willi, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
 
 
 
