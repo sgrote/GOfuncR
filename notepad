@@ -76,7 +76,7 @@ Rscript test_values.R
 (*) in plot_odds_ratio.Rd say how odds ratio is computed
 (*) add value to plot_odds_ratio.Rd (return(invisible))
 (*) preserve input node-order in plot_odds_ratio
-() add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
+(*) add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 
 # binomial test, contingancy tables (1.3.0)
 () pull func source from github
@@ -97,6 +97,7 @@ Rscript test_values.R
 # general improvements
 () use digest md5sum instead of saved_results? maybe also store heads or something (andererseits nur 3Mb)
 () vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain. Include table with versions of GO-tree and annotations]
+() add to vignette when which test is useful with example (like in func paper)
 
 () data.table fuer get_anno_genes in 'find child nodes' and 'find genes annotated' dauert sehr lange wenn alle GO-IDs als input (vielleicht aus aba_enrich uebernehmen)
 
@@ -105,6 +106,7 @@ Rscript test_values.R
 () wilcoxon for genomic regions? - try out if easy to implement
 () FDR?
 () overall-significance?
+() cutoff for minimum number of genes in a node?
 
 () e.g. in get_anno_genes return NULL (as now) or rather an empty dataframe identical to normal output?
 () visualization (email janet - plotting GO-categories)

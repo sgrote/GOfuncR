@@ -18,7 +18,6 @@
 #define GO_GRAPH_HYPE_H
 
 #include "go_obj_hyper.h"
-//steffi:
 #include "idmap.h"
 #include <map>
 #include <set>

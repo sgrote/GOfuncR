@@ -29,11 +29,11 @@ genes::genes( go_graph &graph, istream &annotation, istream &data )
 				// "gene" has gene-name and annotated-GOs including parent GOs
 				genemap[gene_name] = new gene( gene_name, parents ) ; 
 			} else {
-				Rcpp::Rcout << gene_name << " not mapped.\n" ;
+				Rcpp::Rcerr << gene_name << " not mapped.\n" ;
 			}
 		}
 	}
-	//Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
+	Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
 	
 	multimap<double, gene*> genes_ranked ;
 	// data: two columns: gene | score

@@ -1,6 +1,6 @@
 
 #include "gene.h"
-#include <time.h>
+//#include <time.h>
 #include <cstdlib>
 #include <cstdio>
 
