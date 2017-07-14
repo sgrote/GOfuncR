@@ -97,6 +97,19 @@ go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 head(go_willi[[1]])
 
 
+##### binomial
+set.seed(123)
+high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(low_human_genes)))
+chimp_counts = c(sample(5:15, length(high_human_genes)), sample(20:30, length(low_human_genes)))
+genes = data.frame(gene=c(high_human_genes, low_human_genes), human_counts, chimp_counts)
+
+go_binom = go_enrich(genes, test='binomial', n_randsets=100)
+
+
+
+
 ##### n_randsets
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
 genes = rep(1, length(gene_ids))

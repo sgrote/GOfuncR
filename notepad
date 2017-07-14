@@ -79,8 +79,11 @@ Rscript test_values.R
 (*) add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 
 # binomial test, contingancy tables (1.3.0)
-() pull func source from github
-() binomial test and contingancy tests
+(*) pull func source from github
+() add binom randset
+() add binom category test
+() change "genes" input in general to data-frame?
+() contigancy?
 
 # refinement from Func (1.4.0)
 () refinement from Func (either use c++ or reimplement in R)
