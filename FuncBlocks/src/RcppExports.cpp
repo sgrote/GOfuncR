@@ -5,6 +5,19 @@
 
 using namespace Rcpp;
 
+// binom_category_test
+void binom_category_test(std::string directory, int cutoff, std::string root, bool silent);
+RcppExport SEXP FuncBlocks_binom_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
+    Rcpp::traits::input_parameter< int >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
+    Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
+    binom_category_test(directory, cutoff, root, silent);
+    return R_NilValue;
+END_RCPP
+}
 // binom_randset
 void binom_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, bool silent);
 RcppExport SEXP FuncBlocks_binom_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP silentSEXP) {

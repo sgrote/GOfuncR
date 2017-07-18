@@ -35,6 +35,7 @@ res = go_enrich(c(1,0,0,1,0))
 res = go_enrich(gene_ids)
 
 
+
 ##### standard parameters - background defined
 candi_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4')
 bg_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -52,6 +53,8 @@ res[[2]]
 res = go_enrich(genes[c(1,(length(candi_ids)+1):length(genes))], n_randsets=100)
 head(res[[1]])
 res[[2]]
+# multiple assignment of same value
+res = go_enrich(genes[c(1,1:length(genes))], n_randsets=10)
 ### erroneous input
 # same gene as candidate and background
 names(genes)[1:3] = bg_ids[1:3]
@@ -95,6 +98,10 @@ genes = seq(1.1, 1.7, by=0.1)
 names(genes) = gene_ids
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 head(go_willi[[1]])
+# multiple assignment of different values
+genes = c(1,2,3)
+names(genes) = c('NCAPG', 'APOL4', 'APOL4')
+go_enrich(genes, test='wilcoxon')
 
 
 ##### binomial
@@ -103,10 +110,22 @@ high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZW
 low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(low_human_genes)))
 chimp_counts = c(sample(5:15, length(high_human_genes)), sample(20:30, length(low_human_genes)))
-genes = data.frame(gene=c(high_human_genes, low_human_genes), human_counts, chimp_counts)
-
+genes = data.frame(gene=c(high_human_genes, low_human_genes), chimp_counts, human_counts)
 go_binom = go_enrich(genes, test='binomial', n_randsets=100)
-
+# negative values
+neg_genes = data.frame(gene=c(high_human_genes, low_human_genes), -chimp_counts, -human_counts)
+go_binom = go_enrich(neg_genes, test='binomial', n_randsets=10)
+# only one genes - works, all FWER are 1
+go_binom_one = go_enrich(genes[1,], test='binomial', n_randsets=10)
+# 0 counts
+go_binom_z1 = go_enrich(genes=data.frame(a='G6PD',b=0,c=10), test='binomial', n_randsets=10)
+go_binom_z2 = go_enrich(genes=data.frame(a='G6PD',b=10,c=0), test='binomial', n_randsets=10)
+go_binom_z3 = go_enrich(genes=data.frame(a='G6PD',b=0,c=0), test='binomial', n_randsets=10)
+# multiple assignment of different values
+multi_ok = go_enrich(genes=data.frame(a='G6PD',b=0,c=10)[c(1,1),], test='binomial', n_randsets=10)
+## erroneous
+# multiple assignment of different values
+multi = data.frame(a=c('G6PD','G6PD') ,b=c(0,1),d=c(10,8))
 
 
 

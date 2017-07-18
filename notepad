@@ -26,12 +26,14 @@ cd /home/steffi_grote/R_packages/FuncBlocks_package
 R CMD build FuncBlocks #--resave-data
 
 # install package
-R CMD INSTALL FuncBlocks_1.2.6.tar.gz
+R CMD INSTALL FuncBlocks_1.2.7.tar.gz
 
 # check package
-R CMD check FuncBlocks_1.2.6.tar.gz
-R CMD BiocCheck FuncBlocks_1.2.6.tar.gz
-R CMD check --as-cran --use-valgrind FuncBlocks_1.2.6.tar.gz # find memory leaks, dauert lange
+R CMD check FuncBlocks_1.2.7.tar.gz
+R CMD BiocCheck FuncBlocks_1.2.7.tar.gz
+# Valgrind for memory leaks (So aehnlich steht das auch in Bioconductor/Developers/Debugging_C++)
+R -d "valgrind -v --tool=memcheck --leak-check=full --track-origins=yes --read-var-info=yes" --no-save < tests/test_valgrind.R
+
 
 # if check says e.g. 'get_ids.Rd: non-ASCII input and no declared encoding', to find non-ASCII:
 tools::showNonASCII(readLines("FuncBlocks/man/get_ids.Rd"))
@@ -83,7 +85,7 @@ Rscript test_values.R
 () add binom randset
 () add binom category test
 () change "genes" input in general to data-frame?
-() contigancy?
+() contigancy!
 
 # refinement from Func (1.4.0)
 () refinement from Func (either use c++ or reimplement in R)

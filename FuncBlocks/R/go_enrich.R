@@ -1,13 +1,6 @@
-# run "FUNC" with default GO and GO-annotations (update once in a while...) TODO: also allow user input
-# wilcoxon rank test or hypergeometric test
 
-### Arguments
-# genes: vector of 0/1 (hypergeometric) or float (wilcoxon) with gene identifiers as names (HGNC-symbol), or chromosomal regions chr:start-stop (only for hypergeometric)
-# test: "hyper" or "wilcoxon"
-# n_randsets: number of random-sets
-# gene_len: randomset is dependent on length of genes
-# circ_chrom: for regions input: random regions are on same chrom and allowed to overlap multiple bg-regions
-# ref_genome: "grch37" (hg19), "grch38" (hg20) or "grcm38" (mouse)
+# run "FUNC" with default GO and GO-annotations (update once in a while...) TODO: also allow user input
+# wilcoxon rank test, hypergeometric test or binomial test
 
 go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE, domains=NULL)
 {
@@ -43,13 +36,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 		root_nodes = domains
 	}
+	genes = unique(genes) # also unique rows in dataframe
+	
 	# test-specific arguments
 	if (test=="hyper" | test=="wilcoxon"){
 		if (length(names(genes))==0){
 			stop("Please add gene identifiers as names to 'genes' vector.")
 		}
-		# NEW: check for multiple assignment for one gene
-		genetab = unique(data.frame(genes, names(genes))) # allow for multiple assignment of the same value
+		# check for multiple assignment for one gene
+		genetab = data.frame(genes, names(genes))
 		multi_genes = sort(unique(genetab[,2][duplicated(genetab[,2])]))
 		if (length(multi_genes) > 0){
 			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
@@ -72,12 +67,19 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (length(genes) < 2){
 			stop("Only one gene provided as input.")
 		}
-	} else if (test=="binomial"){ # TODO: add more checks
+	} else if (test=="binomial"){
 		if (!is.data.frame(genes)){
 			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test.")
 		}
+		if (any(c(genes[,2],genes[,3]) != round(c(genes[,2],genes[,3]))) || any(c(genes[,2], genes[,3]) < 0)){
+			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test. count1 and count2 need to be integers >= 0.")
+		}
 		if (gene_len == TRUE){
 			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+		}		
+		multi_genes = sort(unique(genetab[,1][duplicated(genetab[,1])]))
+		if (length(multi_genes) > 0){
+			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
 		}
 	} else { 
 		stop("Not a valid test. Please use 'hyper', 'wilcoxon' or 'binomial'.")
@@ -239,8 +241,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			infile_data = unique(input[,c(1,3)])
 		} else if (test=="binomial"){
 			infile_data = unique(input[,c(1,3,4)])
-			message("THE INPUT FOR BINOM:")
-			print(head(infile_data,n=30))
 		}
 			
 		# create "root" dataframe (all genes (test and bg) with GO-annotations, file named with root_node_id)
@@ -272,7 +272,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 #		system(paste("cp ",directory,"_infile-data ", directory, "_infile_data_", root_id, sep=""))
 		
 		if (!silent) message("Run Func...\n")
-		if (test=="hyper"){
+		if (test == "hyper"){
 			# randomset
 			if (blocks & circ_chrom){
 				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll" , silent)
@@ -283,20 +283,13 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			} else {
 				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic", silent)
 			}
-#			stop("only randomset")
-			# category test
 			hyper_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
-		} else if (test=="wilcoxon"){
+		} else if (test == "wilcoxon"){
 			wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
-			# category test
 			wilcox_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
-		} else if (test=="binomial"){
+		} else if (test == "binomial"){
 			binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
-			# category test
-#			wilcox_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
-			ran_out = read.table(paste(directory, "_randset_out",sep=""), fill=T)
-			print(head(ran_out))
-			stop("Just random set")
+			binom_category_test(directory, 1, root_id, silent)			
 		}
 
 		# read Func output
@@ -304,21 +297,22 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# for debugging: save output-files per root-node
 		#system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
 			
-#		# check that FWER order follows p-value order (per root_node)
-#		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
-#		groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
-#		if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
-#			print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
-#			stop("FWER_over does not strictly follow p_over. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de")
-#		}
-#		groupy_sorted = groupy[order(signif (groupy$p_under,12), -groupy$FWER_under),]
-#		if (any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
-#			print(data.frame(groupy_sorted[,c(1,2,4)], FWER_check=groupy_sorted$FWER_under == cummax(groupy_sorted$FWER_under)))
-#			stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de.")
-#		}
+		# check that FWER order follows p-value order (per root_node)
+		colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
+		groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
+		if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
+			print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
+			stop("FWER_over does not strictly follow p_over. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de")
+		}
+		groupy_sorted = groupy[order(signif (groupy$p_under,12), -groupy$FWER_under),]
+		if (any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
+			print(data.frame(groupy_sorted[,c(1,2,4)], FWER_check=groupy_sorted$FWER_under == cummax(groupy_sorted$FWER_under)))
+			stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de.")
+		}
 				
 		out = rbind(out, groupy)
 	} # end root_nodes
+
 	
 	# add GO-names and sort
 	namen = term[match(out[,1],term[,4]),2:3]
@@ -327,14 +321,20 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# NEW: also sort on FWER_underrep and raw_p_underrep and GO-ID (ties in tail) 
 	out = out[order(out[,7], out[,5], -out[,6], -out[,4], out[,1], out[,2]),] 
 	rownames(out) = 1:nrow(out)
-	
+
 	if (test == "hyper"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_underrep","raw_p_overrep","FWER_underrep","FWER_overrep", "n_candidate_expected", "n_candidate_real")
 	} else if (test == "wilcoxon"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank","ranksum_expected","ranksum_real")
+	} else if (test == "binomial"){
+		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A","raw_p_high_B","FWER_high_A","FWER_high_B")
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
-	remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
+	if (test %in% c("hyper", "wilcoxon")){
+		remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
+	} else if (test == "binomial"){
+		remaining_genes = remaining_genes[mixedorder(remaining_genes[,1]),]
+	}
 	final_output = list(results=out, genes=remaining_genes, ref_genome=ref_genome)
 	if (!silent) message("\nDone.")
 

@@ -97,7 +97,7 @@ void binom_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 	/*****************
          * save #genes per go to extra file
 	 *******************/
-	// outfile for n_genes (TODO: is this needed? )
+	// outfile for n_genes
 	string outfile_ngene = directory + "_ngenes_per_go";
 	ofstream out_n;
 	out_n.open ( outfile_ngene.c_str() );
@@ -124,5 +124,7 @@ void binom_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 		gns.create_random_set(  ) ;
 		graph.print_ka( out ) ;
 	}
-	
+	if ( !silent ){
+		Rcpp::Rcout << "\rFinished" << endl ;
+	}
 }
