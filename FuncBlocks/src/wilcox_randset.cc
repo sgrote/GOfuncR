@@ -1,7 +1,7 @@
 
-#include <time.h>
-#include <cstdlib>
-#include <cstdio> // TODO check whats outcommented here in hyper_randset
+//#include <time.h>
+//#include <cstdlib>
+//#include <cstdio>
 
 #include <fstream>
 #include <sstream>
@@ -105,6 +105,9 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 		graph.clear_genes(  ) ;
 		gns.create_random_set(  ) ;
 		graph.print_sumranks( out ) ;
+	}
+	if ( !silent ){
+		Rcpp::Rcout << "\rFinished" << endl ;
 	}
 
 }

@@ -255,11 +255,11 @@ void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 				*it <= data_pvals_g[i] + 1.0e-10 * data_pvals_g[i]) // NEW: add tolerance to account for float inaccuracy 
 					n_g++, it++ ;
 			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
-			os << names[i] << "\t" << std::setprecision(17) << data_pvals_l[i] << "\t"
-				<< data_pvals_g[i] << "\t" << std::setprecision(6)
+			os << std::setprecision(17) << names[i] << "\t" 
+				<< data_pvals_l[i] << "\t"
+				<< data_pvals_g[i] << "\t"
 				<< static_cast<double>(n_l)/static_cast<double>(nr_randsets) << "\t" //FWER low ranks
 				<< static_cast<double>(n_g)/static_cast<double>(nr_randsets) << "\t" //FWER high ranks
-				<< std::setprecision(17)
 				<< ranksums_expected[i] << "\t" << ranksums[i]  //NEW: expected and real sum of ranks
 				<< endl;
 				//<< (*fdr_qless)[data_pvals_l[i]] << "\t" 

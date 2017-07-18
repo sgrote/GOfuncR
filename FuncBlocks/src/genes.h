@@ -1,4 +1,7 @@
 
+#ifndef GENES_H
+#define GENES_H
+
 #include <fstream>
 #include <map>
 #include <sstream>
@@ -31,3 +34,5 @@ class genes
 		vector<gene*> gene_vec ;
 
 } ;
+
+#endif

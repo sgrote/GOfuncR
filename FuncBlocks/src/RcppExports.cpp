@@ -33,16 +33,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // hyper_category_test
-void hyper_category_test(std::string input, std::string output, int cutoff, std::string root, bool silent);
-RcppExport SEXP FuncBlocks_hyper_category_test(SEXP inputSEXP, SEXP outputSEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+void hyper_category_test(std::string directory, int cutoff, std::string root, bool silent);
+RcppExport SEXP FuncBlocks_hyper_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type input(inputSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output(outputSEXP);
+    Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
     Rcpp::traits::input_parameter< int >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    hyper_category_test(input, output, cutoff, root, silent);
+    hyper_category_test(directory, cutoff, root, silent);
     return R_NilValue;
 END_RCPP
 }
@@ -73,16 +72,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // wilcox_category_test
-void wilcox_category_test(std::string input, std::string output, int cut, std::string root, bool silent);
-RcppExport SEXP FuncBlocks_wilcox_category_test(SEXP inputSEXP, SEXP outputSEXP, SEXP cutSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+void wilcox_category_test(std::string directory, int cut, std::string root, bool silent);
+RcppExport SEXP FuncBlocks_wilcox_category_test(SEXP directorySEXP, SEXP cutSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type input(inputSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output(outputSEXP);
+    Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
     Rcpp::traits::input_parameter< int >::type cut(cutSEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    wilcox_category_test(input, output, cut, root, silent);
+    wilcox_category_test(directory, cut, root, silent);
     return R_NilValue;
 END_RCPP
 }

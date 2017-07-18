@@ -1,4 +1,8 @@
 
+#ifndef GO_GROUPS_H
+#define GO_GROUPS_H
+
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -61,3 +65,5 @@ class go_groups {
 		//overall_significance less_sig, greater_sig ;
 	
 } ;
+
+#endif

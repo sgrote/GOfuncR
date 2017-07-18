@@ -33,7 +33,7 @@ genes::genes( go_graph &graph, istream &annotation, istream &data )
 			}
 		}
 	}
-	Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
+	//Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
 	
 	multimap<double, gene*> genes_ranked ;
 	// data: two columns: gene | score

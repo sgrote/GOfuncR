@@ -1,4 +1,7 @@
 
+#ifndef GENE_H
+#define GENE_H
+
 #include "go_obj.h"
 
 using namespace std ;
@@ -28,3 +31,5 @@ class gene {
 		double rank ;
 
 } ;
+
+#endif

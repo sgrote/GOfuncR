@@ -29,7 +29,7 @@ genes_binom::genes_binom( go_graph_binom &graph, istream &annotation, istream &d
 			}
 		}
 	}
-	Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ; // TODO remove or silent option
+	//Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
 	
 	while( data ) {
 		getline( data, line ) ;

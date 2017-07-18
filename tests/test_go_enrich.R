@@ -118,15 +118,15 @@ go_binom = go_enrich(neg_genes, test='binomial', n_randsets=10)
 # only one genes - works, all FWER are 1
 go_binom_one = go_enrich(genes[1,], test='binomial', n_randsets=10)
 # 0 counts
-go_binom_z1 = go_enrich(genes=data.frame(a='G6PD',b=0,c=10), test='binomial', n_randsets=10)
-go_binom_z2 = go_enrich(genes=data.frame(a='G6PD',b=10,c=0), test='binomial', n_randsets=10)
-go_binom_z3 = go_enrich(genes=data.frame(a='G6PD',b=0,c=0), test='binomial', n_randsets=10)
+go_binom_z1 = go_enrich(genes=data.frame(a='G6PD',b=0,c=10), test='binomial', n_randsets=10) # geht
+go_binom_z2 = go_enrich(genes=data.frame(a='G6PD',b=10,c=0), test='binomial', n_randsets=10) # geht
+go_binom_z3 = go_enrich(genes=data.frame(a='G6PD',b=0,c=0), test='binomial', n_randsets=10) # TODO: das geht nicht, check before
 # multiple assignment of different values
 multi_ok = go_enrich(genes=data.frame(a='G6PD',b=0,c=10)[c(1,1),], test='binomial', n_randsets=10)
 ## erroneous
 # multiple assignment of different values
 multi = data.frame(a=c('G6PD','G6PD') ,b=c(0,1),d=c(10,8))
-
+go_enrich(multi, test='binomial')
 
 
 ##### n_randsets

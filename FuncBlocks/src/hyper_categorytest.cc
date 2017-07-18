@@ -7,14 +7,13 @@
 #include <sstream>
 #include "go_groups_hyper.h"
 
-// steffi:
+
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//steffi:
-//int main( int argc, char *argv[] )
+
 //[[Rcpp::export]]
-void hyper_category_test(std::string input, std::string output, int cutoff, std::string root, bool silent)
+void hyper_category_test(std::string directory, int cutoff, std::string root, bool silent)
 
 {
 	/*steffi: veraltet: noch argument fuer profile-output: std::string output_profile, aber profile fuer R-package nicht noetig
@@ -28,18 +27,13 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
          * parsing arguments, creating in and outstreams
          ************/
 	// steffi: in R-package wird nur Datei gelesen, und so kann einfach ein "delete" benutzt werden
+	string input = directory + "_randset_out";
 	istream *in ;
 	in = new ifstream( input.c_str() ) ;
-	/*
-	if ( input == "-" ) {
-		in = &cin ;
-	} else {
-		in = new ifstream( argv[1] ) ;
-	}
-	*/
 	if ( ! *in ) {
 		Rcpp::Rcerr << "Cannot open " << input << endl ;
 	}
+	string output = directory + "_category_test_out";
 	ofstream out( output.c_str( )) ;
 	if ( ! out ) {
 		Rcpp::Rcerr << "Cannot open " << output << endl ;
@@ -53,13 +47,12 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	}
 	*/
 
-	string root_go ;
-	{	
-		//steffi:
-		//istringstream ppp( argv[5] ) ;
-		istringstream ppp( root.c_str() ) ;
-		ppp >> root_go ;
-	}
+	//string root_go ; // just use root
+	//{	
+		////istringstream ppp( argv[5] ) ;
+		//istringstream ppp( root.c_str() ) ;
+		//ppp >> root_go ;
+	//}
 
 
 	/*************
@@ -86,7 +79,7 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 	/*************
          * go_groups handles parsing and analysis of dataset and randset lines
          ************/
-	go_groups_hyper gos( groups, detected, changed, root_go, cutoff ) ;
+	go_groups_hyper gos( groups, detected, changed, root, cutoff ) ;
 
 	// returns number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001
 	// for under and over respresentation -> 10 values, also printed to console below
@@ -148,7 +141,6 @@ void hyper_category_test(std::string input, std::string output, int cutoff, std:
 		// Mean number of significant nodes across all randomsets for different p-value cutoffs 0.1, 0.05, 0.01, 0.001, 0.0001; under- and overrep
 		//Rcpp::Rcout << "# sig. groups mean randomsets" << endl ;
 		Rcpp::Rcout << endl << "mean No. of significant groups in randomsets:" << endl ;
-
 		for ( int i = 0 ; i < 10 ; ++i ) 
 			Rcpp::Rcout << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
 		Rcpp::Rcout << endl ;

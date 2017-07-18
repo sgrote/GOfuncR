@@ -14,33 +14,22 @@ using namespace Rcpp;
 //steffi:
 //int main( int argc, char *argv[] )
 //[[Rcpp::export]]
-void wilcox_category_test(std::string input, std::string output, int cut, std::string root, bool silent)
+void wilcox_category_test(std::string directory, int cut, std::string root, bool silent)
 	
 {
-	//steffi: veraltet: noch argument fuer profile-output: std::string output_profile, aber profile fuer R-package nicht noetig
 
-	/*if ( argc != 6 ) {
-		cerr << "Usage " << argv[0] << " randset outfile cutoff GO:ID profile" << endl ;
-		//exit( 1 ) ;
-	}*/
 	/*************
          * parsing arguments, creating in and outstreams
          ************/
 	// steffi: in R-package wird nur Datei gelesen, und so kann einfach ein "delete" benutzt werden
+	string input = directory + "_randset_out";
 	istream *in ;
 	in = new ifstream( input.c_str() ) ;
-	/*
-	if ( input == "-" ) {
-		in = &cin ;
-	} else {
-		in = new ifstream(  argv[1] ) ;
-	}
-	*/
-	//steffi:
 	if ( ! *in ) {
 		Rcpp::Rcerr << "Cannot open " << input << endl ;
 	}
-	//steffi:
+
+	string output = directory + "_category_test_out";
 	ofstream out( output.c_str() ) ;
 	if ( ! out ) {
 		Rcpp::Rcerr << "Cannot open " << output << endl ;
@@ -50,11 +39,11 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 	//ofstream *profile = new ofstream( output_profile.c_str() ) ;
 	//if ( ! *profile ) profile = 0 ;
 
-	string root_go ;
-	{ 
-		istringstream ppp( root.c_str() ) ;
-		ppp >> root_go ;
-	}
+	//string root_go ; // just use root
+	//{ 
+		//istringstream ppp( root.c_str() ) ;
+		//ppp >> root_go ;
+	//}
 
 	/*************
          * start reading from randomset-file  
@@ -87,7 +76,7 @@ void wilcox_category_test(std::string input, std::string output, int cut, std::s
 	/*************
          * go_groups handles parsing and analysis of dataset and randset lines
          ************/
-	go_groups gos( groups, sites, co_genes_per_group, root_go ) ;
+	go_groups gos( groups, sites, co_genes_per_group, root ) ;
 
 	string data ;
 	getline( *in, data ) ; // real data (sums of scores of annotated genes)

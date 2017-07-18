@@ -3,12 +3,7 @@
 #ifndef GO_GRAPH_H
 #define GO_GRAPH_H
 
-// hier auch nochmal... (eiegntlich nicht noetig, aber dann wird die datei erst gar nicht gelesen)
-//ifndef GO_OBJ_H
 #include "go_obj.h"
-//endif
-
-//steffi:
 #include "idmap.h"
 #include <map>
 #include <set>

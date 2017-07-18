@@ -36,7 +36,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 		root_nodes = domains
 	}
-	genes = unique(genes) # also unique rows in dataframe
 	
 	# test-specific arguments
 	if (test=="hyper" | test=="wilcoxon"){
@@ -44,7 +43,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			stop("Please add gene identifiers as names to 'genes' vector.")
 		}
 		# check for multiple assignment for one gene
-		genetab = data.frame(genes, names(genes))
+		genetab = unique(data.frame(genes, names(genes)))
 		multi_genes = sort(unique(genetab[,2][duplicated(genetab[,2])]))
 		if (length(multi_genes) > 0){
 			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
@@ -76,7 +75,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 		if (gene_len == TRUE){
 			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-		}		
+		}
+		genetab = unique(genes)		
 		multi_genes = sort(unique(genetab[,1][duplicated(genetab[,1])]))
 		if (length(multi_genes) > 0){
 			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
@@ -283,10 +283,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			} else {
 				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic", silent)
 			}
-			hyper_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
+			hyper_category_test(directory, 1, root_id, silent)
 		} else if (test == "wilcoxon"){
 			wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
-			wilcox_category_test(paste(directory, "_randset_out",sep=""), paste(directory,"_category_test_out", sep=""), 1, root_id, silent)
+			wilcox_category_test(directory, 1, root_id, silent)
 		} else if (test == "binomial"){
 			binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
 			binom_category_test(directory, 1, root_id, silent)			

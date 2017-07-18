@@ -11,7 +11,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
+#ifndef GO_H
+#define GO_H
 
 
 #include <map>
@@ -57,3 +58,5 @@ class go {
 		map<string,int*> go_map ;
 		vector<int*> go_vec ;
 } ;
+
+#endif

@@ -42,7 +42,7 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-void hyper_randset(std::string all_genes, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent){
+void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent){
 	
 // 1) Build GO-Graph using different files from go_date_termdb-tables.tar.gz
 	
@@ -87,10 +87,9 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 		// gos-object will be used to get one int* per GO and to print the results.
 	go gos ;	
 
-	// maybe rename detected, changed to all_genes and cadidate_genes oder so	
-	std::ifstream in( all_genes.c_str() ) ;
+	std::ifstream in( nodes_per_gene.c_str() ) ;
 	if ( !silent ){
-		Rcpp::Rcout << "Reading all_genes file... " << endl ;
+		Rcpp::Rcout << "Reading nodes_per_gene file... " << endl ;
 	}
 	// gens == genes. This vector is a simple representation of the go tree.
 	// every gene is 1 vector of int*, where the int* represents one go-node.
@@ -145,7 +144,7 @@ void hyper_randset(std::string all_genes, int number_of_randomsets, std::string 
 	int n_background = gens.size();
 	
 	if ( !silent ){
-		Rcpp::Rcout << "Found " << n_background << " usable entrys in " << all_genes << " with " << gos.size() << " GOs" << endl ;
+		Rcpp::Rcout << "Found " << n_background << " usable entrys in " << nodes_per_gene << " with " << gos.size() << " GOs" << endl ;
 	}
 	
 	// write to file randset_out 

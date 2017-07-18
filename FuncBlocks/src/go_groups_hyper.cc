@@ -179,15 +179,15 @@ int* go_groups_hyper::calculate_rand( string &data, ostream *os )
 		pvals_l.insert( prob_left ) ;
 		pvals_r.insert( prob_right ) ;
 
-		if ( os ) {
-			*os << names[i] << "\t" 
-			   << N << "\t"
-			   << n << "\t"
-			   << M << "\t"
-			   << x << "\t"
-			   << prob_left << "\t"
-			   << prob_right << endl ;
-		}
+		//if ( os ) {
+			//*os << names[i] << "\t" 
+			   //<< N << "\t"
+			   //<< n << "\t"
+			   //<< M << "\t"
+			   //<< x << "\t"
+			   //<< prob_left << "\t"
+			   //<< prob_right << endl ;
+		//}
 		// ret array contains number of significant GOs per p-cutoff
 		if ( prob_left < 0.1 ) {
 			ret[0]++ ;
@@ -253,14 +253,12 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 				*it <= data_pvals_r[i] + 1.0e-10 * data_pvals_r[i]) // NEW: add tolerance to account for float inaccuracy 
 					n_r++, it++ ;
 			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
-			os << names[i] << "\t" 
-				<< std::setprecision(17)
-				<< data_pvals_l[i] << "\t"	<< data_pvals_r[i] << "\t" //p-values
-				<< std::setprecision(6)
+			os << std::setprecision(17) << names[i] << "\t"				
+				<< data_pvals_l[i] << "\t" //p-values
+				<< data_pvals_r[i] << "\t"
 				<< static_cast<double>(n_l)/ static_cast<double>(nr_randsets) << "\t" // FWER_under 
 				<< static_cast<double>(n_r)/ static_cast<double>(nr_randsets) << "\t" // FWER_over
-				<< std::setprecision(17)
-				<< n_anno_expected[i] << "\t" << changed_data[i]  //NEW: expected and real number of candi genes
+				<< n_anno_expected[i] << "\t" << changed_data[i]  //NEW: exp and real number of candi genes
 				<< endl;
 				/*steffi:
 				<< (*fdr_q_l)[data_pvals_l[i]] << "\t" 

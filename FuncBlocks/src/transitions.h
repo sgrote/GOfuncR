@@ -11,8 +11,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-
+#ifndef TRANSI_H
+#define TRANSI_H
 
 #include <string>
 #include <set>
@@ -35,3 +35,4 @@ class transitions: public set<string>
 		transitions( string &id, istream &in ) ;
 } ;
 
+#endif

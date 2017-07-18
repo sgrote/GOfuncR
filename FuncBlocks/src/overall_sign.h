@@ -1,6 +1,9 @@
 
 /* vim: set ts=4 tw=80 cindent : */
 
+#ifndef OVERSIGN_H
+#define OVERSIGN_H
+
 #include <cstdlib>
 #include <set>
 #include <vector>
@@ -69,4 +72,4 @@ class overall_significance {
 
 } ;
 
-
+#endif

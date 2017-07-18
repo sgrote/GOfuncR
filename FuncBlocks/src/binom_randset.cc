@@ -1,7 +1,7 @@
 
-#include <time.h>
-#include <cstdlib>
-#include <cstdio> //TODO maybe outcomment those 3 like in hyper_randset
+//#include <time.h>
+//#include <cstdlib>
+//#include <cstdio> 
 
 #include <fstream>
 #include <sstream>
@@ -113,7 +113,7 @@ void binom_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 	/*****************
          * save dataset to randomsetfile
 	 *******************/
-	graph.print_groups( out ) ; // TODO this was a pointer before (*out), check how graph_wilcox was changed
+	graph.print_groups( out ) ;
 	graph.print_ka( out ) ;
 
 	/*****************

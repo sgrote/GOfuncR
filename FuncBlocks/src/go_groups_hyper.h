@@ -1,4 +1,7 @@
 
+#ifndef GO_GROUPS_HYPE_H
+#define GO_GROUPS_HYPE_H
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -64,3 +67,5 @@ class go_groups_hyper {
 		double cutoff ;
 	
 } ;
+
+#endif

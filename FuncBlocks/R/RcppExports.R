@@ -9,8 +9,8 @@ binom_randset <- function(nodes_per_gene, number_of_randomsets, directory, root,
     invisible(.Call('FuncBlocks_binom_randset', PACKAGE = 'FuncBlocks', nodes_per_gene, number_of_randomsets, directory, root, silent))
 }
 
-hyper_category_test <- function(input, output, cutoff, root, silent) {
-    invisible(.Call('FuncBlocks_hyper_category_test', PACKAGE = 'FuncBlocks', input, output, cutoff, root, silent))
+hyper_category_test <- function(directory, cutoff, root, silent) {
+    invisible(.Call('FuncBlocks_hyper_category_test', PACKAGE = 'FuncBlocks', directory, cutoff, root, silent))
 }
 
 hyper_randset <- function(all_genes, number_of_randomsets, directory, root, mod, silent) {
@@ -21,8 +21,8 @@ unlock_environment <- function(env) {
     .Call('FuncBlocks_unlock_environment', PACKAGE = 'FuncBlocks', env)
 }
 
-wilcox_category_test <- function(input, output, cut, root, silent) {
-    invisible(.Call('FuncBlocks_wilcox_category_test', PACKAGE = 'FuncBlocks', input, output, cut, root, silent))
+wilcox_category_test <- function(directory, cut, root, silent) {
+    invisible(.Call('FuncBlocks_wilcox_category_test', PACKAGE = 'FuncBlocks', directory, cut, root, silent))
 }
 
 wilcox_randset <- function(nodes_per_gene, number_of_randomsets, directory, root, silent) {

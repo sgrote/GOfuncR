@@ -257,15 +257,11 @@ void go_groups_binom::print_pvals( int nr_randsets, ostream &os ) {
 			while ( it != smallest_rand_p_h.end() && 
 				*it <= data_pvals_h[i] + 1.0e-10 * data_pvals_h[i]) // NEW: add tolerance to account for float inaccuracy  
 					n_h++, it++ ;
-			os << names[i] << "\t" 
-				<< std::setprecision(17)
+			os << std::setprecision(17) << names[i] << "\t" 				
 				<< data_pvals_c[i] << "\t" //p-values
 				<< data_pvals_h[i] << "\t"
-				//<< std::setprecision(6) // TODO> warum nur 6? auch in hyper und wilcox
-				<< static_cast<double>(n_c)/
-				   static_cast<double>(nr_randsets) << "\t" 
-				<< static_cast<double>(n_h)/
-				   static_cast<double>(nr_randsets) << "\t" 
+				<< static_cast<double>(n_c)/ static_cast<double>(nr_randsets) << "\t"  //FWER high A
+				<< static_cast<double>(n_h)/ static_cast<double>(nr_randsets) << "\t"  //FWER high B
 				// TODO: hier noch was einfuegen so wie expected vs. real?
 				//<< (*fdr_q_c)[data_pvals_c[i]] << "\t" 
 				//<< (*fdr_q_h)[data_pvals_h[i]] << endl ;
