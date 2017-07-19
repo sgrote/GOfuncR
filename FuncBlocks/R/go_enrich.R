@@ -80,16 +80,20 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		multi_genes = sort(unique(genetab[,1][duplicated(genetab[,1])]))
 		if (length(multi_genes) > 0){
 			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
+		}	
+	} else if (test=="contingency"){ # TODO: more checks
+		if (!is.data.frame(genes)){
+			stop("Please provide a data frame with columns [gene, count1A, count2A, count1B, count2B] as input for contingency table test.")
 		}
 	} else { 
-		stop("Not a valid test. Please use 'hyper', 'wilcoxon' or 'binomial'.")
+		stop("Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
 	}
 	
 	#####	2. Prepare for FUNC	
 	
 	# Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
-	directory = tempfile()
-#	dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
+#	directory = tempfile()
+	dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
 
 	# load gene coordinates
 	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
@@ -100,7 +104,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# detect identifier: are genes or genomic regions ('blocks') given as input? # TODO: unsauber mit binom?
 	blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", names(genes)[1]) # TODO: allow more than [0-9XY] as chroms?
 
-	if (blocks){
+	if (blocks){ ## TODO: das ganze Block-Zeug vieleicht auslagern
 		# check that test is hyper
 		if (test != "hyper"){
 			stop("chromosomal regions can only be used with test='hyper'.")
@@ -151,7 +155,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	if (test %in% c("hyper","wilcoxon")){
 		remaining_genes = genes[names(genes) %in% go[,1]] # restrict
 		not_in = unique(names(genes)[!(names(genes) %in% names(remaining_genes))]) # removed	
-	} else if (test=="binomial"){
+	} else if (test %in% c("binomial","contingency")){
 		remaining_genes = genes[genes[,1] %in% go[,1],]
 		not_in = unique(genes[,1][!genes[,1] %in% remaining_genes[,1]]) # removed	
 	}
@@ -186,24 +190,28 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (test=="wilcoxon" & length(remaining_genes) < 2) {
 			stop(paste("Less than 2 genes have annotated GOs.",sep=""))
 		}
-		# TODO: add check for binomial
+		# TODO: add check for binomial, contingency
 	}
 	
 	# subset to input genes (unless test=hyper & no background genes defined)
 	if (test %in% c("hyper", "wilcoxon") && !(test=="hyper" & sum(genes) == length(genes))){
 		go = go[go[,1] %in% names(remaining_genes),] 
-	} else if (test=="binomial"){
+	} else if (test %in% c("binomial","contingency")){
 		go = go[go[,1] %in% remaining_genes[,1],]
 	}
 	
-	
+	# TODO: ist das hier wirklich noetig fuer die input files oder war das nur so im perl-script? gene-GO verbindung wird doch von gene-value getrennt an FUNC uebergeben
 	# add value for genes (1/0 for hyper, scores for wilcox) 
 	# (for hyper-all-bg this adds NA to background genes, doesn't matter, file with all and file with candi-genes needed for func)
 	if (test %in% c("hyper", "wilcoxon")){
 		go$value = genes[match(go[,1], names(genes))]	
-	} else if (test=="binomial"){
-		go = cbind(go, genes[match(go[,1], genes[,1]), 2:3])
+	} else if (test %in% c("binomial","contingency")){
+		go = cbind(go, genes[match(go[,1], genes[,1]), 2:ncol(genes)])
 	}
+	print("GO")
+	print(head(go))
+	print("genes")
+	print(genes)
 
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	if (!silent) message("Write temporary files...")
@@ -237,10 +245,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (test=="hyper"){
 			# subset to test genes
 			infile_data = data.frame(genes = unique(input[input[,3] == 1,1]))
-		} else if (test=="wilcoxon"){
+		} else if (test=="wilcoxon"){ # TODO: das kann man fuer die drei bestimmt auch mit 3:ncol zusa. machen
 			infile_data = unique(input[,c(1,3)])
 		} else if (test=="binomial"){
 			infile_data = unique(input[,c(1,3,4)])
+		} else if (test=="contingency"){
+			infile_data = unique(input[,c(1,3:6)])
 		}
 			
 		# create "root" dataframe (all genes (test and bg) with GO-annotations, file named with root_node_id)
@@ -265,6 +275,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 	
 		# write root_data-files to tmp-directory
+		print(head(infile_data))  # TODO: maybe rename those once and for all!!  gene_values, gene_gos or like in c++ files
+		print(head(root))
 		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_infile-data",sep=""))
 		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_",root_id,sep=""))
 		
@@ -290,8 +302,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		} else if (test == "binomial"){
 			binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
 			binom_category_test(directory, 1, root_id, silent)			
+		} else if (test == "contingency"){
+			binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
+			stop("Only randset")
 		}
-
+		
 		# read Func output
 		groupy = read.table(paste(directory,"_category_test_out",sep=""))
 		# for debugging: save output-files per root-node

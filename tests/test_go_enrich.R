@@ -129,6 +129,17 @@ multi = data.frame(a=c('G6PD','G6PD') ,b=c(0,1),d=c(10,8))
 go_enrich(multi, test='binomial')
 
 
+##### contingency
+#func_2x2contingency needs four values per gene. The order of the values are divergence_synonymous divergence_nonsynonymous diversity_syn diversity_nonsyn.
+set.seed(123)
+genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE', 'CACNG2')
+subs_syn = sample(45:55, length(genes), replace=T)
+subs_non_syn = sample(15:25, length(genes), replace=T)
+vari_syn = sample(25:35, length(genes), replace=T)
+vari_non_syn = sample(0:10, length(genes), replace=T)
+conti = data.frame(genes, subs_syn, subs_non_syn, vari_syn, vari_non_syn)
+conti_res = go_enrich(conti, test='contingency')
+
 ##### n_randsets
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
 genes = rep(1, length(gene_ids))

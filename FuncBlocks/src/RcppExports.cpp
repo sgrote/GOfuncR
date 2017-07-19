@@ -32,6 +32,20 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// conti_randset
+void conti_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, bool silent);
+RcppExport SEXP FuncBlocks_conti_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP silentSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type nodes_per_gene(nodes_per_geneSEXP);
+    Rcpp::traits::input_parameter< int >::type number_of_randomsets(number_of_randomsetsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
+    Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
+    Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
+    conti_randset(nodes_per_gene, number_of_randomsets, directory, root, silent);
+    return R_NilValue;
+END_RCPP
+}
 // hyper_category_test
 void hyper_category_test(std::string directory, int cutoff, std::string root, bool silent);
 RcppExport SEXP FuncBlocks_hyper_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
@@ -46,17 +60,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // hyper_randset
-void hyper_randset(std::string all_genes, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent);
-RcppExport SEXP FuncBlocks_hyper_randset(SEXP all_genesSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP modSEXP, SEXP silentSEXP) {
+void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent);
+RcppExport SEXP FuncBlocks_hyper_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP modSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type all_genes(all_genesSEXP);
+    Rcpp::traits::input_parameter< std::string >::type nodes_per_gene(nodes_per_geneSEXP);
     Rcpp::traits::input_parameter< int >::type number_of_randomsets(number_of_randomsetsSEXP);
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< std::string >::type mod(modSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    hyper_randset(all_genes, number_of_randomsets, directory, root, mod, silent);
+    hyper_randset(nodes_per_gene, number_of_randomsets, directory, root, mod, silent);
     return R_NilValue;
 END_RCPP
 }
