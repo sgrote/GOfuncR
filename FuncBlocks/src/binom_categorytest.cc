@@ -95,7 +95,7 @@ void binom_category_test(std::string directory, int cutoff, std::string root, bo
 		delete[] randdata ;
 		num_randdata++ ;
 	}
-	gos.print_pvals( num_randdata, out ) ;
+	gos.print_pvals( num_randdata, out ) ; //TODO: muesste da kein if(!silent) funktioniert die Option?
 	
 	// write summary to console
 	if (!silent){

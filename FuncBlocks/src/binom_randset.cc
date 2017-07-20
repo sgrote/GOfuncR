@@ -67,8 +67,6 @@ void binom_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 
 
 
-
-
 	/*****************
          * read gene information and annotate to graph
 	 *******************/

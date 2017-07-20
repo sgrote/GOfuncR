@@ -38,16 +38,16 @@ genes_conti::genes_conti( go_graph_conti &graph, istream &annotation, istream &d
 		if ( genemap.find( gene_name ) != genemap.end() ) {
 		
 			double ch_s ;
-			is >> ch_s ;  // chimp synonymous
+			is >> ch_s ;  // substituion chimp->human synonymous
 
 			double ch_ns ;
-			is >> ch_ns ;  // chimp non-synonymous
+			is >> ch_ns ;  // substituion chimp->human non-synonymous
 
 			double hh_s ;
-			is >> hh_s ; // human synonymous
+			is >> hh_s ; // human variable synonymous
 
 			double hh_ns ;
-			is >> hh_ns ; // human non-synonymous
+			is >> hh_ns ; // human variable non-synonymous
 
 			genemap[gene_name]->add( static_cast<int>(ch_s),
 			 			static_cast<int>(ch_ns), 

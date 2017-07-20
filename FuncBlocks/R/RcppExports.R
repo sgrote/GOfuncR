@@ -9,6 +9,10 @@ binom_randset <- function(nodes_per_gene, number_of_randomsets, directory, root,
     invisible(.Call('FuncBlocks_binom_randset', PACKAGE = 'FuncBlocks', nodes_per_gene, number_of_randomsets, directory, root, silent))
 }
 
+conti_category_test <- function(directory, cutoff, root, silent) {
+    invisible(.Call('FuncBlocks_conti_category_test', PACKAGE = 'FuncBlocks', directory, cutoff, root, silent))
+}
+
 conti_randset <- function(nodes_per_gene, number_of_randomsets, directory, root, silent) {
     invisible(.Call('FuncBlocks_conti_randset', PACKAGE = 'FuncBlocks', nodes_per_gene, number_of_randomsets, directory, root, silent))
 }
