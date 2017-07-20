@@ -92,8 +92,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	#####	2. Prepare for FUNC	
 	
 	# Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
-#	directory = tempfile()
-	dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
+	directory = tempfile()
+#	dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
 
 	# load gene coordinates
 	gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
@@ -271,8 +271,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 	
 		# write root_data-files to tmp-directory
-		print(head(infile_data))  # TODO: maybe rename those once and for all!!  gene_values, gene_gos or like in c++ files
-		print(head(root))
+		# TODO: maybe rename those once and for all!!  gene_values, gene_gos or like in c++ files
 		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_infile-data",sep=""))
 		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_",root_id,sep=""))
 		
