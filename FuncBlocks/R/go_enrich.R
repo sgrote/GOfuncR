@@ -208,11 +208,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	} else if (test %in% c("binomial","contingency")){
 		go = cbind(go, genes[match(go[,1], genes[,1]), 2:ncol(genes)])
 	}
-	print("GO")
-	print(head(go))
-	print("genes")
-	print(genes)
-
+	
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	if (!silent) message("Write temporary files...")
 	write.table(term,file=paste(directory, "_term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
@@ -303,8 +299,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
 			binom_category_test(directory, 1, root_id, silent)			
 		} else if (test == "contingency"){
-			binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
-			stop("Only randset")
+			conti_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
+#			stop("Only randset")
+			conti_category_test(directory, 1, root_id, silent)
 		}
 		
 		# read Func output
@@ -343,11 +340,13 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank","ranksum_expected","ranksum_real")
 	} else if (test == "binomial"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A","raw_p_high_B","FWER_high_A","FWER_high_B")
+	} else if (test == "contingency"){
+		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A/B","raw_p_high_C/D","FWER_high_A/B","FWER_high_C/D")
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	if (test %in% c("hyper", "wilcoxon")){
 		remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
-	} else if (test == "binomial"){
+	} else if (test %in% c("binomial", "contingency")){
 		remaining_genes = remaining_genes[mixedorder(remaining_genes[,1]),]
 	}
 	final_output = list(results=out, genes=remaining_genes, ref_genome=ref_genome)

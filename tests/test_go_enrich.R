@@ -131,14 +131,16 @@ go_enrich(multi, test='binomial')
 
 ##### contingency
 #func_2x2contingency needs four values per gene. The order of the values are divergence_synonymous divergence_nonsynonymous diversity_syn diversity_nonsyn.
+require(FuncBlocks)
 set.seed(123)
-genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE', 'CACNG2')
-subs_syn = sample(45:55, length(genes), replace=T)
-subs_non_syn = sample(15:25, length(genes), replace=T)
-vari_syn = sample(25:35, length(genes), replace=T)
-vari_non_syn = sample(0:10, length(genes), replace=T)
-conti = data.frame(genes, subs_syn, subs_non_syn, vari_syn, vari_non_syn)
-conti_res = go_enrich(conti, test='contingency')
+high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+subs_syn = sample(45:55, length(c(high_substi_genes, low_substi_genes)), replace=T)
+subs_non_syn = c(sample(15:25, length(high_substi_genes), replace=T), sample(0:10, length(low_substi_genes)))
+vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace=T)
+vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
+genes = data.frame(genes=c(high_substi_genes, low_substi_genes), vari_syn, vari_non_syn, subs_syn, subs_non_syn)
+conti_res = go_enrich(genes, test='contingency')
 
 ##### n_randsets
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')

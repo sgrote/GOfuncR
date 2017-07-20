@@ -122,7 +122,7 @@ void conti_category_test(std::string directory, int cutoff, std::string root, bo
 		Rcpp::Rcout << endl << endl ;
 	}
 	
-	// TODO: bei den anderen ist das ueber 'write summary to console'	
+	// write outfile	
     gos.print_pvals( num_randdata, out ) ;
 	
 	// steffi: Fuer R-package nicht noetig
@@ -142,6 +142,6 @@ void conti_category_test(std::string directory, int cutoff, std::string root, bo
 		//out << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
 	//out << endl ;	
 	
-	delete in; // TODO: die beiden wurden aus anderen files uebernommen
+	delete in;
 	delete[] realdata;
 }
