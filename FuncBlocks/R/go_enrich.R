@@ -7,14 +7,68 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	
 	#####	1. Check arguments and define parameters
 	
+	## still allow vector as input for hyper and wilcox (like in older versions)
+	if (is.vector(genes)){
+		genes = data.frame(gene=names(genes), score=unname(genes), stringsAsFactors=FALSE)
+	}
+
 	## Check arguments
-	# general
 	if (!silent) message("Checking arguments...")
+
+	# genes
+	if (test=="hyper"){
+		if (!(is.data.frame(genes) && ncol(genes)==2 && is.numeric(genes[,2]))){
+			stop("Please provide a data frame with 2 columns [gene, 0/1] as input for hypergeometric test.")
+		}
+		if (!(all(genes[,2] %in% c(1,0)))){
+			stop("Please provide only 1/0-values in 2nd column of 'genes'-input for hypergeometric test.")
+		}
+		if (sum(genes[,2])==0){
+			stop("Only background genes defined (only 0s in 'genes[,2]'). Please provide candidate genes denoted by 1.")
+		}
+	} else	if (test=="wilcoxon"){
+		if (!(is.data.frame(genes) && ncol(genes)==2  && is.numeric(genes[,2]))){
+			stop("Please provide a data frame with 2 columns [gene, score] as input for wilcoxon rank-sum test.")
+		}
+		if (nrow(genes) < 2){
+			stop("Only one gene provided as input.")
+		}
+		if (gene_len == TRUE){
+			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+		}
+	} else if (test=="binomial"){
+		if (!(is.data.frame(genes) && ncol(genes)==3 && all(sapply(genes,is.numeric) == c(0,1,1)))){
+			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test.")
+		}
+		if (any(c(genes[,2],genes[,3]) != round(c(genes[,2],genes[,3]))) || any(c(genes[,2], genes[,3]) < 0)){
+			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test. count1 and count2 need to be integers >= 0.")
+		}
+		if (gene_len == TRUE){
+			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+		}
+	} else if (test=="contingency"){
+		if (!(is.data.frame(genes) && ncol(genes)==5 && all(sapply(genes,is.numeric) == c(0,1,1,1,1)))){
+			stop("Please provide a data frame with columns [gene, count1A, count2A, count1B, count2B] as input for contingency table test.")
+		}
+		if (any(sapply(genes[,2:5], function(x) x<0))){
+			stop("Please provide non-negative values.")
+		}
+	} else {
+		stop("Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
+	}
+	if (anyNA(genes)){
+		stop("NAs found in 'genes'-input. Please provide finite values only.")
+	}
+	# check for multiple assignment for one gene
+	genes = unique(genes)
+	multi_genes = sort(unique(genes[,1][duplicated(genes[,1])]))
+	if (length(multi_genes) > 0){
+		stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
+	}
+
+	# other arguments
 	if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
 		stop("Please use 'ref_genome=grch37', 'ref_genome=grch38' or 'ref_genome=grcm38'")
-	}
-	if (length(genes)==0){
-		stop("Please enter genes.")
 	}
 	if (length(n_randsets)>1 || !is.numeric(n_randsets) || n_randsets<1){
 		stop("Please define 'n_randsets' as a positive integer.")
@@ -36,58 +90,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		}
 		root_nodes = domains
 	}
-	
-	# test-specific arguments
-	if (test=="hyper" | test=="wilcoxon"){
-		if (length(names(genes))==0){
-			stop("Please add gene identifiers as names to 'genes' vector.")
-		}
-		# check for multiple assignment for one gene
-		genetab = unique(data.frame(genes, names(genes)))
-		multi_genes = sort(unique(genetab[,2][duplicated(genetab[,2])]))
-		if (length(multi_genes) > 0){
-			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
-		}
-	}
-	if (test=="hyper"){
-		if (!all(genes %in% c(0,1))){
-			stop("Not a valid 'genes' argument for hypergeometric test. Please use a vector of 0/1.")	
-		}	
-		if (sum(genes)==0){
-			stop("Only 0 in genes vector. Please enter test genes.")	
-		}
-	} else	if (test=="wilcoxon"){
-		if (!is.numeric(genes)){
-			stop("Not a valid 'genes' argument. Please use a numeric vector.")	
-		}	
-		if (gene_len == TRUE){
-			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-		}
-		if (length(genes) < 2){
-			stop("Only one gene provided as input.")
-		}
-	} else if (test=="binomial"){
-		if (!is.data.frame(genes)){
-			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test.")
-		}
-		if (any(c(genes[,2],genes[,3]) != round(c(genes[,2],genes[,3]))) || any(c(genes[,2], genes[,3]) < 0)){
-			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test. count1 and count2 need to be integers >= 0.")
-		}
-		if (gene_len == TRUE){
-			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-		}
-		genetab = unique(genes)		
-		multi_genes = sort(unique(genetab[,1][duplicated(genetab[,1])]))
-		if (length(multi_genes) > 0){
-			stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
-		}	
-	} else if (test=="contingency"){ # TODO: more checks
-		if (!is.data.frame(genes)){
-			stop("Please provide a data frame with columns [gene, count1A, count2A, count1B, count2B] as input for contingency table test.")
-		}
-	} else { 
-		stop("Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
-	}
+
 	
 	#####	2. Prepare for FUNC	
 	
@@ -101,8 +104,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# load GO-annotation
 	go_anno = get(paste("go_anno_", ref_genome, sep=""))
 	
-	# detect identifier: are genes or genomic regions ('blocks') given as input? # TODO: unsauber mit binom?
-	blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", names(genes)[1]) # TODO: allow more than [0-9XY] as chroms?
+	# detect identifier: are genes or genomic regions ('blocks') given as input?
+	blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", genes[1,1]) # TODO: allow more than [0-9XY] as chroms?
 
 	if (blocks){ ## TODO: das ganze Block-Zeug vieleicht auslagern
 		# check that test is hyper
@@ -110,8 +113,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			stop("chromosomal regions can only be used with test='hyper'.")
 		}
 		# check that background region is specified
-		if (sum(genes) == length(genes)){
-			stop("All values of the 'genes' input are 1. Using chromosomal regions as input requires defining background regions with 0.")
+		if (all(genes[,2]==1)){
+			stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
 		}
 		# warn if gene_len=TRUE, although regions are used
 		if (gene_len == TRUE){
@@ -147,28 +150,28 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	if (!silent) message("get GOs for genes...")
 	# remove obsolete terms
 	term = term[term[,5]==0,]
-	# subset to GOs present in term.txt and flip colums
-	go = go_anno[go_anno[,1] %in% term[,4] & go_anno[,1]!="", 2:1]
-	
-	# check which genes dont have GOs annotated (GOs contained in the ontology)
+	# subset to GOs present in term.txt and flip colums [gene, GO]
+	gene_go = go_anno[go_anno[,1] %in% term[,4] & go_anno[,1]!="", 2:1]
+
+	# subset genes to annotated genes (GOs contained in the ontology)
 	if (!silent) message("Remove invalid genes...")
-	if (test %in% c("hyper","wilcoxon")){
-		remaining_genes = genes[names(genes) %in% go[,1]] # restrict
-		not_in = unique(names(genes)[!(names(genes) %in% names(remaining_genes))]) # removed	
-	} else if (test %in% c("binomial","contingency")){
-		remaining_genes = genes[genes[,1] %in% go[,1],]
-		not_in = unique(genes[,1][!genes[,1] %in% remaining_genes[,1]]) # removed	
-	}
+	gene_values = genes[genes[,1] %in% gene_go[,1],] # restrict
+	not_in = genes[,1][!genes[,1] %in% gene_values[,1]] # removed
 	if (length(not_in) > 0 && !blocks){	# this message is usually too long when blocks are used. 
 		not_in_string = paste(not_in,collapse=", ")
 		warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
 	}
-		
-	# restrict to genes that have coordinates and warn about the rest
+
+	# subset GO-annotations to input genes (unless test=hyper & no background genes defined)
+	if (!(test=="hyper" && all(gene_values[,2]==1))){
+		gene_go = gene_go[gene_go[,1] %in% gene_values[,1],]
+	}
+
+	# subset to genes that have coordinates and warn about the rest
 	if (gene_len){ # only for test==hyper
-		no_coords = unique(names(remaining_genes)[!(names(remaining_genes) %in% gene_coords[,4])]) # removed
+		no_coords = gene_values[,1][!(gene_values[,1] %in% gene_coords[,4])] # removed
 		if (length(no_coords) > 0){
-			remaining_genes = remaining_genes[!(names(remaining_genes) %in% no_coords)] # restrict
+			gene_values = gene_values[!(gene_values[,1] %in% no_coords)] # restrict
 			no_coords_string = paste(no_coords,collapse=", ")
 			warning(paste("No coordinates available for genes: ",no_coords_string,".\n  These genes were not included in the analysis.",sep=""))
 			not_in = c(not_in, no_coords)
@@ -177,38 +180,22 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# after removing genes without expression data or coordinates: are enough genes left?
 	if (length(not_in) > 0){
 		# is any gene in the data? if not, stop.
-		if (length(remaining_genes) == 0) {
+		if (nrow(gene_values) == 0) {
 			stop("No requested genes in data.")
 		}
 		# for 0/1 data: are test genes and background genes in the data (background only if background specified)?
-		if (test=="hyper" & sum(remaining_genes)==0) {
+		if (test=="hyper" && sum(gene_values[,2])==0) {
 			stop("No requested test genes in data.")
 		}
-		if (test=="hyper" & sum(genes)!=length(genes) & sum(remaining_genes)==length(remaining_genes)) {
+		if (test=="hyper" && 0 %in% genes[,2] && all(gene_values[,2]==1)) {
 			stop("No requested background genes in data.")
 		}
-		if (test=="wilcoxon" & length(remaining_genes) < 2) {
+		if (test=="wilcoxon" && nrow(gene_values) < 2) { ## TODO: in general require at least two?
 			stop(paste("Less than 2 genes have annotated GOs.",sep=""))
 		}
 		# TODO: add check for binomial, contingency
 	}
-	
-	# subset to input genes (unless test=hyper & no background genes defined)
-	if (test %in% c("hyper", "wilcoxon") && !(test=="hyper" & sum(genes) == length(genes))){
-		go = go[go[,1] %in% names(remaining_genes),] 
-	} else if (test %in% c("binomial","contingency")){
-		go = go[go[,1] %in% remaining_genes[,1],]
-	}
-	
-	# TODO: ist das hier wirklich noetig fuer die input files oder war das nur so im perl-script? gene-GO verbindung wird doch von gene-value getrennt an FUNC uebergeben
-	# add value for genes (1/0 for hyper, scores for wilcox) 
-	# (for hyper-all-bg this adds NA to background genes, doesn't matter, file with all and file with candi-genes needed for func)
-	if (test %in% c("hyper", "wilcoxon")){
-		go$value = genes[match(go[,1], names(genes))]	
-	} else if (test %in% c("binomial","contingency")){
-		go = cbind(go, genes[match(go[,1], genes[,1]), 2:ncol(genes)])
-	}
-	
+
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
 	if (!silent) message("Write temporary files...")
 	write.table(term,file=paste(directory, "_term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
@@ -226,34 +213,28 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 #		stop("Not all root_nodes present in term.txt")
 #	}
 	
-	out = data.frame()
+	out = list()
 
 	for (r in 1:length(root_nodes)){		
 		root_node = root_nodes[r]
 		root_id = root_node_ids[r]
 		if (!silent) message(paste("\n\nProcessing root node: ", root_node,"...\n", sep=""))
 		
-		# subset the input data to GOs that belong to current root node (col 3 in term.txt is root-node)
-		input = go[term[match(go[,2],term[,4]),3]==root_node,]
+		# subset GO-annotations to nodes that belong to current root node (col 3 in term.txt is root-node)
+		gene_go_root = gene_go[term[match(gene_go[,2],term[,4]),3]==root_node,]
 		
-		# prepare input data ('infile-data' and 'root' like in separate_taxonomies.pl in FUNC)
-		# "infile-data": one column with test genes (hyper) OR genes and associated scores (wilcox) 
-		if (test=="hyper"){
-			# subset to test genes
-			infile_data = data.frame(genes = unique(input[input[,3] == 1,1]))
-		} else if (test=="wilcoxon"){ # TODO: das kann man fuer die drei bestimmt auch mit 3:ncol zusa. machen
-			infile_data = unique(input[,c(1,3)])
-		} else if (test=="binomial"){
-			infile_data = unique(input[,c(1,3,4)])
-		} else if (test=="contingency"){
-			infile_data = unique(input[,c(1,3:6)])
-		}
-			
-		# create "root" dataframe (all genes (test and bg) with GO-annotations, file named with root_node_id)
-		# add gene-coordinates, despite for classic FUNC option 
-		go_string = tapply(input[,2],input[,1],function(x){paste(x,collapse=" ")}) # paste annotations
-		go_string = go_string[mixedorder(names(go_string))]
+		# TODO: skip root-node if no annotations of input genes (at least two for wilcoxon) 
+		# for now leave for testing behaviour 
+
+
+		### prepare input data ('infile-data' and 'root' in c++ scripts)
+
+		# 'root'
+		# gene | (chrom | start | end) | GO1 GO2 GO3
+		go_string = tapply(gene_go_root[,2],gene_go_root[,1],function(x){paste(x,collapse=" ")})
+		go_string = go_string[mixedorder(names(go_string))] # TODO: why order? takes > 1s (wegen consistency in test_values?) # DANN ENTFERNEN
 		gene = as.character(names(go_string))
+		# add gene-coordinates, despite for classic FUNC option 
 		if (blocks || gene_len){
 			# one line per gene: gene | chrom | start | end | GO1 GO2 GO3
 			# add coordinates
@@ -269,9 +250,17 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			# one line per gene: gene | GO1 GO2 GO3
 			root = data.frame(genes=gene, goterms=as.character(go_string))
 		}
+
+		# 'infile-data'
+		# gene | value1 | value2 ...
+		# subset to genes annotated to current root-node
+		infile_data = gene_values[gene_values[,1] %in% root[,1],]
+		# for hyper infile-data is just a column with canidate genes
+		if (test=="hyper"){
+			infile_data = infile_data[infile_data[,2]==1, 1]
+		}
 	
-		# write root_data-files to tmp-directory
-		# TODO: maybe rename those once and for all!!  gene_values, gene_gos or like in c++ files
+		# write input-files to tmp-directory
 		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_infile-data",sep=""))
 		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_",root_id,sep=""))
 		
@@ -290,6 +279,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			} else {
 				hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic", silent)
 			}
+			# category test
 			hyper_category_test(directory, 1, root_id, silent)
 		} else if (test == "wilcoxon"){
 			wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
@@ -321,9 +311,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de.")
 		}
 				
-		out = rbind(out, groupy)
+		out[[r]] = groupy
 	} # end root_nodes
 
+	out = do.call(rbind, out)
 	
 	# add GO-names and sort
 	namen = term[match(out[,1],term[,4]),2:3]
@@ -344,11 +335,16 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	if (test %in% c("hyper", "wilcoxon")){
-		remaining_genes = remaining_genes[mixedorder(names(remaining_genes))]
-	} else if (test %in% c("binomial", "contingency")){
-		remaining_genes = remaining_genes[mixedorder(remaining_genes[,1]),]
+		genes = gene_values[,2]
+		names(genes) = gene_values[,1]
+		gene_values = genes
+		gene_values = gene_values[mixedorder(names(gene_values))]
+	} else if (test %in% c("binomial", "contingency")){ ## TODO: after checking results do df for all
+		# NEW: dataframe
+		gene_values = gene_values[mixedorder(gene_values[,1]),]
 	}
-	final_output = list(results=out, genes=remaining_genes, ref_genome=ref_genome)
+
+	final_output = list(results=out, genes=gene_values, ref_genome=ref_genome)
 	if (!silent) message("\nDone.")
 
 	return(final_output)

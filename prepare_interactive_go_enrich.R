@@ -8,6 +8,7 @@ library(data.table)
 library(gtools)
 load("FuncBlocks/R/sysdata.rda")
 source("FuncBlocks/R/RcppExports.R")
+source("FuncBlocks/R/get_genes_from_regions.R")
 
 
 # parameters
@@ -24,7 +25,12 @@ gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', '
   'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
-genes
+
+# genomic regions
+test="hyper"
+genes = c(1,1, rep(0,6))
+names(genes) = c('8:82000000-83000000', '3:76500000-90500000', '7:1300000-56800000', '7:74900000-148700000',
+ '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
 
 # 2x2 contingency
 test="contingency"

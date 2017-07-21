@@ -11,7 +11,7 @@
 get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	
 	# convert coordinates from 'genes'-names to bed-format 
-	bed = do.call(rbind, strsplit(names(genes), "[:-]"))
+	bed = do.call(rbind, strsplit(genes[,1], "[:-]"))
 #	bed[,1] = substring(bed[,1], 4)  ## if chrom is given as chr21 instead of 21 
 	bed = as.data.frame(bed)
 	bed[,2:3] = apply(bed[,2:3], 2, as.numeric)
@@ -20,13 +20,13 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	# check that start < stop
 	reverse_indi = bed[,2] > bed[,3]
 	if(sum(reverse_indi) > 0){
-		reverse = paste(names(genes)[reverse_indi], collapse=", ")
+		reverse = paste(genes[,1][reverse_indi], collapse=", ")
 		stop(paste("Invalid regions: ", reverse, ".\n  In 'chr:start-stop' start < stop is required.", sep=""))
 	}
 		
 	# split in test and background
-	test_reg = bed[genes==1,]
-	bg_reg = bed[genes==0,]	
+	test_reg = bed[genes[,2]==1,]
+	bg_reg = bed[genes[,2]==0,]	
 	
 	## test that regions are non-overlapping (separately for candidate and background)
 	# candidate
@@ -38,7 +38,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		}	
 	}
 	if (length(overlap_indis) > 0){
-		over = paste(names(genes[genes==1])[overlap_indis], collapse=", ")
+		over = paste(genes[genes[,2]==1,1][overlap_indis], collapse=", ")
 		stop(paste("Candidate regions overlap: ", over, sep=""))
 	}
 	# background
@@ -49,7 +49,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		}	
 	}
 	if (length(overlap_indis) > 0){
-		over = paste(names(genes[genes==0])[overlap_indis], collapse=", ")
+		over = paste(genes[genes[,2]==0,1][overlap_indis], collapse=", ")
 		stop(paste("Background regions overlap: ", over, sep=""))
 	}
 		
@@ -98,16 +98,15 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		stop("Candidate regions do not contain protein-coding genes.")
 	}
 
-	# convert to classic "genes" func-input-vector 
-	gene_names = unique(c(test_genes, bg_genes))
-	genes_vec = rep(0, length(gene_names))
-	names(genes_vec) = gene_names
-	genes_vec[names(genes_vec) %in% test_genes] = 1
+	# convert to classic "genes" func-input-dataframe
+	gene_names = c(test_genes, bg_genes)
+	scores = c(rep(1,length(test_genes)), rep(0,length(bg_genes)))
+	genes_df = unique(data.frame(gene_names, scores))
 
 	# NEW: merge candidate into background regions (single-genes-FUNC also implicitly integrates candidate into background genes to choose from in randomsets)
 	bg_reg = merge_bed(rbind(bg_reg,test_reg))
 	
-	return(list(test_reg, bg_reg, genes_vec))	
+	return(list(test_reg, bg_reg, genes_df))	
 }
 	
 	

@@ -13,8 +13,8 @@ setwd('/r1/people/steffi_grote/R_packages/FuncBlocks_package')
 
 ##### standard parameters
 gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = rep(1, length(gene_ids))
-names(genes) = gene_ids
+scores = rep(1, length(gene_ids))
+genes = data.frame(gene_ids, scores) 
 res = go_enrich(genes)
 head(res[[1]])
 res[[2]] # should not contain QUATSCH1
@@ -23,50 +23,64 @@ res[[2]] # should not contain QUATSCH1
 res = go_enrich(genes[1], n_randsets=100)
 head(res[[1]])
 # one gene without annotation
-res = go_enrich(genes[2])
+res = go_enrich(genes[2,])
 ### erroneous input
 # not 1/0-input
 genes2 = genes
-genes2[3] = 2
+genes2[3,2] = 2
 res = go_enrich(genes2)
 # no genes names
-res = go_enrich(c(1,0,0,1,0))
+res = go_enrich(genes[,2])
 # no gene scores
-res = go_enrich(gene_ids)
+res = go_enrich(genes[,1])
 
 
 
 ##### standard parameters - background defined
 candi_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4')
 bg_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)))
-names(genes) = c(candi_ids, bg_ids)
+scores = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)))
+genes = data.frame(g=c(candi_ids, bg_ids), scores)
 res = go_enrich(genes, n_randsets=100)
 head(res[[1]])
 res[[2]]
 ### corner cases
-# one background gene
-res = go_enrich(genes[1:(length(candi_ids)+1)], n_randsets=100)
+# one background gene (not annotated in all roots)
+onebg = genes[c(1,(length(candi_ids)+1):length(genes)),]
+res = go_enrich(onebg, n_randsets=100)
 head(res[[1]])
 res[[2]]
-# one candidate gene
-res = go_enrich(genes[c(1,(length(candi_ids)+1):length(genes))], n_randsets=100)
+# one candidate gene (not annotated in all roots)
+onecan = onebg
+onecan[,2] = 1*(onecan[,2]==0)
+res = go_enrich(onebg, n_randsets=100)
 head(res[[1]])
 res[[2]]
+### erroneous input
+
+## candidate AND background lack annotations in a specific root?
+# no candidate in mol/biol; no background in mol
+genes = data.frame(a=c("C21orf59","MTUS1"), b=c(1,0))  ## TODO: this should be skipped in next version
+he = go_enrich(genes, n_randset=50) ## AHA: Error in evalq(sys.calls(), <environment>) : Error reading randomsets
+
+
+
 # multiple assignment of same value
-res = go_enrich(genes[c(1,1:length(genes))], n_randsets=10)
+res = go_enrich(genes[c(1,1:length(genes)),], n_randsets=10)
+
+
 ### erroneous input
 # same gene as candidate and background
-names(genes)[1:3] = bg_ids[1:3]
+genes[1:3,1] = bg_ids[1:3]
 res = go_enrich(genes)
 # only background defined
-res = go_enrich(genes[(length(candi_ids)+1):length(genes)])
-
+res = go_enrich(genes[(length(candi_ids)+1):length(genes),])
+# NA in input
 
 ##### wilcoxon
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = sample(1:30, length(gene_ids))
-names(genes) = gene_ids
+scores = sample(1:30, length(gene_ids))
+genes = data.frame(gene_ids, scores)
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 head(go_willi[[1]])
 go_willi[[2]]
@@ -102,7 +116,7 @@ head(go_willi[[1]])
 genes = c(1,2,3)
 names(genes) = c('NCAPG', 'APOL4', 'APOL4')
 go_enrich(genes, test='wilcoxon')
-
+# NA in input
 
 ##### binomial
 set.seed(123)
@@ -127,7 +141,7 @@ multi_ok = go_enrich(genes=data.frame(a='G6PD',b=0,c=10)[c(1,1),], test='binomia
 # multiple assignment of different values
 multi = data.frame(a=c('G6PD','G6PD') ,b=c(0,1),d=c(10,8))
 go_enrich(multi, test='binomial')
-
+# NA in input
 
 ##### contingency
 #func_2x2contingency needs four values per gene. The order of the values are divergence_synonymous divergence_nonsynonymous diversity_syn diversity_nonsyn.
@@ -141,6 +155,11 @@ vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace
 vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
 genes = data.frame(genes=c(high_substi_genes, low_substi_genes), vari_syn, vari_non_syn, subs_syn, subs_non_syn)
 conti_res = go_enrich(genes, test='contingency')
+# NA in input
+
+
+
+
 
 ##### n_randsets
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2')
