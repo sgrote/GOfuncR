@@ -29,8 +29,14 @@ names(genes) = gene_ids
 # genomic regions
 test="hyper"
 genes = c(1,1, rep(0,6))
-names(genes) = c('8:82000000-83000000', '3:76500000-90500000', '7:1300000-56800000', '7:74900000-148700000',
- '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
+names(genes) = c('8:81000000-83000000', '3:76500000-90500000', '7:1300000-56800000', '7:74900000-148700000', '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
+
+
+# wilcoxon
+test="wilcoxon"
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+genes = sample(1:30, length(gene_ids))
+names(genes) = gene_ids
 
 # 2x2 contingency
 test="contingency"

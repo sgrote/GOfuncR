@@ -98,10 +98,10 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 		stop("Candidate regions do not contain protein-coding genes.")
 	}
 
-	# convert to classic "genes" func-input-dataframe
-	gene_names = c(test_genes, bg_genes)
-	scores = c(rep(1,length(test_genes)), rep(0,length(bg_genes)))
-	genes_df = unique(data.frame(gene_names, scores))
+	# convert to classic "genes" func-input-dataframe (and avoid double-assignment of test+bg)
+	gene_names = unique(c(test_genes, bg_genes))
+	genes_df = data.frame(gene_names, score=rep(0, length(gene_names)))
+	genes_df[genes_df$gene_names %in% test_genes, 2] = 1
 
 	# NEW: merge candidate into background regions (single-genes-FUNC also implicitly integrates candidate into background genes to choose from in randomsets)
 	bg_reg = merge_bed(rbind(bg_reg,test_reg))

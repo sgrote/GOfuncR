@@ -259,7 +259,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (test=="hyper"){
 			infile_data = infile_data[infile_data[,2]==1, 1]
 		}
-	
+		## TODO: remove, just to see if wilcox then matches, nahc reihenfolge in gene-root go sortieren
+		if(test == "wilcoxon"){
+			ordere = unique(gene_go_root[,1])
+			infile_data = infile_data[match(ordere, infile_data[,1]),]
+		}
 		# write input-files to tmp-directory
 		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_infile-data",sep=""))
 		write.table(root,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_",root_id,sep=""))
