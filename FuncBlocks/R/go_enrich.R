@@ -107,45 +107,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# detect identifier: are genes or genomic regions ('blocks') given as input?
 	blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", genes[1,1]) # TODO: allow more than [0-9XY] as chroms?
 
-	if (blocks){ ## TODO: das ganze Block-Zeug vieleicht auslagern
-		# check that test is hyper
-		if (test != "hyper"){
-			stop("chromosomal regions can only be used with test='hyper'.")
-		}
-		# check that background region is specified
-		if (all(genes[,2]==1)){
-			stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
-		}
-		# warn if gene_len=TRUE, although regions are used
-		if (gene_len == TRUE){
-			warning("Unused argument: 'gene_len = TRUE'.")
-		}		
-		# convert coords from genes-vector to bed format, SORT, CHECK and extract genes overlapping regions
-		regions = get_genes_from_regions(genes, gene_coords, circ_chrom) # gene_coords from sysdata.rda HGNC
-		test_regions = regions[[1]]		
-		bg_regions = regions[[2]]
-		genes = regions[[3]]
-		
-		# avoid scientific notation in regions (read in c++)
-		test_regions = format(test_regions, scientific=FALSE, trim=TRUE)
-		bg_regions = format(bg_regions, scientific=FALSE, trim=TRUE)
-
-		if (!silent){
-			message("Candidate regions:")
-			print(test_regions)
-			message("Background regions:")
-			print(bg_regions)
-		}
-
-		# write regions to files
-		write.table(test_regions,file=paste(directory, "_test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-		write.table(bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+	# convert genomic regions to single genes (get_genes_from_regions)
+	if (blocks){
+		genes = blocks_to_genes(directory, genes, test, gene_len, gene_coords, circ_chrom, silent)
 	} else {
 		if (circ_chrom == TRUE){
 			# warn if circ_chrom=TRUE, although individual genes are used
 			warning("Unused argument: 'circ_chrom = TRUE'.")
 		}
-	} 	
+	}
 	
 	if (!silent) message("get GOs for genes...")
 	# remove obsolete terms

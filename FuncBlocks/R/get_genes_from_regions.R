@@ -1,14 +1,57 @@
 
+# get genes from genomic regions and return normal genes-input for hypergeometric test
+# write regions to file
+
+blocks_to_genes = function(directory, genes, test, gene_len, gene_coords, circ_chrom, silent){
+	# check that test is hyper
+	if (test != "hyper"){
+		stop("chromosomal regions can only be used with test='hyper'.")
+	}
+	# check that background region is specified
+	if (all(genes[,2]==1)){
+		stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
+	}
+	# warn if gene_len=TRUE, although regions are used
+	if (gene_len == TRUE){
+		warning("Unused argument: 'gene_len = TRUE'.")
+	}
+	# convert coords from genes-vector to bed format, SORT, CHECK and extract genes overlapping regions
+	regions = get_genes_from_regions(genes, gene_coords, circ_chrom) # gene_coords from sysdata.rda HGNC
+	test_regions = regions[[1]]
+	bg_regions = regions[[2]]
+	genes = regions[[3]]
+
+	# avoid scientific notation in regions (read in c++)
+	test_regions = format(test_regions, scientific=FALSE, trim=TRUE)
+	bg_regions = format(bg_regions, scientific=FALSE, trim=TRUE)
+
+	if (!silent){
+		message("Candidate regions:")
+		print(test_regions)
+		message("Background regions:")
+		print(bg_regions)
+	}
+
+	# write regions to files
+	write.table(test_regions,file=paste(directory, "_test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+	write.table(bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+
+	return(genes)
+}
+
+
+
+
 # input: 
-	# 0/1-vector with genomic regions as names (chr:from-to)
+	# dataframe with genomic regions (chr:from-to) and 1/0
 	# gene_coords (bed)
 	# circ_chrom-option T/F
 # output: list with elements
 	# test-regions (bed)
 	# background_regions (merged with test-regions) (bed)
-	# genes-vector ("normal hyper-input" for genes from test-regions) 
+	# genes-vector ("normal hyper-input" for genes from test-regions)
 
-get_genes_from_regions = function(genes, gene_pos, circ_chrom){
+get_genes_from_regions = function(genes, gene_coords, circ_chrom){
 	
 	# convert coordinates from 'genes'-names to bed-format 
 	bed = do.call(rbind, strsplit(genes[,1], "[:-]"))
@@ -80,7 +123,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	# get genes overlapping background-regions
 	bg_genes = c()
 	for (i in 1:nrow(bg_reg)){
-		bg_genes = c(bg_genes, gene_pos[gene_pos[,1]==bg_reg[i,1] & ((gene_pos[,2] >= bg_reg[i,2] & gene_pos[,2] < bg_reg[i,3]) | (gene_pos[,3] >= bg_reg[i,2] & gene_pos[,3] < bg_reg[i,3]) |  (gene_pos[,2] <= bg_reg[i,2] & gene_pos[,3] >= bg_reg[i,3])), 4])		
+		bg_genes = c(bg_genes, gene_coords[gene_coords[,1]==bg_reg[i,1] & ((gene_coords[,2] >= bg_reg[i,2] & gene_coords[,2] < bg_reg[i,3]) | (gene_coords[,3] >= bg_reg[i,2] & gene_coords[,3] < bg_reg[i,3]) |  (gene_coords[,2] <= bg_reg[i,2] & gene_coords[,3] >= bg_reg[i,3])), 4])
 	}
 	# check that bg-region contains genes
 	# (if no bg-genes here, all non-candidate genes would be background in go_enrich -> unwanted)
@@ -91,7 +134,7 @@ get_genes_from_regions = function(genes, gene_pos, circ_chrom){
 	# get genes overlapping test-regions
 	test_genes = c()
 	for (i in 1:nrow(test_reg)){
-		test_genes = c(test_genes, gene_pos[gene_pos[,1]==test_reg[i,1] & ((gene_pos[,2] >= test_reg[i,2] & gene_pos[,2] < test_reg[i,3]) | (gene_pos[,3] >= test_reg[i,2] & gene_pos[,3] < test_reg[i,3]) | (gene_pos[,2] <= test_reg[i,2] & gene_pos[,3] >= test_reg[i,3])), 4])
+		test_genes = c(test_genes, gene_coords[gene_coords[,1]==test_reg[i,1] & ((gene_coords[,2] >= test_reg[i,2] & gene_coords[,2] < test_reg[i,3]) | (gene_coords[,3] >= test_reg[i,2] & gene_coords[,3] < test_reg[i,3]) | (gene_coords[,2] <= test_reg[i,2] & gene_coords[,3] >= test_reg[i,3])), 4])
 	}
 	# check that test-region contains genes
 	if (length(test_genes)==0){
