@@ -22,10 +22,10 @@ go_enrich_values = function(){
 	### restrict domains
 	test_results[["res_molec"]] = go_enrich(genes, n_randsets=20, domains='molecular_function', silent=T)
 	test_results[["res_cell_bio"]] = go_enrich(genes, n_randsets=20, domains=c('biological_process','cellular_component'), silent=T)
-	### mouse
+	### mouse + dataframe
 	gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3', 'Npcd')
-	genes = rep(1, length(gene_ids))
-	names(genes) = gene_ids
+	scores = rep(1, length(gene_ids))
+	genes = data.frame(gene_ids, scores)
 	test_results[["res_mouse"]] = go_enrich(genes, n_randsets=20, ref_genome='grcm38', silent=T)
 
 
@@ -64,10 +64,10 @@ go_enrich_values = function(){
 	# only one score - works, all p and FWER are 1
 	genes[genes==1] = 2
 	test_results[["go_willi5"]] = go_enrich(genes, test='wilcoxon', n_randsets=10, silent=T)
-	# floating point input
+	# floating point input + data.frame
 	gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1')
-	genes = seq(1.1, 1.7, by=0.1)
-	names(genes) = gene_ids
+	scores = seq(1.1, 1.7, by=0.1)
+	genes = data.frame(gene_ids, scores)
 	test_results[["go_willi6"]] = go_enrich(genes, test='wilcoxon', n_randsets=20, silent=T)
 
 
@@ -90,11 +90,11 @@ go_enrich_values = function(){
 	message("genomic_regions...")
 	set.seed(123)
 	genes = c(1,1, rep(0,6))
-	names(genes) = c('8:81000000-83000000', '3:76500000-90500000', '7:1300000-56800000', '7:74900000-148700000',
-	 '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
+	names(genes) = c('8:81000000-83000000', '3:76500000-90500000', '7:1300000-56800000','7:74900000-148700000', '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
 	test_results[["go_region"]] = go_enrich(genes, n_randsets=20, silent=T)
-	### hg20
-	test_results[["go_region_hg20"]] = go_enrich(genes, n_randsets=20, ref_genome='grch38', silent=T)
+	### hg20 + data.frame
+	df_genes = data.frame(a=names(genes), b=unname(genes))  ### TODO: das geht nicht
+	test_results[["go_region_hg20"]] = go_enrich(df_genes, n_randsets=20, ref_genome='grch38', silent=T)
 	### mouse
 	test_results[["go_region_mouse"]] = go_enrich(genes, n_randsets=20, ref_genome='grcm38', silent=T)
 

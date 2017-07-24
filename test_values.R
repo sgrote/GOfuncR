@@ -57,11 +57,21 @@ if (set_values){
 				for (j in 1:length(saved_results[[i]])){
 					equ = all.equal(saved_results[[i]][[j]], test_results[[i]][[j]])
 					if(!(isTRUE(equ))){
+						message(paste("\ntest_results[[",i,"]][[",j,"]] is failing (", names(saved_results[[i]])[j],").",sep=""))
 						print(equ)
 						message(paste("saved_results[[",j,"]]",sep=""))
 						print(head(saved_results[[i]][[j]]))
 						message(paste("test_results[[",j,"]]",sep=""))
 						print(head(test_results[[i]][[j]]))
+						# NEW: check if p-values match, (FWER may change, e.g. by gene order, doesn't matter)
+						if(names(saved_results[[i]])[j] == "results"){
+							ostats = saved_results[[i]][[j]]
+							nstats = test_results[[i]][[j]]
+							message("p-value comparison:")
+							print(all.equal(ostats[,4],nstats[match(ostats[,2], nstats[,2]),4]))
+							print(all.equal(ostats[,5],nstats[match(ostats[,2], nstats[,2]),5]))
+							message("\n")
+						}
 					}
 				}
 			}	

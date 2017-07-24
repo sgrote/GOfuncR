@@ -54,6 +54,7 @@ blocks_to_genes = function(directory, genes, test, gene_len, gene_coords, circ_c
 get_genes_from_regions = function(genes, gene_coords, circ_chrom){
 	
 	# convert coordinates from 'genes'-names to bed-format 
+	genes[,1] = as.character(genes[,1])
 	bed = do.call(rbind, strsplit(genes[,1], "[:-]"))
 #	bed[,1] = substring(bed[,1], 4)  ## if chrom is given as chr21 instead of 21 
 	bed = as.data.frame(bed)

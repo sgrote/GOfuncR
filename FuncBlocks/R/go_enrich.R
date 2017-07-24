@@ -8,6 +8,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	#####	1. Check arguments and define parameters
 	
 	## still allow vector as input for hyper and wilcox (like in older versions)
+	if (!((is.vector(genes) && !is.null(names(genes))) || is.data.frame(genes))){
+		stop("Please provide a data frame as 'genes' input (also named vector is still accepted for hypergeometric or wilcoxon rank-sum test).")
+	}
 	if (is.vector(genes)){
 		genes = data.frame(gene=names(genes), score=unname(genes), stringsAsFactors=FALSE)
 	}
@@ -16,6 +19,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	if (!silent) message("Checking arguments...")
 
 	# genes
+	if (anyNA(genes)){
+		stop("NAs found in 'genes'-input. Please provide finite values only.")
+	}
 	if (test=="hyper"){
 		if (!(is.data.frame(genes) && ncol(genes)==2 && is.numeric(genes[,2]))){
 			stop("Please provide a data frame with 2 columns [gene, 0/1] as input for hypergeometric test.")
@@ -56,9 +62,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	} else {
 		stop("Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
 	}
-	if (anyNA(genes)){
-		stop("NAs found in 'genes'-input. Please provide finite values only.")
-	}
+
 	# check for multiple assignment for one gene
 	genes = unique(genes)
 	multi_genes = sort(unique(genes[,1][duplicated(genes[,1])]))
@@ -202,7 +206,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# 'root'
 		# gene | (chrom | start | end) | GO1 GO2 GO3
 		go_string = tapply(gene_go_root[,2],gene_go_root[,1],function(x){paste(x,collapse=" ")})
-		go_string = go_string[mixedorder(names(go_string))] # TODO: why order? takes > 1s (wegen consistency in test_values?) # DANN ENTFERNEN
 		gene = as.character(names(go_string))
 		# add gene-coordinates, despite for classic FUNC option 
 		if (blocks || gene_len){
@@ -228,11 +231,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# for hyper infile-data is just a column with canidate genes
 		if (test=="hyper"){
 			infile_data = infile_data[infile_data[,2]==1, 1]
-		}
-		## TODO: remove, just to see if wilcox then matches, nahc reihenfolge in gene-root go sortieren
-		if(test == "wilcoxon"){
-			ordere = unique(gene_go_root[,1])
-			infile_data = infile_data[match(ordere, infile_data[,1]),]
 		}
 		# write input-files to tmp-directory
 		write.table(infile_data,sep="\t",quote=FALSE,col.names=FALSE,row.names=FALSE,file=paste(directory,"_infile-data",sep=""))
@@ -263,7 +261,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 			binom_category_test(directory, 1, root_id, silent)			
 		} else if (test == "contingency"){
 			conti_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
-#			stop("Only randset")
 			conti_category_test(directory, 1, root_id, silent)
 		}
 		
@@ -305,18 +302,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	} else if (test == "binomial"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A","raw_p_high_B","FWER_high_A","FWER_high_B")
 	} else if (test == "contingency"){
-		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A/B","raw_p_high_C/D","FWER_high_A/B","FWER_high_C/D")
+		colnames(out)=c("ontology","node_id","node_name","raw_p_high_C/D","raw_p_high_A/B","FWER_high_C/D","FWER_high_A/B")
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
-	if (test %in% c("hyper", "wilcoxon")){
-		genes = gene_values[,2]
-		names(genes) = gene_values[,1]
-		gene_values = genes
-		gene_values = gene_values[mixedorder(names(gene_values))]
-	} else if (test %in% c("binomial", "contingency")){ ## TODO: after checking results do df for all
-		# NEW: dataframe
-		gene_values = gene_values[mixedorder(gene_values[,1]),]
-	}
+	# NEW: dataframe
+	gene_values = gene_values[mixedorder(gene_values[,1]),]
 
 	final_output = list(results=out, genes=gene_values, ref_genome=ref_genome)
 	if (!silent) message("\nDone.")

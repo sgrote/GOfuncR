@@ -50,16 +50,16 @@ int* go_groups_conti::calculate_data( string &data, ostream *os )
 	vector<int> hh_s ;
 	vector<int> hh_ns ;
 	
-	// p-values for (A/B > C/D) and (C/D > A/B)
+	// p-values for (C/D > A/B) and (A/B > C/D)
 	data_pvals_1.resize( names.size() ) ;
 	data_pvals_2.resize( names.size() ) ;
 	
 	while ( is ) {
 		int ch_s_, ch_ns_, hh_s_, hh_ns_ ;
-		is >> ch_s_ ;
-		is >> ch_ns_ ;
-		is >> hh_s_ ;
-		is >> hh_ns_ ;
+		is >> ch_s_ ; // A  // synonymous and non-synonymous are switched in paper (Table 1)
+		is >> ch_ns_ ; // B
+		is >> hh_s_ ; // C
+		is >> hh_ns_ ; // D
 		ch_s.push_back( ch_s_ ) ;
 		ch_ns.push_back( ch_ns_ ) ;
 		hh_s.push_back( hh_s_ ) ;
@@ -82,7 +82,7 @@ int* go_groups_conti::calculate_data( string &data, ostream *os )
 			else p_1 = 1. ;
 		} else if ( hh_s[idx] == 0 ) p_1 = 1. ;	
 		else if ( ch_s[idx] == 0 ) p_1 = fisher_chi2( ch_s[idx], ch_ns[idx], hh_s[idx], hh_ns[idx] ) ;
-		// if (non-syn variable / syn-variable) >= (non-syn substi / syn-substi), then p=1
+		// if (D/C) >= (B/A), then p=1  (= A/B >= C/D)
 		else if ( static_cast<double>(hh_ns[idx])/static_cast<double>(hh_s[idx]) 
                         >= static_cast<double>(ch_ns[idx])/static_cast<double>(ch_s[idx]) ) 
                    p_1 = 1. ;
@@ -96,15 +96,15 @@ int* go_groups_conti::calculate_data( string &data, ostream *os )
 			else p_2 = 1. ;
 		} else if ( ch_s[idx] == 0 ) p_2 = 1. ;	
 		else if ( hh_s[idx] == 0 ) p_2 = fisher_chi2( ch_s[idx], ch_ns[idx], hh_s[idx], hh_ns[idx] ) ;
-		// if (non-syn substitu / syn substitu) >= (non-syn variable / syn variable), then p=1
+		// if (B/A) >= (D/C), then p=1 (= C/D >= A/B)
 		else if ( static_cast<double>(ch_ns[idx])/static_cast<double>(ch_s[idx]) 
                         >= static_cast<double>(hh_ns[idx])/static_cast<double>(hh_s[idx]) ) 
                    p_2 = 1. ;
 		else 
                    p_2 = fisher_chi2( ch_s[idx], ch_ns[idx], hh_s[idx], hh_ns[idx] ) ;
 
-		data_pvals_1[idx] = p_1 ; // (non-syn substitu / syn substitu) > (non-syn variable / syn variable)
-		data_pvals_2[idx] = p_2 ; // (non-syn variable / syn variable) > (non-syn substitu / syn substitu)
+		data_pvals_1[idx] = p_1 ; // (C/D) > (A/B)
+		data_pvals_2[idx] = p_2 ; // (A/B) > (C/D)
 
 		pvals_1.insert( p_1 ) ;
 		pvals_2.insert( p_2 ) ;
