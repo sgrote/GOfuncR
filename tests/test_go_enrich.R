@@ -68,7 +68,10 @@ res[[2]]
 ## candidate AND background lack annotations in a specific root?
 # no candidate in mol/biol; no background in mol
 ungenes = data.frame(a=c("C21orf59","MTUS1"), b=c(1,0))  ## TODO: this should be skipped in next version
-he = go_enrich(ungenes, n_randset=50) ## AHA: Error in evalq(sys.calls(), <environment>) : Error reading randomsets
+he = go_enrich(ungenes, n_randset=50) ## vorher: Error in evalq(sys.calls(), <environment>
+by(he[[1]], he[[1]]$ontology, summary) # all p and FWER = 1 in mole and biol roots
+# when skiping works, test if domain=mol works
+he2 = go_enrich(ungenes, n_randset=50, domains="molecular_function") ## Error aber warning mit "No GO-annotation for molecular function"; reicht
 
 
 ### erroneous input

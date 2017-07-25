@@ -49,6 +49,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (any(c(genes[,2],genes[,3]) != round(c(genes[,2],genes[,3]))) || any(c(genes[,2], genes[,3]) < 0)){
 			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test. count1 and count2 need to be integers >= 0.")
 		}
+		if (test=="binomial" && all(c(gene_values[,2],gene_values[,3]) == 0)) {
+			stop(paste("All input values are 0.",sep=""))
+		}
 		if (gene_len == TRUE){
 			stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
 		}
@@ -164,10 +167,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (test=="hyper" && 0 %in% genes[,2] && all(gene_values[,2]==1)) {
 			stop("No requested background genes in data.")
 		}
-		if (test=="wilcoxon" && nrow(gene_values) < 2) { ## TODO: in general require at least two?
+		# at least two for wilcoxon
+		if (test=="wilcoxon" && nrow(gene_values) < 2) {
 			stop(paste("Less than 2 genes have annotated GOs.",sep=""))
 		}
-		# TODO: add check for binomial, contingency
 	}
 
 	# write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
@@ -197,9 +200,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		# subset GO-annotations to nodes that belong to current root node (col 3 in term.txt is root-node)
 		gene_go_root = gene_go[term[match(gene_go[,2],term[,4]),3]==root_node,]
 		
-		# TODO: skip root-node if no annotations of input genes (at least two for wilcoxon) 
-		# for now leave for testing behaviour 
-
+		# NEW: skip root-node if no annotations of input genes (at least two for wilcoxon) 
+		if (nrow(gene_go_root) == 0 || (test == "wilcoxon" && nrow(gene_go_root) < 2)){
+			warning(paste0("No GO-annotations for root node '", root_node,"'."))
+			message(paste0("\nSkipping root node '", root_node,"'.\n"))
+			next
+		}
 
 		### prepare input data ('infile-data' and 'root' in c++ scripts)
 
