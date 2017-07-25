@@ -49,7 +49,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 		if (any(c(genes[,2],genes[,3]) != round(c(genes[,2],genes[,3]))) || any(c(genes[,2], genes[,3]) < 0)){
 			stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test. count1 and count2 need to be integers >= 0.")
 		}
-		if (test=="binomial" && all(c(gene_values[,2],gene_values[,3]) == 0)) {
+		if (test=="binomial" && all(c(genes[,2],genes[,3]) == 0)) {
 			stop(paste("All input values are 0.",sep=""))
 		}
 		if (gene_len == TRUE){
