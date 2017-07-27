@@ -6,8 +6,11 @@
 
 plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	
-	# TODO roots as input for custom ontologies
-	root_ids = c("GO:0003674","GO:0008150","GO:0005575")
+	# get IDs for root_nodes from res
+	root_names = unique(res[[1]][,1])
+	root_ids = term[match(root_names, term[,2]) ,4] # TODO: allow custom ontology
+	def_root_ids = c("GO:0003674","GO:0005575","GO:0008150") # default root-ids for stable colors
+	# TODO:remove default if onto is input
 
 	### check input
 	# check that res could be go_enrich-output
@@ -16,7 +19,7 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	}
 	# check that it's a hypergeometric test
 	in_genes = res[[2]]
-	if(!(all(in_genes %in% c(1,0)))){
+	if(!(all(in_genes[,2] %in% c(1,0)))){
 		stop("Please use the result of an hypergeometric test performed with go_enrich as input.")
 	}
 	# check that fwer_threshold is numeric
@@ -25,7 +28,7 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	}
 	# check if background is defined
 	bgdef = TRUE
-	if(all(in_genes==1)){
+	if(all(in_genes[,2]==1)){
 		bgdef = FALSE
 	}
 	
@@ -42,14 +45,14 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	}
 	if (bgdef){
 		# background defined: restrict to input genes
-		anno = get_anno_genes(go_ids=go_ids, genes=names(in_genes), ref_genome=res[[3]])
+		anno = get_anno_genes(go_ids=go_ids, genes=in_genes[,1], ref_genome=res[[3]])
 	} else {
 		# background not defined: get all genes annotations
 		anno = get_anno_genes(go_ids=go_ids, ref_genome=res[[3]])
 	}
 	if(is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
 	anno$score = 0
-	anno[anno[,2] %in% names(in_genes[in_genes==1]), "score"] = 1
+	anno[anno[,2] %in% in_genes[in_genes[,2]==1,1], "score"] = 1
 	
 	# keep order of input GO's (which gets messed up in get_anno_genes by *apply)
 	ordere = data.frame(go_ids, rank=1:length(go_ids))
@@ -63,13 +66,13 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	#TODO: allow different root nodes (term has "all" root...,remove that) -> require root nodes-vector as input from user with default values; or use only roots of required GOs? 
 	if (bgdef){
 		# background defined: restrict to input genes
-		root_anno = get_anno_genes(go_ids=root_ids, genes=names(in_genes), ref_genome=res[[3]])
+		root_anno = get_anno_genes(go_ids=root_ids, genes=in_genes[,1], ref_genome=res[[3]])
 	} else {
 		# background not defined: get all genes annotations
 		root_anno = get_anno_genes(go_ids=root_ids, ref_genome=res[[3]])
 	}
 	root_anno$score = 0
-	root_anno[root_anno[,2] %in% names(in_genes[in_genes==1]), "score"] = 1
+	root_anno[root_anno[,2] %in% in_genes[in_genes[,2]==1,1], "score"] = 1
 	
 	### perform fishers exact test for every GO
 	drawn_table = data.frame(do.call(rbind, tapply(anno$score, anno$go_id, function(x) c(sum(x==0),sum(x==1)), simplify=FALSE)))
@@ -117,7 +120,7 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	# pie charts
 	par(mar=c(5.5,4,3,1), bty="l")
 	pie_cols = c("#F15A60","#7BC36A","#599BD3","#F9A75B","#9E67AB","#CE7058","#D77FB4")
-	root_cols = data.frame(root=rownames(urn_table),col=pie_cols[1:nrow(urn_table)],stringsAsFactors=FALSE)
+	root_cols = data.frame(root=def_root_ids,col=pie_cols[1:length(def_root_ids)],stringsAsFactors=FALSE)
 
 	plot(1,xlim=c(0.5,nrow(fish_odds)+0.5), ylim=c(0,1),type="n", main="annotated genes", xlab="", ylab="", xaxt="n", yaxt="n")
 	radi_units = 0.4/log(max(rowSums(fish_odds[,3:4]))+1)
@@ -139,10 +142,10 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 		w = urn_table[i,2]
 		add.pie(z=c(b,w), x=1, y=i, radius=log(b+w+1)*radi_units, labels="", col=c("#737373",root_cols[match(rownames(urn_table)[i],root_cols[,1]),2]))
 	}
-	text(x=1, y=(0.4 + 1:nrow(urn_table)), labels=urn_table$name, col=root_cols[,2], cex=0.8)
-	text(x=1, y=(-0.4 + 1:nrow(urn_table)), labels=paste(urn_table[,2],rowSums(urn_table[,1:2]), sep=" / "), cex=0.8, col=root_cols[,2])
+	text(x=1, y=(0.4 + 1:nrow(urn_table)), labels=urn_table$name, col=root_cols[match(rownames(urn_table),root_cols[,1]),2], cex=0.8)
+	text(x=1, y=(-0.4 + 1:nrow(urn_table)), labels=paste(urn_table[,2],rowSums(urn_table[,1:2]), sep=" / "), cex=0.8, col=root_cols[match(rownames(urn_table),root_cols[,1]),2])
 	
-	par(op) # TODO this throws error??
+	par(op)
 	# TODO: also return p? add significance asterix for fisher-test? - but does not account for multiple testing, # rather FWER-over and under?
 	return(invisible(out))
 }

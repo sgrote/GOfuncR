@@ -1,6 +1,7 @@
 
 library(FuncBlocks)
 
+
 ################## (1) plot_odds_ratio
 
 set.seed(123)
@@ -18,6 +19,11 @@ bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'F
 genes = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
 names(genes) = c(candi_gene_ids, bg_gene_ids)
 go_bg = go_enrich(genes, n_randsets=100)
+## skip one root
+set.seed(123)
+go_bg_skip = go_enrich(genes, n_randsets=100, domains=c('molecular_function', 'cellular_component'))
+go_bg_skip2 = go_enrich(genes, n_randsets=100, domains=c('molecular_function', 'biological_process'))
+go_bg_skip3 = go_enrich(genes, n_randsets=100, domains=c('cellular_component'))
 
 # normal input
 x = plot_odds_ratio(go_res, fwer_threshold=0.02)
@@ -29,13 +35,16 @@ plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:00057
 plot_odds_ratio(go_bg, go_ids=c('GO:0000009', 'GO:0000010', 'GO:0000014')) # no genes annotated
 plot_odds_ratio(go_bg, fwer_threshold=0.001) # no gos with fwer below threshold
 plot_odds_ratio("bla")
-plot_odds_ratio(go_bg, fwer_threshold=2) # all GOs
-# corner case
-plot_odds_ratio(go_bg, go_ids=c('GO:0005623')) # only one GO
-plot_odds_ratio(go_bg, go_ids=c('GO:0000166', 'GO:0000287', 'GO:0000981')) # no candidate annotated
 plot_odds_ratio(go_res, fwer_threshold=-1)
 plot_odds_ratio(go_res, fwer_threshold='bla')
-
+# corner case
+plot_odds_ratio(go_bg, fwer_threshold=2) # all GOs
+plot_odds_ratio(go_bg, go_ids=c('GO:0005623')) # only one GO
+plot_odds_ratio(go_bg, go_ids=c('GO:0000166', 'GO:0000287', 'GO:0000981')) # no candidate annotated
+# skipped root node
+plot_odds_ratio(go_bg_skip, fwer_threshold=0.9) # no biol_process
+plot_odds_ratio(go_bg_skip2, fwer_threshold=0.9) # no cell_comp
+plot_odds_ratio(go_bg_skip3, fwer_threshold=0.9) # no cell_comp
 
 
 ################## (2) plot_scores
@@ -48,20 +57,24 @@ names(genes) = c(high_score_genes, low_score_genes)
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 head(go_willi[[1]])
 go_willi[[2]]
+go_willi_skip = go_enrich(genes, test='wilcoxon', n_randsets=100, domains=c('cellular_component'))
 
 # normal input
 w = plot_scores(go_willi, fwer_threshold=0.21)
 w
 plot_scores(go_willi, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check order-preserve
 plot_scores(go_willi, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
+# corner cases
 plot_scores(go_willi, go_ids=c('GO:0005634')) # only one GO
+plot_scores(go_willi, fwer_threshold=2) # all GOs
 # erroneous input
 plot_scores(go_willi, go_ids=c('GO:0000009', 'GO:0000010', 'GO:0000014')) # no genes annotated
 plot_scores(go_willi, fwer_threshold=0.001) # no gos with fwer below threshold
 plot_scores("bla")
-plot_scores(go_willi, fwer_threshold=2) # all GOs
-plot_scores(go_willi, fwer_threshold=-1) # all GOs
-plot_scores(go_willi, fwer_threshold='bla') # all GOs
+plot_scores(go_willi, fwer_threshold=-1)
+plot_scores(go_willi, fwer_threshold='bla')
+# skipped root node
+plot_scores(go_willi_skip, fwer_threshold=0.9)
 
 # mouse
 set.seed(123)

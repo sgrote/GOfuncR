@@ -6,8 +6,10 @@
 
 plot_scores = function(res, fwer_threshold=0.05, go_ids=NULL){
 	
-	# TODO roots as input for custom ontologies
-	root_ids = c("GO:0003674","GO:0008150","GO:0005575")
+	root_names = unique(res[[1]][,1])
+	root_ids = term[match(root_names, term[,2]) ,4] # TODO: allow custom ontology
+	def_root_ids = c("GO:0003674","GO:0005575","GO:0008150") # default root-ids for stable colors
+	# TODO:remove default if onto is input
 
 	### check input
 	# check that res could be go_enrich-output
@@ -38,20 +40,21 @@ plot_scores = function(res, fwer_threshold=0.05, go_ids=NULL){
 	ordere = data.frame(go_ids, rank=1:length(go_ids))
 	
 	# get annotated genes for GO-IDs
-	anno = get_anno_genes(go_ids=go_ids, genes=names(res[[2]]), ref_genome=res[[3]])
+	in_genes = res[[2]]
+	anno = get_anno_genes(go_ids=go_ids, genes=in_genes[,1], ref_genome=res[[3]])
 	if(is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
-	anno$score = res[[2]][anno$anno_gene]
+	anno$score = in_genes[match(anno$anno_gene, in_genes[,1]), 2]
 	# retain original node order
 	anno = anno[order(ordere[match(anno$go_id, ordere$go_ids),"rank"]),]
 
 	# get annotated genes for the root nodes
-	root_anno = get_anno_genes(go_ids=root_ids, genes=names(res[[2]]), ref_genome=res[[3]])
-	root_anno$score = res[[2]][root_anno$anno_gene]
+	root_anno = get_anno_genes(go_ids=root_ids, genes=in_genes[,1], ref_genome=res[[3]])
+	root_anno$score = in_genes[match(root_anno$anno_gene, in_genes[,1]), 2]
 
 	### Violin Plots
 	# colors (some more for possible future custom root-node number option)
 	pie_cols = c("#F15A60","#7BC36A","#599BD3","#F9A75B","#9E67AB","#CE7058","#D77FB4")
-	root_cols = data.frame(root=sort(root_ids), col=pie_cols[1:length(root_ids)], stringsAsFactors=FALSE)
+	root_cols = data.frame(root=def_root_ids, col=pie_cols[1:length(def_root_ids)], stringsAsFactors=FALSE)
 	# layout
 	layout(matrix(c(1,2),ncol=2), widths=c(5,2))
 	ylim = range(c(anno$score, root_anno$score))
