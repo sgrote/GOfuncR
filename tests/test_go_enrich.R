@@ -144,10 +144,10 @@ go_binom_one = go_enrich(genes[1,], test='binomial', n_randsets=10)
 # 0 counts
 go_binom_z1 = go_enrich(genes=data.frame(a='G6PD',b=0,c=10), test='binomial', n_randsets=10) # geht
 go_binom_z2 = go_enrich(genes=data.frame(a='G6PD',b=10,c=0), test='binomial', n_randsets=10) # geht
-## erroneous
-go_binom_z3 = go_enrich(genes=data.frame(a='G6PD',b=0,c=0), test='binomial', n_randsets=10) # TODO: das geht nicht, check before
-# multiple assignment of different values
+# multiple assignment of same values
 multi_ok = go_enrich(genes=data.frame(a='G6PD',b=0,c=10)[c(1,1),], test='binomial', n_randsets=10)
+## erroneous
+go_binom_z3 = go_enrich(genes=data.frame(a='G6PD',b=0,c=0), test='binomial', n_randsets=10)
 # negative values
 neg_genes = data.frame(gene=c(high_human_genes, low_human_genes), -chimp_counts, -human_counts)
 go_binom = go_enrich(neg_genes, test='binomial', n_randsets=10)
@@ -169,8 +169,8 @@ vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:2
 genes = data.frame(genes=c(high_substi_genes, low_substi_genes), vari_syn, vari_non_syn, subs_syn, subs_non_syn)
 conti_res = go_enrich(genes, test='contingency', n_randset=100)
 ### corner cases
-# only one gene in one root (C21orf59)
-conti_root = go_enrich(genes[nrow(genes),], test='contingency', n_randset=100) ## TODO: check before and skip root-node (now error)
+# only one gene in one root (C21orf59) - skip other root nodes
+conti_root = go_enrich(genes[nrow(genes),], test='contingency', n_randset=100)
 # only one gene
 conti_res1 = go_enrich(genes[3,], test='contingency', n_randset=100)
 # two genes

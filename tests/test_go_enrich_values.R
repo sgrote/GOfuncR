@@ -105,6 +105,31 @@ go_enrich_values = function(){
 	test_results[["go_circ1_hg20"]] = go_enrich(genes[c(1,5,6)], n_randsets=20, circ_chrom=T, ref_genome='grch38', silent=T)
 	# warning about unused chromosomes
 	test_results[["go_circ2"]] = go_enrich(genes[-2], n_randsets=20, circ_chrom=T, silent=T)
+	
+	
+	##### binomial
+	message("binomial...")
+	set.seed(234)
+	high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+	low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+	human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(low_human_genes)))
+	chimp_counts = c(sample(5:15, length(high_human_genes)), sample(20:30, length(low_human_genes)))
+	genes = data.frame(gene=c(high_human_genes, low_human_genes), chimp_counts, human_counts)
+	test_results[["go_binom"]] = go_enrich(genes, test='binomial', n_randsets=50, silent=T)
+	
+	##### contingency
+	set.seed(123)
+	high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+	low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
+	subs_syn = sample(45:55, length(c(high_substi_genes, low_substi_genes)), replace=T)
+	subs_non_syn = c(sample(15:25, length(high_substi_genes), replace=T), sample(0:10, length(low_substi_genes)))
+	vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace=T)
+	vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
+	genes = data.frame(genes=c(high_substi_genes, low_substi_genes), vari_syn, vari_non_syn, subs_syn, subs_non_syn)
+	test_results[["go_conti"]] = go_enrich(genes, test='contingency', n_randset=100, silent=T)
+	# only one gene in one root (C21orf59) - skip other root node
+	test_results[["go_conti_1root"]] = go_enrich(genes[nrow(genes),], test='contingency', n_randset=100, silent=T)
+
 
 	return(test_results)
 }
