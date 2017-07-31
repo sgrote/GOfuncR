@@ -23,6 +23,7 @@ genes_binom::genes_binom( go_graph_binom &graph, istream &annotation, istream &d
 				graph.get_parents( go_name, &parents ) ;
 			}
 			if ( parents.size() > 0 ) {
+				//Rcpp::Rcout << "gene name: " << gene_name << ", parents.size: " << parents.size() << endl;
 				genemap[gene_name] = new gene_binom( gene_name, parents ) ;
 			} else {
 				Rcpp::Rcerr << gene_name << " not mapped.\n" ;

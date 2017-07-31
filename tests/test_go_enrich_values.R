@@ -118,6 +118,7 @@ go_enrich_values = function(){
 	test_results[["go_binom"]] = go_enrich(genes, test='binomial', n_randsets=50, silent=T)
 	
 	##### contingency
+	message("contingency...")
 	set.seed(123)
 	high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 	low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')

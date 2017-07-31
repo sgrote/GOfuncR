@@ -9,6 +9,8 @@
 genes_conti::genes_conti( go_graph_conti &graph, istream &annotation, istream &data ) 
 {
 	//srand( time(NULL) ) ;
+	// annotation = gene | GO1 | GO2 | GO3 ...
+	// go through annotation file, and add genes to all annotated GOs and their parents 
 	string line ;
 	while ( annotation ) {
 		getline( annotation, line ) ;
@@ -23,7 +25,10 @@ genes_conti::genes_conti( go_graph_conti &graph, istream &annotation, istream &d
 				graph.get_parents( go_name, &parents ) ;
 			}
 			if ( parents.size() > 0 ) {
+				//Rcpp::Rcout << "gene name: " << gene_name << ", parents.size: " << parents.size() << endl;
 				genemap[gene_name] = new gene_conti( gene_name, parents ) ;
+			} else {
+				Rcpp::Rcerr << gene_name << " not mapped.\n" ;
 			}
 		}
 	}
