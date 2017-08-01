@@ -308,7 +308,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	} else if (test == "binomial"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A","raw_p_high_B","FWER_high_A","FWER_high_B")
 	} else if (test == "contingency"){
-		colnames(out)=c("ontology","node_id","node_name","raw_p_high_C/D","raw_p_high_A/B","FWER_high_C/D","FWER_high_A/B")
+		colnames(out)=c("ontology","node_id","node_name","raw_p_high_CD","raw_p_high_AB","FWER_high_CD","FWER_high_AB")
 	}
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	# NEW: dataframe
