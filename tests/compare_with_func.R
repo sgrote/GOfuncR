@@ -10,7 +10,7 @@
 	# compare output
 	# run test for one node in R
 	
-	
+
 require(FuncBlocks)
 
 # create temp-directory
@@ -106,26 +106,7 @@ compi(merge_out[,4], merge_out[,9], "FWER_low_rank", "Func", "FuncBlocks")
 compi(merge_out[,5], merge_out[,10], "FWER_high_rank", "Func", "FuncBlocks")
 
 # run test for one node in R
-
-# a) as implemented in Func and FuncBlocks
 stich = func_out_wilcox[func_out_wilcox$node_id=="GO:0008152",]
-ranksum = stich$sum_of_ranks_in_node
-sum_nties = 0
-n = stich$X.genes_in_node
-N = stich$X.genes_outside_node
-C = ranksum - ((n*(n+1))/2)
-z = C - (n*N*0.5)
-sigma = sqrt((n*N/12) * ((n+N+1)-sum_nties / ((n+N)*(N+n-1.))))
-# p low rank
-corr = -0.5
-stich$raw_p_low_ranks
-pnorm( (z-corr) / sigma, 0, 1, 1, 0 )
-# p high rank
-corr = 0.5
-stich$raw_p_high_ranks
-1 - pnorm( (z-corr) / sigma, 0, 1, 1, 0 )
-
-# b) ordinary wilcox test - not exacactly the same (different correction?)
 anno_node = get_anno_genes("GO:0008152", genes=genes_wilcox[,1])
 anno_root = get_anno_genes(get_ids(get_names("GO:0008152")[,3])[,3], genes=genes_wilcox[,1]) 
 anno_root = anno_root[!(anno_root[,2] %in% anno_node[,2]),] # genes outside node; not genes in root
@@ -133,10 +114,10 @@ anno_node$score = genes_wilcox[match(anno_node[,2], genes_wilcox[,1]),2]
 anno_root$score = genes_wilcox[match(anno_root[,2], genes_wilcox[,1]),2]
 # p low rank
 stich$raw_p_low_ranks
-wilcox.test(anno_node$score, anno_root$score, alternative="less")
+wilcox.test(anno_node$score, anno_root$score, alternative="less", exact=FALSE)
 # p high rank
 stich$raw_p_high_ranks
-wilcox.test(anno_node$score, anno_root$score, alternative="greater")
+wilcox.test(anno_node$score, anno_root$score, alternative="greater", exact=FALSE)
 
 
 
