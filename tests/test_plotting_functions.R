@@ -67,14 +67,13 @@ plot_scores(go_willi, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:000573
 # corner cases
 plot_scores(go_willi, go_ids=c('GO:0005634')) # only one GO
 plot_scores(go_willi, fwer_threshold=2) # all GOs
+plot_scores(go_willi_skip, fwer_threshold=0.9) # skipped root node
 # erroneous input
 plot_scores(go_willi, go_ids=c('GO:0000009', 'GO:0000010', 'GO:0000014')) # no genes annotated
 plot_scores(go_willi, fwer_threshold=0.001) # no gos with fwer below threshold
 plot_scores("bla")
 plot_scores(go_willi, fwer_threshold=-1)
 plot_scores(go_willi, fwer_threshold='bla')
-# skipped root node
-plot_scores(go_willi_skip, fwer_threshold=0.9)
 
 # mouse
 set.seed(123)
