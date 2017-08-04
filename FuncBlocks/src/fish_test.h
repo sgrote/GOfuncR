@@ -152,7 +152,7 @@ double chi_square_2x2( int a1, int a2, int b1, int b2 )
 
 // Calculates fisher exact if one value is below 10, otherwise chi_square
 double fisher_chi2( int a1, int a2, int b1, int b2 ) {
-	if ( a1 < 10 || b2 < 10 || b1 < 10 || b2 < 10 ) 
+	if ( a1 < 10 || a2 < 10 || b1 < 10 || b2 < 10 ) 
 		return fishers_exact_2t( a1, a2, b1, b2 ) ;
 	else 
 		return chi_square_2x2( a1, a2, b1, b2 ) ;
