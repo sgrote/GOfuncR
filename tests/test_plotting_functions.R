@@ -84,8 +84,23 @@ names(genes) = c(high_score_genes, low_score_genes)
 go_willi_mus = go_enrich(genes, test='wilcoxon', n_randsets=100, ref_genome='grcm38')
 plot_scores(go_willi_mus, fwer_threshold=0.21)
 
-
-
+#################### (4) contingency
+# 2x2 contingency
+require(FuncBlocks)
+test="contingency"
+set.seed(123)
+high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
+subs_syn = sample(45:55, length(c(high_substi_genes, low_substi_genes)), replace=T)
+subs_non_syn = c(sample(15:25, length(high_substi_genes), replace=T), sample(0:10, length(low_substi_genes)))
+vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace=T)
+vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
+genes = data.frame(genes=c(high_substi_genes, low_substi_genes), vari_syn, vari_non_syn, subs_syn, subs_non_syn)
+go_conti = go_enrich(genes, test=test)
+# plot odds ratio contingency
+plot_odds_ratio_conti(go_conti, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check order-preserve
+plot_odds_ratio_conti(go_conti, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
+plot_odds_ratio_conti(go_conti, fwer_threshold=0.7)
 
 
 
