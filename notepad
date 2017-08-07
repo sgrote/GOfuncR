@@ -104,11 +104,14 @@ Rscript test_values.R
 
 
 # general improvements
+() auto-detect test
 () use digest md5sum instead of saved_results? maybe also store heads or something (andererseits nur 3Mb)
 
 () vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain. Include table with versions of GO-tree and annotations]
-() add to vignette when which test is useful with example (like in func paper)
+() add to vignette when which test is useful with example (like in func paper); also table
 () add 2x2 contingency table figure to vignette
+() make a second vignette for statistics and description of tests
+() show R-command to compute the p-value of a GO (could be copied to or referenced by ABAEnrichment)
 
 () data.table fuer get_anno_genes in 'find child nodes' and 'find genes annotated' dauert sehr lange wenn alle GO-IDs als input (vielleicht aus aba_enrich uebernehmen)
 

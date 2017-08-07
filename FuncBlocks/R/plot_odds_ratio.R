@@ -6,11 +6,6 @@
 
 plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	
-	# get IDs for root_nodes from res
-	root_names = unique(res[[1]][,1])
-	root_ids = term[match(root_names, term[,2]) ,4] # TODO: allow custom ontology
-	def_root_ids = c("GO:0003674","GO:0005575","GO:0008150") # default root-ids for stable colors
-	# TODO:remove default if onto is input
 
 	### check input
 	# check that res could be go_enrich-output
@@ -31,6 +26,11 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	if(all(in_genes[,2]==1)){
 		bgdef = FALSE
 	}
+	# get IDs for root_nodes from res
+	root_names = unique(res[[1]][,1])
+	root_ids = term[match(root_names, term[,2]) ,4] # TODO: allow custom ontology
+	def_root_ids = c("GO:0003674","GO:0005575","GO:0008150") # default root-ids for stable colors
+	# TODO:remove default if onto is input
 	
 	### define GOs and get annotated genes
 	if(is.null(go_ids)){

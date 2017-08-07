@@ -213,7 +213,7 @@ compi(merge_out[,5], merge_out[,10], "FWER_high_C_D", "Func", "FuncBlocks")
 # (two stichs because one of the p-vals is always 1) 
 conti = res_conti[[1]]
 # apparently a chisq-test is performed, and if A/B > C/D chisq p-val is assigned high_A/B, else high_C/D and the other one is set to 1
-# p_high_AD
+# p_high_AB
 stich1 = conti[conti$node_id=="GO:0044422",]
 stich1_anno = get_anno_genes(stich1$node_id, genes=genes_conti[,1])
 stich1_anno = cbind(stich1_anno, genes_conti[match(stich1_anno[,2], genes_conti[,1]),2:5])
@@ -227,9 +227,15 @@ stich2_anno = cbind(stich2_anno, genes_conti[match(stich2_anno[,2], genes_conti[
 conti_tab2 = matrix(colSums(stich2_anno[,3:6]), ncol=2) # matrix is filled col-wise
 chisq.test(conti_tab2, correct=FALSE)
 stich2$raw_p_high_CD
-
-
-
+# one value < 10 ==> fisher's exacat test
+stich3 = conti[conti$node_id=="GO:0000776",]  ## A2 =0 (B im table)
+stich3_anno = get_anno_genes(stich3$node_id, genes=genes_conti[,1])
+stich3_anno = cbind(stich3_anno, genes_conti[match(stich3_anno[,2], genes_conti[,1]),2:5])
+conti_tab3 = matrix(colSums(stich3_anno[,3:6]), ncol=2) # matrix is filled col-wise
+chisq.test(conti_tab3, correct=FALSE)$p.value  ## now Fisher! Was chisquare before bugfix
+fisher.test(conti_tab3)$p.value
+stich3$raw_p_high_AB
+func_out_conti[func_out_conti[,3]=="GO:0000776","raw_p_high_3.4"]  ## TODO alte Version mit bug
 
 
 
