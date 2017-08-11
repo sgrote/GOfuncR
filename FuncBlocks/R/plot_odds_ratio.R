@@ -92,7 +92,7 @@ plot_odds_ratio = function(res, fwer_threshold=0.05, go_ids=NULL){
 	# replace Inf or -Inf CI for plotting
 	inf_go = fish_odds[is.infinite(fish_odds$odds_ratio),"go_id"]
 	if(length(inf_go) > 0){
-		warning(paste("The following GOs have an infinite odds ratio due to no background gene annotation: "), paste(inf_go, collapse=", "), sep="")
+		warning(paste("The following GO-categories have an infinite odds ratio due to no background gene annotation: "), paste(inf_go, collapse=", "), sep="")
 	}
 	zero_go = fish_odds[fish_odds$odds_ratio==0,"go_id"]
 	if(length(zero_go) > 0){

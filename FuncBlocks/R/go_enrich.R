@@ -297,6 +297,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	namen = term[match(out[,1],term[,4]),2:3]
 	out = data.frame(namen[,2],out[,1], namen[,1], out[,2:ncol(out)])
 	out[,1:3] = apply(out[,1:3], 2, as.character)
+	# NEW: switch columns for binomial test high B - then high A to be more consistent
+	if (test == "binomial"){
+		out[,4:7] = out[,c(5,4,7,6)]
+	}
 	# NEW: also sort on FWER_underrep and raw_p_underrep and GO-ID (ties in tail) 
 	out = out[order(out[,7], out[,5], -out[,6], -out[,4], out[,1], out[,2]),] 
 	rownames(out) = 1:nrow(out)
@@ -306,7 +310,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	} else if (test == "wilcoxon"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_low_rank","raw_p_high_rank","FWER_low_rank","FWER_high_rank","ranksum_expected","ranksum_real")
 	} else if (test == "binomial"){
-		colnames(out)=c("ontology","node_id","node_name","raw_p_high_A","raw_p_high_B","FWER_high_A","FWER_high_B")
+		colnames(out)=c("ontology","node_id","node_name","raw_p_high_B","raw_p_high_A","FWER_high_B","FWER_high_A")
 	} else if (test == "contingency"){
 		colnames(out)=c("ontology","node_id","node_name","raw_p_high_CD","raw_p_high_AB","FWER_high_CD","FWER_high_AB")
 	}

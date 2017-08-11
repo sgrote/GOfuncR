@@ -32,12 +32,21 @@ test="hyper"
 genes = c(1,1, rep(0,6))
 names(genes) = c('8:81000000-83000000', '3:76500000-90500000', '7:1300000-56800000', '7:74900000-148700000', '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
 
-
 # wilcoxon
 test="wilcoxon"
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 genes = sample(1:30, length(gene_ids))
 names(genes) = gene_ids
+
+# plot scores
+fwer_threshold=0.26
+go_ids=NULL
+high_score_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+set.seed(123)
+scores = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
+genes_wilcox = data.frame(genes_wilcox=c(high_score_genes, low_score_genes), scores)
+res = go_enrich(genes_wilcox, test='wilcoxon')
 
 # 2x2 contingency
 test="contingency"
@@ -55,20 +64,17 @@ fwer_threshold = 0.7
 go_ids = NULL
 
 
-# plot scores
-fwer_threshold=0.26
-go_ids=NULL
-high_score_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
-low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+# binomial
 set.seed(123)
-scores = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
-genes_wilcox = data.frame(genes_wilcox=c(high_score_genes, low_score_genes), scores)
-res = go_enrich(genes_wilcox, test='wilcoxon')
-
-
-
-
-
+high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(low_human_genes)))
+chimp_counts = c(sample(5:15, length(high_human_genes)), sample(20:30, length(low_human_genes)))
+genes = data.frame(gene=c(high_human_genes, low_human_genes), chimp_counts, human_counts)
+# plot binom
+res = go_enrich(genes, test='binomial', n_randsets=100)
+fwer_threshold = 0.1
+go_ids = NULL
 
 
 
