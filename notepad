@@ -26,11 +26,11 @@ cd /home/steffi_grote/R_packages/FuncBlocks_package
 R CMD build FuncBlocks #--resave-data
 
 # install package
-R CMD INSTALL FuncBlocks_1.2.7.tar.gz
+R CMD INSTALL FuncBlocks_1.2.8.tar.gz
 
 # check package
-R CMD check FuncBlocks_1.2.7.tar.gz
-R CMD BiocCheck FuncBlocks_1.2.7.tar.gz
+R CMD check FuncBlocks_1.2.8.tar.gz
+R CMD BiocCheck FuncBlocks_1.2.8.tar.gz
 # Valgrind for memory leaks (So aehnlich steht das auch in Bioconductor/Developers/Debugging_C++)
 R -d "valgrind -v --tool=memcheck --leak-check=full --track-origins=yes --read-var-info=yes" --no-save < tests/test_valgrind.R
 
@@ -80,30 +80,33 @@ Rscript test_values.R
 (*) preserve input node-order in plot_odds_ratio
 (*) add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 
-# binomial test, contingancy tables (1.3.0)
+# binomial test, contingancy tables (1.2.8; GOfuncR 1.0.0)
 (*) pull func source from github
 (*) add binom randset
 (*) add binom category test
 (*) change "genes" input in general to data-frame?
 (*) contingency
-() testing script to compare results with original Func
-() documentation
-() plotting function for binomial, contingency
+(*) testing script to compare results with original Func
+(*) plotting function for binomial, contingency
 () unify plotting function for all 4 tests (infer test from input?, plot_anno_genes)
+() documentation
+() expected vs. real column in output?
+() rename to GOfuncR
 
-# refinement from Func (1.4.0)
+# refinement from Func (1.1.0)
 () refinement from Func (either use c++ or reimplement in R)
 
-# ontology  stuff (1.5.0)
+# ontology  stuff (1.2.0)
 () print (on load?), return or attribute(!) version of ontology, annotations, (gene-coords for gene_len and regions)
 () print ontology, annotations versions in get_anno_genes (or as attribute?)
 () allow user-defined term-tables (GO-graph) (-> roots named explicitly or infer from term[,3]?)
 () allow user-defined GO-annotations
 () allow user-defined gene_coordinates (?)
-() update-functions for the previous 3? (biomaRt, ensembldb packages?)
-
+() check common methods/classesBioc-devel Digest, Vol 161, Issue 11)
+() update-functions for the previous 3? (biomaRt, ensembldb packages)
 
 # general improvements
+() empirical p-value? (any other category that has clustered genes might screw it)
 () auto-detect test
 () use digest md5sum instead of saved_results? maybe also store heads or something (andererseits nur 3Mb)
 
