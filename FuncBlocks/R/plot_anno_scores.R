@@ -50,38 +50,35 @@ plot_anno_scores = function(res, go_ids){
 	# get annotation for go_ids and root-nodes
 	if (bgdef){
 		# background defined: restrict to input genes
-		anno = get_anno_genes(go_ids=go_ids, genes=in_genes[,1], ref_genome=res[[3]])
-		root_anno = get_anno_genes(go_ids=root_ids, genes=in_genes[,1], ref_genome=res[[3]])
+		anno = get_anno_genes(go_id=go_ids, genes=in_genes[,1], ref_genome=res[[3]])
+		root_anno = get_anno_genes(go_id=root_ids, genes=in_genes[,1], ref_genome=res[[3]])
 	} else {
 		# background not defined: get all genes annotations
-		anno = get_anno_genes(go_ids=go_ids, ref_genome=res[[3]])
-		root_anno = get_anno_genes(go_ids=root_ids, ref_genome=res[[3]])
+		anno = get_anno_genes(go_id=go_ids, ref_genome=res[[3]])
+		root_anno = get_anno_genes(go_id=root_ids, ref_genome=res[[3]])
 	}
 	if (is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
 	
 	if (test != "wilcoxon"){
 		# add scores to nodes and root-nodes
-		aggrego = cbind(anno, in_genes[match(anno[,2], in_genes[,1]), 2:ncol(in_genes)])
-		root_aggrego = cbind(root_anno, in_genes[match(root_anno[,2], in_genes[,1]), 2:ncol(in_genes)])
+		anno_scores = cbind(anno, in_genes[match(anno[,2], in_genes[,1]), 2:ncol(in_genes)])
+		root_anno_scores = cbind(root_anno, in_genes[match(root_anno[,2], in_genes[,1]), 2:ncol(in_genes)])
 		if (!bgdef){
-			aggrego[is.na(aggrego[,3]), 3] = 0 # default 0 for hyper
-			root_aggrego[is.na(root_aggrego[,3]), 3] = 0
+			anno_scores[is.na(anno_scores[,3]), 3] = 0 # default 0 for hyper
+			root_anno_scores[is.na(root_anno_scores[,3]), 3] = 0
 		}
 		# aggregate scores in nodes and root-nodes
-		if (test == "hyper"){
-			aggrego = aggregate(aggrego[,3], list(go_id=aggrego[,1]), table)
-			aggrego = data.frame(go_ids = aggrego[,1], unlist(aggrego[,2]))
-			root_aggrego = aggregate(root_aggrego[,3], list(go_id=root_aggrego[,1]), table)
-			root_aggrego = data.frame(go_ids = root_aggrego[,1], unlist(root_aggrego[,2]))
-		} else {
-			aggrego = aggregate(aggrego[,3:ncol(aggrego)], list(go_id=aggrego[,1]), sum)
-			root_aggrego = aggregate(root_aggrego[,3:ncol(root_aggrego)], list(go_id=root_aggrego[,1]), sum)
+		if (test == "hyper"){ 
+			# counts of 1 and 0 genes in a node
+			aggrego = tapply(anno_scores[,3], anno_scores[,1], function(x) c(sum(x), length(x)-sum(x)))
+			aggrego = data.frame(go_id = names(aggrego), do.call(rbind, aggrego))
+			root_aggrego = tapply(root_anno_scores[,3], root_anno_scores[,1], function(x) c(sum(x), length(x)-sum(x)))
+			root_aggrego = data.frame(go_id = names(root_aggrego), do.call(rbind, root_aggrego))
+		} else { 
+			# sums of scores in a node
+			aggrego = aggregate(anno_scores[,3:ncol(anno_scores)], list(go_id=anno_scores[,1]), sum)
+			root_aggrego = aggregate(root_anno_scores[,3:ncol(root_anno_scores)], list(go_id=root_anno_scores[,1]), sum)
 		}
-		print(aggrego)
-		print(str(aggrego))
-		print(root_aggrego)
-		print(str(root_aggrego))
-		
 		# add colors and root_node_name
 		root_aggrego$root_name = get_names(root_aggrego[,1])[,2]
 		root_aggrego$root_col = root_cols[match(root_aggrego[,1], root_cols[,1]), 2]
@@ -90,6 +87,10 @@ plot_anno_scores = function(res, go_ids){
 		aggrego$root_id = root_names[match(matched_root_name, root_names[,2]), 4]
 		aggrego = cbind(aggrego, root_aggrego[match(aggrego$root_id, root_aggrego[,1]), 2:ncol(root_aggrego)])
 	}
+	# get original order
+	aggrego = aggrego[order(ordere[match(aggrego$go_id, ordere$go_ids), 2]),]
+	rownames(aggrego) = 1:nrow(aggrego)
+	
 	# plot and get stats returned
 	if (test == "hyper"){
 		stats = plot_hyper(aggrego, root_aggrego)
