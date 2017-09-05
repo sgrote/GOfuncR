@@ -19,9 +19,9 @@ plot_anno_scores = function(res, go_ids){
 		} else {
 			test = "wilcoxon"
 		}
-	} else if(ncol(in_genes) == 4){
+	} else if(ncol(in_genes) == 3){
 		test = "binomial"
-	} else if(ncol(in_genes) == 6){
+	} else if(ncol(in_genes) == 5){
 		test = "contingency"
 	} else {
 		stop("Identification of test failed.")
@@ -94,8 +94,9 @@ plot_anno_scores = function(res, go_ids){
 	# plot and get stats returned
 	if (test == "hyper"){
 		stats = plot_hyper(aggrego, root_aggrego)
+	} else if (test == "binomial"){
+		stats = plot_binomial(aggrego, root_aggrego)
 	}
-	
 	
 	# wilcoxon:
 		

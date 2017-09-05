@@ -106,9 +106,23 @@ human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(lo
 chimp_counts = c(sample(5:15, length(high_human_genes)), sample(20:30, length(low_human_genes)))
 genes = data.frame(gene=c(high_human_genes, low_human_genes), chimp_counts, human_counts)
 go_binom = go_enrich(genes, test='binomial', n_randsets=100)
+go_binom_skip = go_enrich(genes, test='binomial', n_randsets=100, domains=c('molecular_function', 'cellular_component'))
+go_binom_skip2 = go_enrich(genes, test='binomial', n_randsets=100, domains=c('molecular_function', 'biological_process'))
+go_binom_skip3 = go_enrich(genes, test='binomial', n_randsets=100, domains=c('cellular_component'))
+### new
+b = plot_anno_scores(go_binom, go_ids = head(go_binom[[1]])$node_id)
+b
+plot_anno_scores(go_binom, go_ids = tail(go_binom[[1]])$node_id)
+plot_anno_scores(go_binom_skip, go_ids = head(go_binom_skip[[1]])$node_id[1:5])
+plot_anno_scores(go_binom_skip2, go_ids = head(go_binom_skip2[[1]])$node_id[1:3])
+plot_anno_scores(go_binom_skip3, go_ids = head(go_binom_skip3[[1]])$node_id[4]) # only one node
+## old
 b = plot_binom(go_binom, go_ids = head(go_binom[[1]])$node_id)
 b
 plot_binom(go_binom, go_ids = tail(go_binom[[1]])$node_id)
+
+
+
 
 #################### (4) contingency
 # 2x2 contingency
