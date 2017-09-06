@@ -96,6 +96,8 @@ plot_anno_scores = function(res, go_ids){
 		stats = plot_hyper(aggrego, root_aggrego)
 	} else if (test == "binomial"){
 		stats = plot_binomial(aggrego, root_aggrego)
+	} else if (test == "contingency"){
+		stats = plot_conti(aggrego) # TODO, maybe avoid root_aggrego for contingency
 	}
 	
 	# wilcoxon:

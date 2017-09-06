@@ -137,8 +137,13 @@ vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace
 vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
 genes = data.frame(genes=c(high_substi_genes, low_substi_genes), vari_syn, vari_non_syn, subs_syn, subs_non_syn)
 go_conti = go_enrich(genes, test=test)
-# plot odds ratio contingency
-x = plot_odds_ratio_conti(go_conti, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check order-preserve
+
+## new
+x = plot_anno_scores(go_conti, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
+x
+
+# old
+x = plot_odds_ratio_conti(go_conti, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
 x
 plot_odds_ratio_conti(go_conti, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
 plot_odds_ratio_conti(go_conti, fwer_threshold=0.7)
