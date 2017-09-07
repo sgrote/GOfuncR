@@ -71,17 +71,19 @@ low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1'
 genes = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
 names(genes) = c(high_score_genes, low_score_genes)
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
-#head(go_willi[[1]])
-#go_willi[[2]]
-#go_willi_skip = go_enrich(genes, test='wilcoxon', n_randsets=100, domains=c('cellular_component'))
+head(go_willi[[1]])
+go_willi[[2]]
+go_willi_skip = go_enrich(genes, test='wilcoxon', n_randsets=100, domains=c('cellular_component'))
 
-# normal input
+# new normal input
 w = plot_anno_scores(go_willi, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check order-preserve
 w
+o = plot_scores(go_willi, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
+o
 plot_anno_scores(go_willi, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
 # corner cases
 plot_anno_scores(go_willi, go_ids=c('GO:0005634')) # only one GO
-plot_anno_scores(go_willi_skip, fwer_threshold=0.9) # skipped root node
+plot_anno_scores(go_willi_skip, go_ids=go_willi_skip[[1]][1:5,2]) # skipped root node
 # erroneous input
 plot_anno_scores(go_willi, go_ids=c('GO:0000009', 'GO:0000010', 'GO:0000014')) # no genes annotated
 plot_anno_scores("bla")

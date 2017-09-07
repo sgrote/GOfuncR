@@ -21,10 +21,10 @@ plot_wilcox = function(anno_scores, root_anno_scores, root_info){
 	op = par(no.readonly = TRUE) 
 	# plot GO-categories
 	par(mar=c(6.5,4,4,2), bty="l") #, bty="n") # mar default=c(5, 4, 4, 2)
-	violin(anno_scores, root_info, node_to_root, ylim)
+	violine(anno_scores, root_info, node_to_root, ylim)
 	# plot root nodes
 	par(mar=c(6.5,1,4,2), bty="l")
-	violin(root_anno_scores, root_info, node_to_root, ylim, root=TRUE)
+	violine(root_anno_scores, root_info, node_to_root, ylim, root=TRUE)
 	par(op) 
 
 	out = list(node_anno=anno_scores, root_anno=root_anno_scores, node_to_root=node_to_root)
@@ -34,7 +34,7 @@ plot_wilcox = function(anno_scores, root_anno_scores, root_info){
 
 
 ## plot multiple violins side by side
-violin = function(plotty, root_info, node_to_root, ylim, root=FALSE){
+violine = function(plotty, root_info, node_to_root, ylim, root=FALSE){
 	# find root-node for every GO and add median and color (gos=[node, root] for every node to plot)
 	if (root){
 		gos = data.frame(unique(plotty[,1]), unique(plotty[,1]))
@@ -71,7 +71,7 @@ violin = function(plotty, root_info, node_to_root, ylim, root=FALSE){
 		if (length(scores)==1) {
 			points(x=i, y=scores, col=root_info[i,"root_col"], pch=16, cex=1.5)
 		} else {
-			vioplot(scores, at=i, col=root_info[i,"col"], add=TRUE)
+			vioplot(scores, at=i, col=root_info[i,"root_col"], add=TRUE)
 		}
 #		points(i+runif(length(scores),-0.15, 0.15), scores)
 	}
