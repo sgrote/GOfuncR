@@ -35,7 +35,7 @@ plot_binomial = function(aggrego, root_aggrego){
 	## pie charts
 	par(mar=c(5.5,4,3,1), bty="l")
 
-	plot(1,xlim=c(0.5,nrow(binom)+0.5), ylim=c(0,1),type="n", main="annotated scores", xlab="", ylab="", xaxt="n", yaxt="n")
+	plot(1,xlim=c(0.5,nrow(binom)+0.5), ylim=c(0,1),type="n", main="proportion of A", xlab="", ylab="", xaxt="n", yaxt="n")
 	radi_units = 0.4/log(max(rowSums(binom[,2:3]))+1)
 	for(i in 1:nrow(binom)){
 		a = binom[i,2]
@@ -48,7 +48,7 @@ plot_binomial = function(aggrego, root_aggrego){
 	
 	# pie charts for root nodes
 	par(mar=c(5.5,1,3,1), bty="l")
-	plot(1,xlim=c(-0.3,2), ylim=c(0.5,3.5),type="n", main="annotated genes\nroot nodes", xlab="", ylab="", xaxt="n", yaxt="n", yaxs="i")
+	plot(1,xlim=c(-0.3,2), ylim=c(0.5,3.5),type="n", main="proportion of A\nroot nodes", xlab="", ylab="", xaxt="n", yaxt="n", yaxs="i")
 	radi_units = 0.3/log(max(rowSums(root_aggrego[,2:3]))+1)
 	for(i in 1:nrow(root_aggrego)){
 		a = root_aggrego[i,2]

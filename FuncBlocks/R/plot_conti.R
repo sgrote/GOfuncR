@@ -11,7 +11,6 @@ plot_conti = function(aggrego){
 	aggrego = aggrego[,1:5] # TODO: maybe avoid adding root-info in plot_anno_scores in the first place?
 	
 	### perform fishers exact test for every GO
-	print(aggrego)
 	fish_odds = data.frame(aggrego, t(apply(aggrego, 1, fisher_conti)))
 	colnames(fish_odds)[c(2:9)] = c("A","B","C","D","odds_ratio","ci95_low","ci95_high","p")
 	out = fish_odds

@@ -43,7 +43,7 @@ plot_anno_scores = function(res, go_ids){
 		genes = in_genes[,1]
 	}
 	
-	# get annotation for nodes
+	### get annotation for nodes
 	anno = get_anno_genes(go_id=go_ids, genes=genes, ref_genome=res[[3]])
 	if (is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
 	# add scores to nodes
@@ -61,8 +61,9 @@ plot_anno_scores = function(res, go_ids){
 			anno_scores = aggregate(anno_scores[,3:ncol(anno_scores)], list(go_id=anno_scores[,1]), sum)
 		}
 	}
-	
-	# get annotation for root nodes	(conti independent of root nodes)
+
+
+	### get annotation for root nodes	(conti independent of root nodes)
 	if (test != "contingency"){
 		
 		# get IDs for root_nodes
@@ -86,17 +87,20 @@ plot_anno_scores = function(res, go_ids){
 				# sums of scores in a node (binom + conti)
 				root_anno_scores = aggregate(root_anno_scores[,3:ncol(root_anno_scores)], list(go_id=root_anno_scores[,1]), sum)
 			}
+			# add colors and root_node_name
+			root_anno_scores$root_name = get_names(root_anno_scores[,1])[,2]
+			root_anno_scores$root_col = root_cols[match(root_anno_scores[,1], root_cols[,1]), 2]
+			# merge nodes with root node info
+			matched_root_name = get_names(anno_scores[,1])[,3] # get names
+			anno_scores$root_id = root_names[match(matched_root_name, root_names[,2]), 4]
+			anno_scores = cbind(anno_scores, root_anno_scores[match(anno_scores$root_id, root_anno_scores[,1]), 2:ncol(root_anno_scores)])
+		} else { 
+			# for wilcox leave unaggregated version but create table with median, name, col
+			root_info = aggregate(root_anno_scores[,3], list(go_id=root_anno_scores[,1]), median)
+			root_info$root_name = get_names(root_info[,1])[,2]
+			root_info$root_col = root_cols[match(root_info[,1], root_cols[,1]), 2]
 		}
-		
-		# add colors and root_node_name
-		root_anno_scores$root_name = get_names(root_anno_scores[,1])[,2]
-		root_anno_scores$root_col = root_cols[match(root_anno_scores[,1], root_cols[,1]), 2]
-		# merge nodes with root node info
-		matched_root_name = get_names(anno_scores[,1])[,3] # get names
-		anno_scores$root_id = root_names[match(matched_root_name, root_names[,2]), 4]
-		anno_scores = cbind(anno_scores, root_anno_scores[match(anno_scores$root_id, root_anno_scores[,1]), 2:ncol(root_anno_scores)])
 	}
-
 	
 	# recover original order (aggregate and get_anno_genes sorts output alphabetically)
 	anno_scores = anno_scores[order(ordere[match(anno_scores$go_id, ordere$go_ids), 2]),]
@@ -108,20 +112,11 @@ plot_anno_scores = function(res, go_ids){
 	} else if (test == "binomial"){
 		stats = plot_binomial(anno_scores, root_anno_scores)
 	} else if (test == "contingency"){
-		stats = plot_conti(anno_scores) # TODO, maybe avoid root_anno_scores for contingency
+		stats = plot_conti(anno_scores)
+	} else if (test == "wilcoxon"){
+		stats = plot_wilcox(anno_scores, root_anno_scores, root_info)
 	}
 	
-	# wilcoxon:
-		
-		# table root_info (go_id -> node-id)
-		# (only test where scores are not collapsed, would be too redundant to have everything in one table) 
-	
-		# create output with list of 3 tables(node-anno, root-anno, node->root-mapping)
-		
-		# add colors and root_node_name
-	
-	
-	# remove unused columns for output (maybe add GO-name, useful also because plot just has IDs)
 	return(invisible(stats))
 }
 	
