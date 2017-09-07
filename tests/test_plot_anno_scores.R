@@ -70,7 +70,7 @@ pdf("test_plot_anno_scores.pdf", width=10)
 	genes = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score_genes)))
 	names(genes) = c(high_score_genes, low_score_genes)
 	go_willi_mus = go_enrich(genes, test='wilcoxon', n_randsets=20, ref_genome='grcm38', silent=T)
-	plot_scores(go_willi_mus, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check mouse genome is used in get_anno_genes (prints to console 'using ref-genome...')
+	plot_anno_scores(go_willi_mus, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765')) # check mouse genome is used in get_anno_genes (prints to console 'using ref-genome...')
 
 
 	####################  (3) binomial
@@ -112,7 +112,7 @@ pdf("test_plot_anno_scores.pdf", width=10)
 	x = plot_anno_scores(go_conti, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
 	print(x)
 	# only one node
-	plot_odds_ratio_conti(go_conti, go_ids=c('GO:0072025'))
+	plot_anno_scores(go_conti, go_ids=c('GO:0072025'))
 
 
 dev.off()
