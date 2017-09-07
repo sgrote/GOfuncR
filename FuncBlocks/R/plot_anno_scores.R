@@ -11,6 +11,11 @@ plot_anno_scores = function(res, go_ids){
 	if (!(is.list(res) && all(names(res) == c("results","genes","ref_genome")))){
 		stop("Please use an object returned from go_enrich as input (list with 3 elements).")
 	}
+	# check that all go_ids are in res
+	if (!all(go_ids %in% res[[1]][,2])){
+		inval = go_ids[!go_ids %in% res[[1]][,2]]
+		stop(paste("go_ids not present in res (go_enrich result):", paste(inval,collapse=", ")))
+	}
 	# infer test
 	in_genes = res[[2]]
 	if (ncol(in_genes) == 2){
