@@ -3,3 +3,4 @@
 *tar.gz
 .DS_Store
 FuncBlocks.Rcheck/
+tests/test_plot_anno_scores.pdf
