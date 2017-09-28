@@ -1,5 +1,5 @@
 
-cd /r1/people/steffi_grote/R_packages/FuncBlocks_package
+cd /r1/people/steffi_grote/R_packages/GOfuncR_package
 
 # termtables downloaded from (last modified: 25-Apr-2017)
 http://archive.geneontology.org/latest-termdb/
@@ -75,7 +75,7 @@ unique results only: yes
 # (R-objects saved in /R/sysdata.rda can be used in the package's R functions without any explicit loading)
 # in R: 
 rm(list=ls())
-setwd("/r1/people/steffi_grote/R_packages/FuncBlocks_package")
+setwd("/r1/people/steffi_grote/R_packages/GOfuncR_package")
 
 
 ##### ontology
@@ -149,6 +149,6 @@ gene_coords_grcm38 = gene_coords_grcm38[order(gene_coords_grcm38$chr,gene_coords
 gene_coords_grcm38 = gene_coords_grcm38[gene_coords_grcm38$hgnc_symbol %in% go_anno_grcm38[,2],]
 nrow(gene_coords_grcm38)
 
-save(list=ls(),file="./FuncBlocks/R/sysdata.rda")
+save(list=ls(),file="./GOfuncR/R/sysdata.rda")
 
 

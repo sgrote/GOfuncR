@@ -131,7 +131,7 @@ go_region[[2]][go_region[[2]]==1]
 
 
 # For more examples please refer to 
-# /home/steffi_grote/R_packages/FuncBlocks_usage_examples.R.
+# /home/steffi_grote/R_packages/GOfuncR_usage_examples.R.
 
 }
 

@@ -1,8 +1,8 @@
 
 # check that results match the results created previously or store new results
-# needs to be executed in /FuncBlocks_package/   (to use on any computer)
+# needs to be executed in /GOfuncR_package/   (to use on any computer)
 Sys.setlocale("LC_COLLATE","C")
-library(FuncBlocks)
+library(GOfuncR)
 setwd("./tests")
 
 # one optional Command Line argument "set_values" if not, then default *test values*

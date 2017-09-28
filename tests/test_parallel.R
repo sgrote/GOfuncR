@@ -1,4 +1,4 @@
-library("FuncBlocks")
+library("GOfuncR")
 library("parallel")
 
 message("test parallel...")
@@ -32,7 +32,7 @@ parares = mclapply(1:3, function(x){
 	go_enrich(input[[x]], n_randset=50, silent=T)
 })
 
-# all 3 parares results are like res[[3]] # does not work with FuncBlocks_1.2.3
+# all 3 parares results are like res[[3]] # does not work with GOfuncR_1.2.3
 for (i in 1:3){
 	if(!(isTRUE(all.equal(res[[i]], parares[[i]])))){
 		stop("Error in test_parallel.R (hypergeometric)", silent=T)
@@ -62,7 +62,7 @@ parares = mclapply(1:3, function(x){
 	go_enrich(input[[x]], n_randset=50, test="wilcoxon", silent=T)
 })
 
-# all 3 parares results are like res[[3]] # does not work with FuncBlocks_1.2.3
+# all 3 parares results are like res[[3]] # does not work with GOfuncR_1.2.3
 for (i in 1:3){
 	if(!(isTRUE(all.equal(res[[i]], parares[[i]])))){
 		stop("Error in test_parallel.R (wilcoxon)")

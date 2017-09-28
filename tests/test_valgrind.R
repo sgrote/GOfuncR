@@ -1,7 +1,7 @@
 
 ## normal examples to run with valgrind
 
-require(FuncBlocks)
+require(GOfuncR)
 
 ##### hypergeometric standard parameters
 set.seed(123)

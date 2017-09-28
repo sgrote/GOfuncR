@@ -1,11 +1,11 @@
-Package: FuncBlocks
+Package: GOfuncR
 Type: Package
 Title: Gene ontology enrichment using FUNC
-Version: 1.2.8
-Date: 2017-08-25
-Author: Steffi Grote & David Reher
+Version: 0.98.0
+Date: 2017-09-28
+Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
-Description: The package FuncBlocks performs GO-enrichment analyses 
+Description: The package GOfuncR performs GO-enrichment analyses 
 		and provides functions that facilitate the interpretation
 		of the results.
 		The core function 'go_enrich' takes as input either candidate

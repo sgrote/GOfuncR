@@ -1,7 +1,7 @@
 
 #test 'get_names', 'get_child_nodes', 'get_parent_nodes', 'get_anno_genes'
 
-library(FuncBlocks)
+library(GOfuncR)
 
 ##### get names
 get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))

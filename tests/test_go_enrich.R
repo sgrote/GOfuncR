@@ -1,13 +1,13 @@
 # try out functionalities, error messages and warnings
 
 # remove package from R session
-detach('package:FuncBlocks', unload = TRUE)
-#library.dynam.unload("FuncBlocks", system.file(package = "FuncBlocks"))
+detach('package:GOfuncR', unload = TRUE)
+#library.dynam.unload("GOfuncR", system.file(package = "GOfuncR"))
 
 ##############################
 
-library(FuncBlocks)
-setwd('/r1/people/steffi_grote/R_packages/FuncBlocks_package')
+library(GOfuncR)
+setwd('/r1/people/steffi_grote/R_packages/GOfuncR_package')
 
 
 ##### standard parameters
@@ -158,7 +158,7 @@ go_enrich(multi, test='binomial')
 
 ##### contingency
 #func_2x2contingency needs four values per gene. The order of the values are divergence_synonymous divergence_nonsynonymous diversity_syn diversity_nonsyn.
-require(FuncBlocks)
+require(GOfuncR)
 set.seed(123)
 high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
@@ -273,8 +273,8 @@ length(go_circ[[2]][go_circ[[2]]==0]) == length(go_circ_unused[[2]][go_circ_unus
 length(go_circ_unused[[2]][go_circ_unused[[2]]==0]) < length(go_region[[2]][go_region[[2]]==0])
 
 ##### example with Ben's deserts
-background = read.table('~/R_packages/FuncBlocks_package/Ben_background_regions.bed')
-candidate = read.table('~/R_packages/FuncBlocks_package/Ben_neandertal_deserts.bed')
+background = read.table('~/R_packages/GOfuncR_package/Ben_background_regions.bed')
+candidate = read.table('~/R_packages/GOfuncR_package/Ben_neandertal_deserts.bed')
 back_cand = rbind(candidate, background)
 regions = c(rep(1,nrow(candidate)),rep(0,nrow(background)))
 names(regions) = c(paste(back_cand[,1],':',back_cand[,2],'-',back_cand[,3],sep=''))

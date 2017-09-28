@@ -1,8 +1,8 @@
 # install
-system('R CMD INSTALL /r1/people/steffi_grote/R_packages/FuncBlocks_1.2.6.tar.gz')
+# system('R CMD INSTALL /r1/people/steffi_grote/R_packages/GOfuncR_[VERSION].tar.gz')
 
 # load
-library(FuncBlocks)
+library(GOfuncR)
 
 # random number seed
 set.seed(123)
@@ -109,11 +109,11 @@ parares = mclapply(1:3, function(x){
 
 
 
-####### GO-graph functions (more to come)
+####### GO-graph functions
 
 
 #### (1) GO-ID -> genes  
-# (NEW: since version 1.2.6 this function does not support go_enrich()-result as input anymore (simpler))
+# (NEW: this function does not support go_enrich()-result as input anymore (simpler))
 
 # find all genes that are annotated to GO:0000109
 # ("nucleotide-excision repair complex")

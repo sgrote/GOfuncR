@@ -1,7 +1,7 @@
 
-# run in FuncBlocks/tests
+# run in GOfuncR/tests
 
-library(FuncBlocks)
+library(GOfuncR)
 
 pdf("test_plot_anno_scores.pdf", width=10)
 
@@ -45,7 +45,7 @@ pdf("test_plot_anno_scores.pdf", width=10)
 
 
 	################## (2) wilcoxon
-	library(FuncBlocks)
+	library(GOfuncR)
 	set.seed(123)
 	high_score_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 	low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -74,7 +74,7 @@ pdf("test_plot_anno_scores.pdf", width=10)
 
 
 	####################  (3) binomial
-	require(FuncBlocks)
+	require(GOfuncR)
 	set.seed(123)
 	high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 	low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -97,7 +97,7 @@ pdf("test_plot_anno_scores.pdf", width=10)
 
 	#################### (4) contingency
 	# 2x2 contingency
-	require(FuncBlocks)
+	require(GOfuncR)
 	set.seed(123)
 	high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 	low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')

@@ -1,15 +1,15 @@
 
 # just some code to copy before going through go_enrich manually
 
-setwd("/r1/people/steffi_grote/R_packages/FuncBlocks_package")
+setwd("/r1/people/steffi_grote/R_packages/GOfuncR_package")
 
-library(FuncBlocks)
+library(GOfuncR)
 library(data.table)
 library(gtools)
 library(mapplots)
-load("FuncBlocks/R/sysdata.rda")
-source("FuncBlocks/R/RcppExports.R")
-source("FuncBlocks/R/get_genes_from_regions.R")
+load("GOfuncR/R/sysdata.rda")
+source("GOfuncR/R/RcppExports.R")
+source("GOfuncR/R/get_genes_from_regions.R")
 
 
 # parameters

@@ -4,19 +4,19 @@
 # * wilcox
 # * binomial
 # * contingency:
-	# run FuncBlocks
+	# run GOfuncR
 	# generate input for FUNC
 	# run Func
 	# compare output
 	# run test for one node in R
 	
 
-require(FuncBlocks)
+require(GOfuncR)
 
 # create temp-directory
 directory = tempdir()
 
-# plot Func vs FuncBlocks
+# plot Func vs GOfuncR
 compi = function(col1, col2, main, xlab, ylab){
 	plot(col1, col2, main=main, xlab=xlab, ylab=ylab)
 	abline(0,1,col="red")
@@ -27,7 +27,7 @@ compi = function(col1, col2, main, xlab, ylab){
 
 ### HYPERGEOMETRIC
 
-# run FuncBlocks
+# run GOfuncR
 candi_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4')
 bg_ids = c('C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 scores = c(rep(1,length(candi_ids)), rep(0,length(bg_ids)))
@@ -42,7 +42,7 @@ input_hyper$score = genes_hyper[match(input_hyper[,1], genes_hyper[,1]),2]
 write.table(input_hyper, paste0(directory,"/input_hyper.tsv"), sep="\t", quote=F, row.names=F, col.names=F)
 
 # run Func
-system(paste0("func_hyper -i ",directory,"/input_hyper.tsv -t ~/R_packages/FuncBlocks_package/term_tables -o ",directory))
+system(paste0("func_hyper -i ",directory,"/input_hyper.tsv -t ~/R_packages/GOfuncR_package/term_tables -o ",directory))
 func_weird_out = read.table(paste0(directory,"/groups.txt"), header=T, comment.char="", sep="\t", row.names=NULL)
 func_out_hyper = func_weird_out[,1:13]
 colnames(func_out_hyper) = colnames(func_weird_out)[2:14]
@@ -53,10 +53,10 @@ head(func_out_hyper)
 head(res_hyper[[1]])
 merge_out = merge(func_out_hyper[,c(3,7,8:11)], res_hyper[[1]][,c(2:7,9)])
 par(mfrow=c(2,2), pty="s")
-compi(merge_out[,3], merge_out[,8], "raw_p_underrep", "Func", "FuncBlocks")
-compi(merge_out[,4], merge_out[,9], "raw_p_overrep", "Func", "FuncBlocks")
-compi(merge_out[,5], merge_out[,10], "FWER_underrep", "Func", "FuncBlocks")
-compi(merge_out[,6], merge_out[,11], "FWER_overrep", "Func", "FuncBlocks")
+compi(merge_out[,3], merge_out[,8], "raw_p_underrep", "Func", "GOfuncR")
+compi(merge_out[,4], merge_out[,9], "raw_p_overrep", "Func", "GOfuncR")
+compi(merge_out[,5], merge_out[,10], "FWER_underrep", "Func", "GOfuncR")
+compi(merge_out[,6], merge_out[,11], "FWER_overrep", "Func", "GOfuncR")
 
 # run test for one node in R
 stich = func_out_hyper[func_out_hyper$node_id=="GO:0044422",]
@@ -75,7 +75,7 @@ phyper(candi_node-1, candi_root, bg_root, total_node, lower.tail=F)
 
 ### WILCOXON
 
-# run FuncBlocks
+# run GOfuncR
 set.seed(123)
 high_score_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_score_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -89,7 +89,7 @@ input_wilcox$score = genes_wilcox[match(input_wilcox[,1], genes_wilcox[,1]),2]
 write.table(input_wilcox, paste0(directory,"/input_wilcox.tsv"), sep="\t", quote=F, row.names=F, col.names=F)
 
 # run Func
-system(paste0("func_wilcoxon -i ",directory,"/input_wilcox.tsv -t ~/R_packages/FuncBlocks_package/term_tables -o ",directory))
+system(paste0("func_wilcoxon -i ",directory,"/input_wilcox.tsv -t ~/R_packages/GOfuncR_package/term_tables -o ",directory))
 func_weird_out = read.table(paste0(directory,"/groups.txt"), header=T, comment.char="", sep="\t", row.names=NULL)
 func_out_wilcox = func_weird_out[,1:12]
 colnames(func_out_wilcox) = colnames(func_weird_out)[2:13]
@@ -100,10 +100,10 @@ head(func_out_wilcox)
 head(res_wilcox[[1]])
 merge_out = merge(func_out_wilcox[,c(3,7:10)], res_wilcox[[1]][,c(2:7,9)])
 par(mfrow=c(2,2), pty="s")
-compi(merge_out[,2], merge_out[,7], "raw_p_low_rank", "Func", "FuncBlocks")
-compi(merge_out[,3], merge_out[,8], "raw_p_high_rank", "Func", "FuncBlocks")
-compi(merge_out[,4], merge_out[,9], "FWER_low_rank", "Func", "FuncBlocks")
-compi(merge_out[,5], merge_out[,10], "FWER_high_rank", "Func", "FuncBlocks")
+compi(merge_out[,2], merge_out[,7], "raw_p_low_rank", "Func", "GOfuncR")
+compi(merge_out[,3], merge_out[,8], "raw_p_high_rank", "Func", "GOfuncR")
+compi(merge_out[,4], merge_out[,9], "FWER_low_rank", "Func", "GOfuncR")
+compi(merge_out[,5], merge_out[,10], "FWER_high_rank", "Func", "GOfuncR")
 
 # run test for one node in R
 stich = func_out_wilcox[func_out_wilcox$node_id=="GO:0008152",]
@@ -123,7 +123,7 @@ wilcox.test(anno_node$score, anno_root$score, alternative="greater", exact=FALSE
 
 ### BINOMIAL
 
-# run FuncBlocks
+# run GOfuncR
 set.seed(123)
 high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
@@ -138,7 +138,7 @@ input_binom = cbind(input_binom, genes_binom[match(input_binom[,1], genes_binom[
 write.table(input_binom, paste0(directory,"/input_binom.tsv"), sep="\t", quote=F, row.names=F, col.names=F)
 
 # run Func
-system(paste0("func_binom -i ",directory,"/input_binom.tsv -t ~/R_packages/FuncBlocks_package/term_tables -o ",directory))
+system(paste0("func_binom -i ",directory,"/input_binom.tsv -t ~/R_packages/GOfuncR_package/term_tables -o ",directory))
 func_weird_out = read.table(paste0(directory,"/groups.txt"), header=T, comment.char="", sep="\t", row.names=NULL)
 func_out_binom = func_weird_out[,1:11]
 colnames(func_out_binom) = colnames(func_weird_out)[2:12]
@@ -149,10 +149,10 @@ head(func_out_binom)
 head(res_binom[[1]])
 merge_out = merge(func_out_binom[,c(3,6:9)], res_binom[[1]][,c(2:7)])
 par(mfrow=c(2,2), pty="s")
-compi(merge_out[,2], merge_out[,7], "raw_p_high_A", "Func", "FuncBlocks")
-compi(merge_out[,3], merge_out[,8], "raw_p_high_B", "Func", "FuncBlocks")
-compi(merge_out[,4], merge_out[,9], "FWER_high_A", "Func", "FuncBlocks")
-compi(merge_out[,5], merge_out[,10], "FWER_high_B", "Func", "FuncBlocks")
+compi(merge_out[,2], merge_out[,7], "raw_p_high_A", "Func", "GOfuncR")
+compi(merge_out[,3], merge_out[,8], "raw_p_high_B", "Func", "GOfuncR")
+compi(merge_out[,4], merge_out[,9], "FWER_high_A", "Func", "GOfuncR")
+compi(merge_out[,5], merge_out[,10], "FWER_high_B", "Func", "GOfuncR")
 
 # run test for one node in R
 stich = func_out_binom[func_out_binom$node_id=="GO:0044422",]
@@ -175,7 +175,7 @@ binom.test(c(b_node, a_node), p = p_b, alternative="greater")
 
 ### CONTINGENCY
 
-# run FuncBlocks
+# run GOfuncR
 set.seed(123)
 high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
@@ -192,22 +192,22 @@ input_conti = cbind(input_conti, genes_conti[match(input_conti[,1], genes_conti[
 write.table(input_conti, paste0(directory,"/input_conti.tsv"), sep="\t", quote=F, row.names=F, col.names=F)
 
 # run Func
-system(paste0("func_2x2contingency -i ",directory,"/input_conti.tsv -t ~/R_packages/FuncBlocks_package/term_tables -o ",directory))
+system(paste0("func_2x2contingency -i ",directory,"/input_conti.tsv -t ~/R_packages/GOfuncR_package/term_tables -o ",directory))
 func_weird_out = read.table(paste0(directory,"/groups.txt"), header=T, comment.char="", sep="\t", row.names=NULL)
 func_out_conti = func_weird_out[,1:13]
 colnames(func_out_conti) = colnames(func_weird_out)[2:14]
 
 # compare results ## TODO: hier auf eine neue Version von Func warten
-# (aber vor bug-fix in FuncBlocks haben die Ergebnisse auch uebereingestimmt)
+# (aber vor bug-fix in GOfuncR haben die Ergebnisse auch uebereingestimmt)
 func_out_conti = func_out_conti[order(func_out_conti$FWER_3.4),]
 head(func_out_conti)
 head(res_conti[[1]])
 merge_out = merge(func_out_conti[,c(3,8:11)], res_conti[[1]][,c(2:7)])
 par(mfrow=c(2,2), pty="s")
-compi(merge_out[,2], merge_out[,7], "raw_p_high_C_D", "Func", "FuncBlocks")
-compi(merge_out[,3], merge_out[,8], "raw_p_high_A_B", "Func", "FuncBlocks")
-compi(merge_out[,4], merge_out[,9], "FWER_high_C_D", "Func", "FuncBlocks")
-compi(merge_out[,5], merge_out[,10], "FWER_high_C_D", "Func", "FuncBlocks")
+compi(merge_out[,2], merge_out[,7], "raw_p_high_C_D", "Func", "GOfuncR")
+compi(merge_out[,3], merge_out[,8], "raw_p_high_A_B", "Func", "GOfuncR")
+compi(merge_out[,4], merge_out[,9], "FWER_high_C_D", "Func", "GOfuncR")
+compi(merge_out[,5], merge_out[,10], "FWER_high_C_D", "Func", "GOfuncR")
 
 # run test for one node in R
 # (two stichs because one of the p-vals is always 1) 

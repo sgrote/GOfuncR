@@ -9,11 +9,11 @@ set.seed(123)
 ```
 
 <!--
-%\VignetteIndexEntry{FuncBlocks: Ontology enrichment using FUNC}
+%\VignetteIndexEntry{GOfuncR: Ontology enrichment using FUNC}
 %\VignetteEngine{knitr::knitr}
 -->
 
-# FuncBlocks: Ontology enrichment using FUNC
+# GOfuncR: Ontology enrichment using FUNC
 
 Package: ABAEnrichment   
 Author: Steffi Grote and David Reher   
@@ -49,14 +49,14 @@ User may also use custom ontology and go annotation. parameter `term`, `term2ter
    
 ## Examples   
 
-*Ein Beispiel fuer FuncBlocks*
+*Ein Beispiel fuer GOfuncR*
 
 #### Test gene expression enrichment with hypergeometric test
 For an example set of 5 FABP genes a test for GO-enrichment is performed using a set of 9 background genes. A binary vector with '1' for a candidate gene and '0' for a background gene and names as HGNC-symbol needs to be defined. If no background genes are defined, all remaining genes (see *GO-version*) of the dataset are used as background.
 
 ```{r} 
-## load FuncBlocks package
-require(FuncBlocks)
+## load GOfuncR package
+require(GOfuncR)
 ## create input vector with candidate genes 
 test_genes = paste(rep('FABP', 5), c(2,4:7), sep='')
 bg_genes = c('NCAPG', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1')
