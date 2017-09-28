@@ -16,7 +16,15 @@ GOfuncR/vignettes/GOfuncR.Rmd
 source("https://bioconductor.org/biocLite.R")
 biocLite("BiocStyle")
 
-# help files for single function like ?go_enrich should be in GOfuncR/man
+# help files (GOfuncR/man)
+?go_enrich
+?get_names
+?get_anno_genes
+?get_child_nodes
+?get_parent_nodes
+?get_anno_categories
+?get_ids
+?plot_anno_scores
 
 # vignette with package usage examples in GOfuncR/vignettes
 not there yet
@@ -26,11 +34,11 @@ cd /home/steffi_grote/R_packages/GOfuncR_package
 R CMD build GOfuncR #--resave-data
 
 # install package
-R CMD INSTALL GOfuncR_1.2.8.tar.gz
+R CMD INSTALL GOfuncR_0.98.0.tar.gz
 
 # check package
-R CMD check GOfuncR_1.2.8.tar.gz
-R CMD BiocCheck GOfuncR_1.2.8.tar.gz
+R CMD check GOfuncR_0.98.0.tar.gz
+R CMD BiocCheck GOfuncR_0.98.0.tar.gz
 # Valgrind for memory leaks (So aehnlich steht das auch in Bioconductor/Developers/Debugging_C++)
 R -d "valgrind -v --tool=memcheck --leak-check=full --track-origins=yes --read-var-info=yes" --no-save < tests/test_valgrind.R
 
@@ -80,7 +88,7 @@ Rscript test_values.R
 (*) preserve input node-order in plot_odds_ratio
 (*) add plot for wilcoxon (plot_scores: gos -> distribution/density of scores compared to root, violin?)
 
-# binomial test, contingancy tables (1.2.8; GOfuncR 0.89.0)
+# binomial test, contingancy tables (0.98.0; GOfuncR 0.89.0)
 (*) pull func source from github
 (*) add binom randset
 (*) add binom category test
@@ -92,6 +100,10 @@ Rscript test_values.R
 (*) rename to GOfuncR
 () man-pages
 () expected vs. real column in output?
+
+# datasets
+() check briefly how other GO-enrichment packages on bioconductor get their annotations
+() manually update () annotations, () term-tables, () coordinates (anything more?)
 
 # vignette
 () vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain. Include table with versions of GO-tree and annotations]
