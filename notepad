@@ -111,7 +111,7 @@ Rscript test_values.R
 () add 2x2 contingency table figure to vignette
 () make a second vignette for statistics and description of tests
 () show R-command to compute the p-value of a GO (could be copied to or referenced by ABAEnrichment)
-() add acknowledgments? Micha,David,Ben,Janet
+() add acknowledgments? Micha,David,Ben,Janet,Kay
 
 # publish
 () submit to bioconductor by Oct 6th
