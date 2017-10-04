@@ -10,12 +10,11 @@ set.seed(123)
 
 ###### standard go-enrichment with 14 candidate genes
 
-## input: a vector with '1' for candidate and optional '0' for background genes
-## the names of the vector are the corresponding gene symbols	
-gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
+## input: a data-frame with two columns: (1) gene-identifiers and (2) scores: '1' for candidate and optional '0' for background genes, for the default hypergeometric test
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
  'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = rep(1, length(gene_ids))
-names(genes) = gene_ids
+gene_scores = rep(1, length(gene_ids))
+genes = data.frame(gene_ids, gene_scores)
 genes
 
 # standard analysis with 1000 randomsets 
@@ -36,7 +35,11 @@ go_res[[3]]
 go_less_ran = go_enrich(genes, n_randsets=100)
 
 # random gene selection dependent on gene-length (for FWER randomsets)
-go_len = go_enrich(genes, gene_len=TRUE)
+go_len = go_enrich(genes, n_randsets=100, gene_len=TRUE)
+
+# only look at GO-domains "biological process" and "cellular component"
+# (to save computation time)
+go_2dom = go_enrich(genes, n_randsets=100, domains=c('biological_process','cellular_component'))
 
 # grch38 reference genome GO-annotations (default=grch37)
 go_hg20 = go_enrich(genes, ref_genome='grch38', n_randsets=100)
@@ -46,10 +49,6 @@ gene_ids = c('Arsi', 'Mapk4', 'Papola', 'Tfrc', 'Bak1', 'Fopnl', 'Mus81', 'Opa3'
 genes = rep(1, length(gene_ids))
 names(genes) = gene_ids
 go_mouse = go_enrich(genes, ref_genome='grcm38', n_randsets=100)
-
-# only look at GO-domains "biological process" and "cellular component"
-# (to save computation time)
-go_2dom = go_enrich(genes, n_randsets=100, domains=c('biological_process','cellular_component'))
 
 # define background
 set.seed(123)
@@ -68,6 +67,27 @@ genes = c(sample(20:30, length(high_score_genes)), sample(5:15, length(low_score
 names(genes) = c(high_score_genes, low_score_genes)
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 
+# two counts for genes and binomial test
+high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(low_human_genes)))
+chimp_counts = c(sample(5:15, length(high_human_genes)), sample(20:30, length(low_human_genes)))
+genes = data.frame(gene=c(high_human_genes, low_human_genes), human_counts, chimp_counts)
+go_binom = go_enrich(genes, test='binomial', n_randsets=100)
+head(go_binom[[1]])
+go_binom[[2]]
+
+# four counts per gene and 2x2-contingency-table test
+# i.e. McDonald-Kreitman test where high rate of fixed non-synomymous changes / fixed synonymous changes between species compared to the rate of non-synonymous / synonymous variation inside one species could indicate positive selection
+high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
+subs_non_syn = c(sample(15:25, length(high_substi_genes), replace=T), sample(0:10, length(low_substi_genes)))
+subs_syn = sample(45:55, length(c(high_substi_genes, low_substi_genes)), replace=T)
+vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
+vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace=T)
+genes = data.frame(genes=c(high_substi_genes, low_substi_genes), subs_non_syn, subs_syn, vari_non_syn, vari_syn)
+conti_res = go_enrich(genes, test='contingency', n_randset=100)
+head(conti_res[[1]])
 
 # regions as input
 genes = c(1, rep(0,6))
@@ -76,7 +96,7 @@ names(genes) = c('8:81000000-83000000', '7:1300000-56800000', '7:74900000-148700
 genes
 go_region = go_enrich(genes, n_randsets=100)
 # genes located in candidate region
-go_region[[2]][go_region[[2]]==1]
+go_region[[2]][go_region[[2]][,2]==1,]
 
 # use hg20 or mouse gene coordinates to find genes located in the regions
 go_region_hg20 = go_enrich(genes, n_randsets=100, ref_genome='grch38')
@@ -125,7 +145,7 @@ genes = c('AGTR1', 'ANO1', 'CALB1', 'GYG1', 'PAX2')
 gos = c('GO:0001558', 'GO:0005536', 'GO:0072205', 'GO:0006821')
 anno_genes = get_anno_genes(go_ids=gos, genes=genes)
 # and add the names and domains of the GO-categories
-cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
+cbind(anno_genes, get_names(anno_genes$go_id)[,2:3])
 
 # find all mouse-gene annotations to two GO-categories 
 gos = c('GO:0072205', 'GO:0000109')
@@ -133,19 +153,10 @@ get_anno_genes(go_ids=gos, ref_genome='grcm38')
 
 # extract categories with a FWER<0.05 from an enrichment analysis
 # and find the candidate genes annotated to those top-hits
-stats = go_res[[1]]
-candidate_genes = names(go_res[[2]][go_res[[2]]==1])
-ref_genome = go_res[[3]]
-top_hits = stats[stats$FWER_overrep < 0.05, 'node_id']
-anno_top = get_anno_genes(go_ids=top_hits, ref_genome=ref_genome, genes=candidate_genes)
-# and add the names and domains of the GO-categories
-cbind(anno_top ,get_names(anno_top$go_id)[,2:3])
-
-# extract categories with a FWER<0.05 from an enrichment analysis
-# and find the candidate genes annotated to those top-hits
 # (this works the same way for an analysis with genomic regions)
 stats = go_res[[1]]
-candidate_genes = names(go_res[[2]][go_res[[2]]==1])
+input_genes = go_res[[2]]
+candidate_genes = input_genes[input_genes[,2]==1, 1]
 ref_genome = go_res[[3]]
 top_hits = stats[stats$FWER_overrep < 0.05, 'node_id']
 anno_top = get_anno_genes(go_ids=top_hits, ref_genome=ref_genome, genes=candidate_genes)
@@ -162,7 +173,7 @@ get_names(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 
 #### (3) GO-name -> GO-ID  (all partial perfect matches of the input string, not case sensitive) 
 get_ids(c('ribosome'))
-get_ids(c('gaba'))
+head(get_ids(c('gaba')))
 
 #### (4) GO-ID -> children
 children = get_child_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
@@ -172,16 +183,7 @@ head(children)
 parents = get_parent_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 parents
 
-#### (6) go_enrich-output and (fwer_threshold or go_ids) -> plot odds-ratios (hyper)
-plot_odds_ratio(go_res, fwer_threshold=0.02)
-plot_odds_ratio(go_bg,fwer_threshold=0.8)
-plot_odds_ratio(go_res, go_ids=c('GO:0072025','GO:0072221','GO:0072235', 'GO:0044765'))
-plot_odds_ratio(go_bg, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
-
-
-#### (7) go_enrich-output and (fwer_threshold or go_ids)-> plot score-distribution (wilcoxon)
-plot_scores(go_willi, fwer_threshold=0.2)
-plot_scores(go_willi, go_ids=c('GO:0005634','GO:0004945','GO:0008289','GO:0005737','GO:0071495'))
+#### (6) plot_anno_score
 
 
 

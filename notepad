@@ -98,29 +98,36 @@ Rscript test_values.R
 (*) plotting function for binomial, contingency
 (*) unify plotting function for all 4 tests (infer test from input?, plot_anno_genes)
 (*) rename to GOfuncR
+(*) remove expected vs. real for now
 () man-pages
-() expected vs. real column in output?
+() get_anno_categories default ref_genome (since get_anno_genes also has it!)
 
-# datasets
-() check briefly how other GO-enrichment packages on bioconductor get their annotations
-() manually update () annotations, () term-tables, () coordinates (anything more?)
 
 # vignette
-() vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain. Include table with versions of GO-tree and annotations]
-() add to vignette when which test is useful with example (like in func paper); also table
-() add 2x2 contingency table figure to vignette
-() make a second vignette for statistics and description of tests
-() show R-command to compute the p-value of a GO (could be copied to or referenced by ABAEnrichment)
-() add acknowledgments? Micha,David,Ben,Janet,Kay
+() vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain. 
+() include table with versions of GO-tree and annotations]
+() add acknowledgments? Micha,David,Ben,Janet
+
+# tests
+() add testthat scripts
+
+# datasets
+(*) check briefly how other GO-enrichment packages on bioconductor get their annotations
+() manually update () annotations, () term-tables, () coordinates (anything more?)
 
 # publish
 () submit to bioconductor by Oct 6th
 () add to https://bioinf.eva.mpg.de/
 
-# tests
-() add testthat scripts
 
+# additional vignette stuff after submission
+() make a second vignette for statistics and description of tests
+() add to vignette when which test is useful with example (like in func paper); also table
+() add 2x2 contingency table figure to vignette
+() show R-command to compute the p-value of a GO (could be copied to or referenced by ABAEnrichment)
 
+# maybe
+() expected vs. real column in output? ready for hyper and wilcox (maybe A/B real, A/B expected for binomial; just A,B,C,D for contingency?)
 
 
 # refinement from Func
@@ -131,6 +138,7 @@ Rscript test_values.R
 () print ontology, annotations versions in get_anno_genes (or as attribute?)
 () allow user-defined term-tables (GO-graph) (-> roots named explicitly or infer from term[,3]?)
 () allow user-defined GO-annotations
+() if accepted in bioconductor maybe use annotation packages for gene->GO mapping 
 () allow user-defined gene_coordinates (?)
 () check common methods/classesBioc-devel Digest, Vol 161, Issue 11)
 () update-functions for the previous 3? (biomaRt, ensembldb packages)
