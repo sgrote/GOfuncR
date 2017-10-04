@@ -1,6 +1,6 @@
 
-# run "FUNC" with default GO and GO-annotations (update once in a while...) TODO: also allow user input
-# wilcoxon rank test, hypergeometric test or binomial test
+# run "FUNC" with default GO and GO-annotations (update once in a while...)
+# wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
 go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE, domains=NULL)
 {
@@ -317,6 +317,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	# NEW: dataframe
 	gene_values = gene_values[mixedorder(gene_values[,1]),]
+	rownames(gene_values) = 1:nrow(gene_values)
 
 	final_output = list(results=out, genes=gene_values, ref_genome=ref_genome)
 	if (!silent) message("\nDone.")
