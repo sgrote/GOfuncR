@@ -100,13 +100,13 @@ Rscript test_values.R
 (*) rename to GOfuncR
 (*) remove expected vs. real for now
 () man-pages
-() get_anno_categories default ref_genome (since get_anno_genes also has it!)
 
 
 # vignette
 () vignette [also show example get_anno_genes for input candidate and background genes. Clearly say that root_node==domain. 
 () include table with versions of GO-tree and annotations]
 () add acknowledgments? Micha,David,Ben,Janet
+() add links to vignette to man-pages
 
 # tests
 () add testthat scripts
@@ -126,7 +126,7 @@ Rscript test_values.R
 () add 2x2 contingency table figure to vignette
 () show R-command to compute the p-value of a GO (could be copied to or referenced by ABAEnrichment)
 
-# maybe
+# additional things
 () expected vs. real column in output? ready for hyper and wilcox (maybe A/B real, A/B expected for binomial; just A,B,C,D for contingency?)
 
 

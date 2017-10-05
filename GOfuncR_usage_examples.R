@@ -56,7 +56,6 @@ candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGT
 bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'FN1', 'NODAL', 'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2', 'GAPDHS')
 genes = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
 names(genes) = c(candi_gene_ids, bg_gene_ids)
-genes
 go_bg = go_enrich(genes, n_randsets=100)
 
 # scores for genes and wilcoxon rank sum test
@@ -68,6 +67,7 @@ names(genes) = c(high_score_genes, low_score_genes)
 go_willi = go_enrich(genes, test='wilcoxon', n_randsets=100)
 
 # two counts for genes and binomial test
+set.seed(123)
 high_human_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_human_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 human_counts = c(sample(20:30, length(high_human_genes)), sample(5:15, length(low_human_genes)))
@@ -79,6 +79,7 @@ go_binom[[2]]
 
 # four counts per gene and 2x2-contingency-table test
 # i.e. McDonald-Kreitman test where high rate of fixed non-synomymous changes / fixed synonymous changes between species compared to the rate of non-synonymous / synonymous variation inside one species could indicate positive selection
+set.seed(123)
 high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
 subs_non_syn = c(sample(15:25, length(high_substi_genes), replace=T), sample(0:10, length(low_substi_genes)))
@@ -86,8 +87,8 @@ subs_syn = sample(45:55, length(c(high_substi_genes, low_substi_genes)), replace
 vari_non_syn = c(sample(0:10, length(high_substi_genes), replace=T), sample(10:20, length(low_substi_genes)))
 vari_syn = sample(25:35, length(c(high_substi_genes, low_substi_genes)), replace=T)
 genes = data.frame(genes=c(high_substi_genes, low_substi_genes), subs_non_syn, subs_syn, vari_non_syn, vari_syn)
-conti_res = go_enrich(genes, test='contingency', n_randset=100)
-head(conti_res[[1]])
+go_conti = go_enrich(genes, test='contingency', n_randset=100)
+head(go_conti[[1]])
 
 # regions as input
 genes = c(1, rep(0,6))
@@ -128,8 +129,33 @@ parares = mclapply(1:3, function(x){
 
 
 
+###### plot_anno_scores
 
-####### GO-graph functions
+# use a go_enrich result and some GO-categories to plot the annotated scores that were used in the go_enrich test
+## plot the annotations to the top categories from each of the 4 test results above:
+
+# hypergeometric test: 
+# annotated candidate and background genes and odds ratio from fisher's exact test
+plot_anno_scores(go_res, head(go_res[[1]]$node_id))
+stat_hyper = plot_anno_scores(go_bg, head(go_bg[[1]]$node_id))
+head(stat_hyper) # invisible object returned from plot_anno_scores that contains the stats
+
+# wilcoxon rank-sum test
+# distribution of the annotated scores
+stat_willi = plot_anno_scores(go_willi, head(go_willi[[1]]$node_id))
+str(stat_willi)
+
+# binomial test
+# proportion of A in (A+B) counts and p(A) in the node plus 95%-CI from binomial-test
+stat_binom = plot_anno_scores(go_binom, head(go_binom[[1]]$node_id))
+head(stat_binom)
+
+# 2x2 contingency table test
+# plot proportions of A/B and C/D and the odds ratio from Fisher's excact test
+stat_conti = plot_anno_scores(go_conti, head(go_conti[[1]]$node_id))
+head(stat_conti)
+
+###### GO-graph functions
 
 
 #### (1) GO-ID -> genes  
@@ -183,7 +209,6 @@ head(children)
 parents = get_parent_nodes(c('GO:0051082', 'GO:123', 'GO:0042254', 'GO:0000109'))
 parents
 
-#### (6) plot_anno_score
 
 
 
