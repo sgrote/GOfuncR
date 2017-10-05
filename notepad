@@ -49,10 +49,11 @@ tools::showNonASCII(readLines("GOfuncR/man/get_ids.Rd"))
 
 # look at help page and news
 # in R:
+library(GOfuncR)
 options("help_type"="html") # to check links
 ?go_enrich
 ?get_anno_genes
-#vignette("GOfuncR",package="GOfuncR")  ## not there yet
+vignette("GOfuncR",package="GOfuncR")
 news(package="GOfuncR")
 
 # if new .cpp files are added, Rcpp's compileAttributes must be run once:
