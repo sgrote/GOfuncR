@@ -32,8 +32,8 @@ Steffi Grote
 }
 
 \examples{
-## get the parent nodes (higher level GO-categories) of three random GO-IDs
-parents = get_parent_nodes(c('GO:0051082', 'GO:0042254', 'GO:0000109'))
+## get the parent nodes (higher level GO-categories) of two random GO-IDs
+parents = get_parent_nodes(c('GO:0051082', 'GO:0042254'))
 parents
 }
 

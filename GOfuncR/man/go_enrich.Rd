@@ -7,12 +7,14 @@ Test human or mouse genes for enrichment in GO-categories
 Tests all GO-categories from the three domains 'biological process', 'cellular component' and 'molecular function' for enrichment of user defined gene sets [1]. The statistical analysis is based on the ontology enrichment software FUNC [2].\cr
 \code{go_enrich} offers four different statistical tests: (1) the hypergeometric test for a candidate and a background gene set; (2) the wilcoxon rank-sum test for genes that are ranked by scores (e.g. p-value for differential expression); (3) the binomial test for genes that have two associated counts (e.g. amino-acid changes on the human and the chimp lineage); and (4) a 2x2-contingency table test for genes that have four associated counts (e.g. for a McDonald-Kreitman test). 
 Besides naming candidate genes explicitly, for the hypergeometric test it is also possible to provide entire genomic regions as input. The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes. Note that this option requires the input of background regions.\cr
-The gene ontology, the annotations and the gene-coordinates are integrated in the package and updated regularly.
+The gene ontology (obtained from geneontology.org), the annotations and the gene-coordinates (both obtained from biomart) are integrated in the package and updated regularly.
 }
+
 \usage{
 go_enrich(genes, test = 'hyper', n_randsets = 1000, gene_len = FALSE, 
   circ_chrom = FALSE, ref_genome = 'grch37', silent = FALSE, domains = NULL)
 }
+
 \arguments{
   \item{genes}{
 A dataframe with gene-symbols in the first column and test-dependent additional columns:\cr
@@ -87,18 +89,17 @@ Steffi Grote
 #### to lower computational time in the following examples. 
 #### Using the default value is recommended.
 
-#### Perform a GO-enrichment analysis for some random human genes
-# create input dataframe 
-
-# TODO: change to data-frame, maybe add another test
-
+#### Perform a GO-enrichment analysis for some human genes
+# create input dataframe that defines the candidate genes
 gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 
  'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = rep(1, length(gene_ids))
-names(genes) = gene_ids
+gene_scores = rep(1, length(gene_ids))
+genes = data.frame(gene_ids, gene_scores)
 genes
+
 # run enrichment analysis
 go_res = go_enrich(genes, n_randset=100)
+
 # go_enrich returns a list with 3 elements:
 # 1) results from the anlysis (ordered by FWER for overrepresentation of candidate genes)
 head(go_res[[1]])

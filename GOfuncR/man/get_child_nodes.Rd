@@ -33,7 +33,7 @@ Steffi Grote
 
 \examples{
 ## get the child nodes (sub-categories) of two random GO-IDs
-child_nodes = get_child_nodes(c('GO:0090070', 'GO:0000109'))
+child_nodes = get_child_nodes(c('GO:0090070', 'GO:0000112'))
 child_nodes
 }
 

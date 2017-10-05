@@ -39,10 +39,12 @@ This gives only direct annotations of genes to GO-categories. By definition gene
 
 \examples{
 ## get the GO-annotations for two random genes
-get_anno_categories(c('BTC', 'SPAG5'))
+anno1 = get_anno_categories(c('BTC', 'SPAG5'))
+head(anno1)
 
 ## get the GO-annotations for two random mouse genes
-get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
+anno2 = get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
+head(anno2)
 
 ## get all annotations of NXPH4, inlcuding higher-level GO-categories
 direct_anno = get_anno_categories('NXPH4')

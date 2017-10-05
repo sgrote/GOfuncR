@@ -26,7 +26,7 @@ optional vector of gene-symbols. If defined, only annotations of those genes are
 }
 
 \value{
-A data frame with the GO-IDs and the annotated genes. The output is ordered by GO-ID and gene-symbol.\cr 
+A dataframe with the GO-IDs and the annotated genes. The output is ordered by GO-ID and gene-symbol.\cr 
 }
 
 \references{
@@ -66,7 +66,7 @@ get_anno_genes(go_ids=gos, ref_genome='grcm38')
 sero_ids = get_ids('serotonin receptor')
 sero_anno = get_anno_genes(go_ids=sero_ids$go_id)
 # annotated genes
-sero_anno
+head(sero_anno)
 # names of GO-categories with annotations
 get_names(unique(sero_anno$go_id))
 }

@@ -39,8 +39,8 @@ More sophisticated searches, e.g. with regular expressions, could be performed o
 
 }
 \examples{
-## get GO-IDs of categories that contain 'gaba' in their names
-get_ids('gaba')
+## get GO-IDs of categories that contain 'gabaergic' in their names
+get_ids('gabaergic')
 
 ## get GO-IDs of categories that contain 'blood-brain barrier' in their names
 get_ids('blood-brain barrier')
