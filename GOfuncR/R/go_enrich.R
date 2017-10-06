@@ -319,6 +319,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 	# also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
 	# NEW: dataframe
 	gene_values = gene_values[mixedorder(gene_values[,1]),]
+	gene_values[,1] = as.character(gene_values[,1])
 	rownames(gene_values) = 1:nrow(gene_values)
 
 	final_output = list(results=out, genes=gene_values, ref_genome=ref_genome)
