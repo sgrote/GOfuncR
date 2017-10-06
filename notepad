@@ -16,19 +16,6 @@ GOfuncR/vignettes/GOfuncR.Rmd
 source("https://bioconductor.org/biocLite.R")
 biocLite("BiocStyle")
 
-# help files (GOfuncR/man)
-?go_enrich
-?get_names
-?get_anno_genes
-?get_child_nodes
-?get_parent_nodes
-?get_anno_categories
-?get_ids
-?plot_anno_scores
-
-# vignette with package usage examples in GOfuncR/vignettes
-not there yet
-
 # build package
 cd /home/steffi_grote/R_packages/GOfuncR_package 
 R CMD build GOfuncR #--resave-data

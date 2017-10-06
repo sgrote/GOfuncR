@@ -21,339 +21,361 @@ Date: October 05, 2017
 
 
 ## Overview
-`r Biocpkg('GOfuncR')` performs a gene ontology enrichment analysis [1] based on the ontology enrichment software FUNC [2]. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked (ii) a binomial test that can be used when genes are associated with two counts, e.g. amino acid changes since a common ancestor in two different species. (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts, e.g. synonymous and non-synonymous variants that are fixed between or variable within species. To correct for multiple testing and interdependency of the tests, family-wise error rates are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below). `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing. The gene ontology (obtained from geneontology.org), the annotations and the gene-coordinates (both obtained from biomart) are integrated in the package and updated regularly.
-
-%%#### GO-graph and annotations
-%%For easy usage the GO-graph (obtained from )
+`r Biocpkg('GOfuncR')` performs a gene ontology enrichment analysis for human and mouse genes based on the ontology enrichment software FUNC [1,2]. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked (ii) a binomial test that can be used when genes are associated with two counts, e.g. amino acid changes since a common ancestor in two different species. (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species.  
+To correct for multiple testing and interdependency of the tests, family-wise error rates are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below). `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing. The gene ontology (obtained from geneontology.org), the annotations and the gene-coordinates (both obtained from biomart) are integrated in the package and updated regularly.
 
 
-#### Functions included in GOfuncR:
+#### Functions included in `GOfuncR`:
 
 function | description
 -------- | ----------
 [go_enrich](#go_enrich) | core function for performing enrichment analyses given a candidate gene set
-[get_expression](#get_expression) | returns expression data for a given set of genes and brain regions
-[plot_expression](#plot_expression) | plots a heatmap with expression data for a given set of genes and brain regions
-[get_name](#onto) | returns the full name of a brain region given a structure ID
-[get_sampled_substructures](#onto) | returns the substructures of a given brain region that have expression data available
-[get_superstructures](#onto) | returns the superstructures of a given brain region
-[get_id](#getid) | *NEW: returns the structure ID given the name of a brain region*
-[get_annotated_genes](#anno) | *NEW: returns genes annotated to enriched or user-defined brain regions*
+[plot_anno_genes](#plot_anno) | plots distribution of scores of genes annotated to GO-categories
+[get_parent_nodes](#graph) | returns all parent-nodes of input GO-categories
+[get_child_nodes](#graph) | returns all child-nodes of input GO-categories
+[get_names](#get_names) | returns the full name of a brain region given a structure ID
+[get_ids](#get_ids) | returns all GO-categories that contain the input string
+[get_anno_genes](#get_anno_g) | returns genes that are annotated to GO-categories
+[get_anno_categories](#get_anno_c) | returns GO-categories that input genes are annotated to
 
+
+#### <a name='go_enrich'></a> Core function `go_enrich`
+
+The function `go_enrich` performs all enrichment analyses given input genes and has the following parameters:
+
+parameter | default | description TODO: maybe link parameters to examples
+-------- | ---------- | ---------- 
+genes | - |  a dataframe with gene-symbols or genomic regions and gene-associated variables
+test | 'hyper' | statistical test to use ('hyper', 'wilcoxon', 'binomial' or 'contingency')
+n_randsets | 1000 | number of randomsets to compute the family-wise error rate
+gene_len | FALSE | correct for gene length (only for hypergeometric test)
+circ_chrom | FALSE |  use background on circularized chromosome (only for hypergeometric test and genomic regions input)
+ref_genome | 'grch37' | reference genome for annotations and gene-coordinates ('grch37', 'grch38' or 'grcm38')
+silent | FALSE | suppress output to screen
+domains | NULL | optional vector of GO-domains (if NULL all 3 domains are analyzed)
 
 
 
 ## Examples   
 
-### <a name='aba_enrich'></a>Test gene expression enrichment using the hypergeometric test
-For a random set of 13 candidate genes, two analyses to identify human brain regions with enriched  expression of the candidate genes are performed: one using data from adult donors (from *Allen Human Brain Atlas* [3]) and one using data from five developmental stages (from *BrainSpan Atlas of the Developing Human Brain* [4]).
-To run a hypergeometric test, a binary vector with `1` for a candidate gene and `0` for a background gene needs to be defined.
-The names of the vector elements are the corresponding gene identifiers (*Entrez-ID*, *Ensembl-ID* or *gene-symbol*).
-In this example no background genes are defined, so all remaining protein-coding genes of the dataset are used as default background.
+### Test gene set enrichment using the hypergeometric test
+The hypergeometric test evaluates the over- or under-representation of a set of candidate genes in GO-categories, compared to a set of background genes (see [Schematic 1](#hyper_scheme) below).
+The input for the hypergeometric test is a dataframe with two columns: (1) a column with gene-symbols and (2) a binary column with `1` for a candidate gene and `0` for a background gene.
+
+#### Hypergeometric test using the default background gene set
+The declaration of background genes is optional. If only candidate genes are defined, then all remaining genes from the internal dataset are used as default background.  
+In this example GO-enrichment of 13 human genes will be tested:
 
 ```{r} 
-## load ABAEnrichment package
-library(ABAEnrichment)
-## create input vector with candidate genes
+## load GOfuncR package
+library(GOfuncR)
+## create input dataframe with candidate genes
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
   'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-genes = rep(1, length(gene_ids))
-names(genes) = gene_ids
-genes
+is_candidate = rep(1, length(gene_ids))
+input_hyper = data.frame(gene_ids, is_candidate)
+input_hyper
 ```
 
-The core function `aba_enrich` performs the enrichment analysis.
-It takes the `genes` vector as input, together with a `dataset` argument which is set to `adult` (default) or `5_stages` for the analyses of the adult and the developing human brain, respectively.
-An example with the developmental effect score (`dev_effect`) can be found [below](#dev_score).
+This dataframe is the only mandatory input for `go_enrich`, however to lower computation time for the examples, we also lower the number of randomsets that are generated to compute the FWER:
 
+```{r, results='hide'} 
+## run enrichment analysis (n_randets=100 lowers compuation time compared to default 1000)
+res_hyper = go_enrich(input_hyper, n_randset=100) 
+```
+
+The output of `go_enrich` is a list of 3 elements: 
+The most important is the first element which contains the results from the enrichment analysis (ordered by FWER for over-representation of candidate genes):
+
+```{r}
+stats = res_hyper[[1]]
+## top-GO categories
+head(stats)
+## top GO-categories per domain
+by(stats, stats$ontology, head, n=3)
+```
+The second element is a dataframe with all valid input genes and the third element states the reference genome for the annotations:
+
+```{r}
+## all valid input genes
+head(res_hyper[[2]])
+## reference genome used (default=grch37)
+res_hyper[[3]]
+```
+
+#### Hypergeometric test using a defined background gene set
+
+To define a background gene set, just add lines to the input dataframe where the gene-associated variable in the second column is a `0`:
+
+```{r}
+candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 
+ 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'FN1', 'NODAL',
+ 'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
+is_candidate = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
+input_hyper_bg = data.frame(gene_ids = c(candi_gene_ids, bg_gene_ids), is_candidate)
+head(input_hyper_bg)
+tail(input_hyper_bg)
+```
+
+The enrichment analysis is performed like before, again with only 100 randomsets to lower computation time.
+```{r, results='hide'}
+res_hyper_bg = go_enrich(input_hyper_bg, n_randsets=100)
+
+```
+```{r}
+head(res_hyper_bg[[1]])
+```
+
+
+#### Hypergeometric test with correction for gene length
+
+If the chance of a gene to be discovered as a candidate gene is higher for longer genes (e.g. the chance to have an amino-acid change compared to another species), it can be helpful to also correct for this length-bias in the calculation of the family-wise error rate.
+`go_enrich` therefore offers the `gene_len` option: While with the default `gene_len=FALSE` candidate and background genes are permuted randomly in the randomsets (see [Schematic 1](#hyper_scheme)), `gene_len=TRUE` makes the chance of a gene to be chosen as a candidate gene in a randomsets dependent on its gene length.
 
 ```{r, eval=FALSE}
-## run enrichment analyses with default parameters for the adult and developing human brain
-res_adult = aba_enrich(genes, dataset='adult')
-res_devel = aba_enrich(genes, dataset='5_stages')
-```
+## test input genes again with correction for gene length
+res_hyper_len = go_enrich(input_hyper, gene_len=TRUE)
+```  
 
-In the following examples two additional parameters are set to lower computation time: `cutoff_quantiles=c(0.5,0.7,0.9)` to use the 50%, 70% and 90% expression quantiles across all genes as the boundary between 'expressed' and 'not expressed' genes, and `n_randsets=100` to use 100 random permutations to calculate the FWER.
-`cutoff_quantiles` and `n_randsets` have default values `seq(0.1,0.9,0.1)` and `1000`, respectively.
+#### Hypergeometric test with genomic regions as input
 
-```{r,results='hide'}
-## run enrichment analysis with less cutoffs and randomsets to save computation time
-res_devel = aba_enrich(genes, dataset='5_stages', cutoff_quantiles=c(0.5,0.7,0.9), n_randsets=100)
-```
-
-The function `aba_enrich` returns a list, the first element of which contains the results of the statistical analysis for each brain region and age category (analyses are performed independently for each developmental stage):
-
-```{r}
-## extract first element from the output list, which contains the statistics
-fwers_devel = res_devel[[1]]
-## see results for the brain regions with highest enrichment for children (3-11 yrs, age_category 3)
-fwers_3 = fwers_devel[fwers_devel[,1]==3, ]
-head(fwers_3)
-```
-
-The rows in the output data frame are ordered by `age_category`, `times_FWER_under_0.05`, `min_FWER` and `mean_FWER`; with e.g. `min_FWER` denoting the minimum FWER for enrichment of expressed candidate genes in that brain region across all expression cutoffs.
-The column `FWERs` lists the individual FWERs for each cutoff.  
-The column `equivalent_structures` lists brain regions with identical expression data due to lack of independent expression measurements in all regions.
-Nodes (brain regions) in the ontology inherit data from their children (substructures), and in the case of only one child node with expression data, the parent node inherits the child's data leading to identical enrichment statistics.
-
-In addition to the statistics, the list that is returned from `aba_enrich` also contains the input genes for which expression data are available, and for each age category the gene expression values that correspond to the requested `cutoff_quantiles`:
-
-```{r}
-res_devel[2:3]
-```
-For example, in the enrichment analysis of age category 2 (infant) with an expression cutoff of 0.7 (70%), genes are considered 'expressed' in a particular brain region when their expression value in that region is at least 7.017616.
-
-#### Choose random candidate regions dependent on gene length
-The default behavior of `aba_enrich` is to permute candidate and background genes randomly to compute the FWER.
-With the option `gene_len=TRUE`, random selection of background genes as candidate genes is dependent on the gene length, i.e. a gene twice as long as another gene also is twice as likely selected as a candidate gene in a randomset.
-This is useful when the procedure that led to the identification of the candidate gene set is also more likely to discover longer genes.
-Gene coordinates were obtained from http://grch37.ensembl.org/biomart/martview/ (GRCh37.p13).
-*NEW: the option* `ref_genome='grch38'` *uses gene coordinates from the GRCh38 genome (GRCh38.p10) obtained from http://ensembl.org/biomart/martview/*.
-
-```{r,eval=FALSE} 
-## run enrichment analysis, with randomsets dependent on gene length
-res_len = aba_enrich(genes, gene_len=TRUE)
-## run the same analysis using gene coordinates from GRCh38 instead of the default GRCh37
-res_len_hg20 = aba_enrich(genes, gene_len=TRUE, ref_genome='grch38')
-```
-
-
-### Test gene expression enrichment using the Wilcoxon rank-sum test
-When the genes are not divided into candidate and background genes, but are ranked by scores, a Wilcoxon rank-sum test can be performed to find brain regions with a high proportion of genes with high scores in the set of expressed genes.
-The `genes` input vector then contains the scores assigned to the genes, and is named with the respective gene identifiers.
-The output is identical to the one produced with the hypergeometric test.
-
-```{r}
-## assign random scores to the genes used above
-genes = sample(1:50, length(gene_ids))
-names(genes) = gene_ids
-genes
-```
-```{r, results='hide'}
-## test for enrichment of expressed genes with high scores in the adult brain using the Wilcoxon rank-sum test
-res_wilcox = aba_enrich(genes, test='wilcoxon', cutoff_quantiles=c(0.5,0.7,0.9), n_randsets=100)
-```
-```{r}
-head(res_wilcox[[1]])
-```
-
-### Test gene expression enrichment for genomic regions
-Instead of defining candidate and background genes explicitly in the `genes` input vector, it is also possible to define entire chromosomal regions as candidate and background regions.
-The expression enrichment is then tested for all protein-coding genes located in, or overlapping the candidate regions on the plus or the minus strand.
-The gene coordinates used to identify those genes were obtained from http://grch37.ensembl.org/biomart/martview/ (GRCh37.p13).
-*NEW: the option* `ref_genome='grch38'` *uses gene coordinates from the hg20 genome (GRCh38.p10) obtained from http://ensembl.org/biomart/martview/*.
-
+Instead of defining candidate and background genes explicitly in the input dataframe, it is also possible to define entire chromosomal regions as candidate and background regions.
+The GO-enrichment is then tested for all genes located in, or overlapping the candidate regions on the plus or the minus strand.
 In comparison to defining candidate and background genes explicitly, this option has the advantage that the FWER accounts for spatial clustering of genes.
 For the random permutations used to compute the FWER, blocks as long as candidate regions are chosen from the merged candidate and background regions and genes contained in these blocks are considered candidate genes ([Schematic 2](#block_scheme)).
 
-To define chromosomal regions in the input vector, the names of the 1/0 vector have to be of the form `chr:start-stop`, where `start` always has to be smaller than `stop`.
+To define chromosomal regions in the input dataframe, the entries in the first column have to be of the form `chr:start-stop`, where `start` always has to be smaller than `stop`.
 Note that this option requires the input of background regions.
 If multiple candidate regions are provided, in the randomsets they are placed randomly (but without overlap) into the merged candidate and background regions.
-The output of `aba_enrich` is identical to the one that is produced for single genes.
-The second element of the output list contains the candidate and background genes located in the user-defined regions:
 
 ```{r} 
 ## create input vector with a candidate region on chromosome 8
 ## and background regions on chromosome 7, 8 and 9
-genes = c(1, rep(0,6))
-names(genes) = c('8:82000000-83000000', '7:1300000-56800000', '7:74900000-148700000',
+regions = c('8:81000000-83000000', '7:1300000-56800000', '7:74900000-148700000',
   '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
-genes
+is_candidate = c(1, rep(0,6))
+input_regions = data.frame(regions, is_candidate)
+input_regions
 ```
 ```{r,results='hide'} 
-## run enrichment analysis for the adult human brain
-res_region = aba_enrich(genes, dataset='adult', cutoff_quantiles=c(0.5,0.7,0.9), n_randsets=100)
+## run GO-enrichment analysis for genes in the candidate region
+res_region = go_enrich(input_regions, n_randsets=100, ref_genome='grch38')
 ```
+The output of `go_enrich` for genomic regions is identical to the one that is produced for single genes.
+The second element of the output list contains the candidate and background genes located in the user-defined regions:
+
 ```{r}
-## look at the results from the enrichment analysis
-fwers_region = res_region[[1]]
-head(fwers_region)
+stats_region = res_region[[1]]
+head(stats_region)
 ## see which genes are located in the candidate region
 input_genes = res_region[[2]]
-candidate_genes = input_genes[input_genes==1]
+candidate_genes = input_genes[input_genes[,2]==1, 1]
 candidate_genes
 ```
 
-An alternative method to choose random blocks from the background regions can be used with the option `circ_chrom=TRUE`.
-Every candidate region is then compared to background regions on the same chromosome ([Schematic 2](#block_scheme)).
-And in contrast to the default `circ_chrom=FALSE`, randomly chosen blocks do not have to be located inside a single background region, but are allowed to overlap multiple background regions.
-This means that a randomly chosen block can start at the end of the last background region and continue at the beginning of the first background region on a given chromosome.
+The gene coordinates used to identify those genes were obtained from biomart and are, like the GO-annotations, dependent on the `ref_genome`:
 
-
-### Explore expression data
-
-#### <a name='get_expression'></a>get_expression
-
-The function `get_expression` enables the output of gene and brain region-specific expression data averaged across donors.
-By only setting the parameter `structure_ids` that defines the brain regions, the `gene_ids` and `dataset` are automatically set to the genes and dataset used in the last enrichment analysis.
-In comparison to defining genes and brain regions explicitly this saves some time since some pre-computations on the original dataset, e.g. aggregation of expression per gene, do not have to be redone.
-Using the default options (`background=FALSE`), `get_expression` returns expression data for the candidate genes.
-If `background=TRUE`, the gene expression data for both, candidate genes and background genes, are returned.
-
-
-```{r}
-## get expression data for the first 5 brain regions from the last aba_enrich-analysis
-top_regions = fwers_region[1:5, 'structure_id']
-top_regions
-expr = get_expression(top_regions, background=FALSE)
-head(expr)
-```
-
-The same output would be created independently of an `aba_enrich` analysis by, in addition to `structure_ids`, setting `gene_ids` and `dataset` manually.
-Like in all functions of the *ABAEnrichment* package `gene_ids` can be *Entrez-ID*, *Ensembl-ID* or *gene-symbol*.
 ```{r, eval=FALSE}
-## get expression data independent from previous aba_enrich analysis
-regions = c('Allen:12926', 'Allen:4738', 'Allen:4671', 'Allen:12909', 'Allen:4718')
-gene_ids = c('CHMP4C', 'FABP12', 'FABP4', 'FABP5', 'FABP9', 'IMPA1',
-  'PAG1', 'PMP2', 'SLC10A5', 'SNX16', 'ZFAND1') 
-expr2 = get_expression(regions, gene_ids=gene_ids, dataset='adult', background=FALSE)
+# use hg20 or mouse gene coordinates to find genes located in the input regions
+res_region_hg20 = go_enrich(input_regions, ref_genome='grch38')
+res_region_mus = go_enrich(input_regions, ref_genome='grcm38')
+
 ```
 
-For the `5_stages` dataset the output of `get_expression` is a list with a data frame for each developmental stage, where the first element corresponds to the first developmental stage, the second element to the second developmental stage, and so on.
 
-Note that the brain regions passed to `get_expression` do not have to match the brain regions returned in the output.
-This is due to the fact that not all brain regions were measured independently.
-In case a brain region was not measured directly, all available expression data from its substructures are returned.
-The function [get_sampled_substructures](#onto) can be used to identify substructures with expression data. 
-
-#### <a name='plot_expression'></a>plot_expression
-
-The function `plot_expression` enables the visualization of expression data.
-The usage of `plot_expression` is similar to that of `get_expression`.
-Providing only brain regions as input, it plots the expression data for the genes and dataset used in the last `aba_enrich` call.
+### Test enrichment of high or low scored genes using the Wilcoxon rank-sum test
+When genes are not divided into candidate and background genes, but ranked by some kind of score, e.g. a p-value for differential expression, a Wilcoxon rank-sum test can be performed to find GO-categories where genes with high or low scores are over-represented. This example uses mouse genes ranked by random example scores:
 
 ```{r}
-## get expression data for the first 5 brain regions from the last aba_enrich-analysis
-top_regions = fwers_region[1:5, 'structure_id']
-plot_expression(top_regions, background=FALSE)
+## create input dataframe with scores in second column
+high_score_genes = c('Gck', 'Gys1', 'Hk2', 'Pygl', 'Slc2a8', 'Ugp2', 'Zwint', 'Engase')
+low_score_genes = c('Cacng2', 'Ano1', 'Btbd3', 'Mtus1', 'Calb1', 'Pax2')
+gene_scores = c(runif(length(high_score_genes),0.5,0.8), runif(low_score_genes, 0.1, 0.4))
+input_willi = data.frame(gene_ids = c(high_score_genes, low_score_genes), gene_scores)
+head(input_willi)
 ```
-
-The optional argument `dendro` determines whether or not a dendrogram should be added to the heatplot.
-The colored side bar in the plot without dendrogram indicates candidate genes (red) and background genes (black).
-In this case only candidate gene expression was plotted (with the default option `background=FALSE`):
-
-```{r}
-## plot the same expression data without dendrogram
-plot_expression(top_regions, dendro=FALSE, background=FALSE)
-```
-
-When plotting expression data following an enrichment analysis with the Wilcoxon rank-sum test, the option `dendro=FALSE` results in a side bar that indicates the scores that were used for the enrichment analysis.
-
-Like `get_expression`, `plot_expression` can also be used independently of an enrichment analysis.
-In that case the arguments `gene_ids` and `dataset` have to be defined.
-If the `5_stages` dataset is used, the additional argument `age_category` selects the developmental stage for which the expression data should be plotted:
-
-```{r}
-## plot expression of some genes for the frontal neocortex (Allen:10161) in age category 3 (children, 3-11 yrs)
-gene_ids = c('ENSG00000157764', 'ENSG00000163041', 'ENSG00000182158', 'ENSG00000147889',
-  'ENSG00000103126', 'ENSG00000184634')
-plot_expression('Allen:10161', gene_ids=gene_ids, dataset='5_stages', age_category=3)
-```
-
-In this example the *frontal neocortex* (Allen:10161) was not sampled directly for expression measurements, but some of its substructures have expression data annotated.
-Instead of pooling the data of the substructures, they are plotted separately.
-
-#### <a name='onto'></a>get_name, get_sampled_substructures and get_superstructures
-
-As illustrated in the previous example, some brain regions like *frontal neocortex* (Allen:10161) do not have gene expression data available in the data set, but some of their substructures do have.
-Plotting or requesting expression data for such brain regions automatically obtains the data for all its sampled substructures.
-
-*ABAEnrichment* offers some functions to explore the ontology graph which describes the hierarchical organization of the brain regions used in the enrichment analyses.
-The function `get_sampled_substructures` returns the IDs of all the substructures for which expression data are available, and `get_superstructures` returns all superstructures in the order 'general to special'.
-The function `get_name` is useful to see the name of a brain region given a structure ID:
-
-```{r}
-## get IDs of the substructures of the frontal neocortex (Allen:10161) for which expression data are available
-subs = get_sampled_substructures('Allen:10161')
-subs
-## get the full name of those substructures
-get_name(subs)
-## get the superstructures of the frontal neocortex (from general to special)
-supers = get_superstructures('Allen:10161')
-supers
-## get the full names of those superstructures
-get_name(supers)
-```
-
-Note that the ontologies and the IDs for brain regions differ between the adult and the developing brain.
-However, the ontology functions `get_name`, `get_sampled_substructures` and `get_superstructures` work with valid brain regions IDs from both ontologies.
-
-
-#### <a name='getid'></a>NEW: get_id
-The new function `get_id` searches the ontologies of the adult and developing brain for the structure ID that belongs to a given brain region name:
-```{r}
-## get structure IDs of brain regions that contain 'accumbens' in their names
-get_id('accumbens')
-## get structure IDs of brain regions that contain 'telencephalon' in their names
-get_id('telencephalon')
-```
-Note that the output of `get_id` is restricted to brain regions that are used in *ABAEnrichment*.
-
-The function can also be used to get a full list of covered brain regions together with their IDs:
-```{r}
-## get all brain regions included in ABAEnrichment together with thier IDs
-all_regions = get_id('')
-head(all_regions)
-```
-
-#### <a name='anno'></a>NEW: get_annotated_genes
-Often it is useful to see which genes are annotated to a brain region, i.e. count as 'expressed', given an expression cutoff.
-While this can be accomplished using the expression cutoffs from `aba_enrich(...)[[3]]` and the expression values from `get_expression`, *ABAEnrichment* now also offers the convenient function `get_annotated_genes`.
-This function takes the output from `aba_enrich` and a FWER-threshold (`fwer_threshold`, default=0.05) as input and returns all brain-region/expression-cutoff combinations with a FWER below the FWER-threshold together with the corresponding annotated genes, the FWER and the score (1 for candidate and 0 for background genes or the scores from the Wilcoxon rank-sum test).
-Note that a brain region gets all genes annotated that are expressed in the brain region itself or in any of the sampled substructures (see [Schematic 1](#hyper_scheme) below).
-
 ```{r, results='hide'}
-## run an enrichment analysis with 7 candidate and 7 background genes for the developing brain
-gene_ids = c('FOXJ1', 'NTS', 'LTBP1', 'STON2', 'KCNJ6', 'AGT', 
-  'ANO3', 'TTR', 'ELAVL4', 'BEAN1', 'TOX', 'EPN3', 'PAX2', 'KLHL1')
-genes = rep(c(1,0), each=7)
-names(genes) = gene_ids
-res = aba_enrich(genes, dataset='5_stages', cutoff_quantiles=c(0.5,0.7,0.9), n_randsets=100)
-```
-```{r}
-head(res[[1]])
-## see which candidate genes are annotated to brain regions with a FWER < 0.01
-anno = get_annotated_genes(res, fwer_threshold=0.1)
-anno
+res_willi = go_enrich(input_willi, test='wilcoxon', n_randsets=100, ref_genome='grcm38')
 ```
 
-In addition to passing the result of an enrichment analysis together with a FWER-threshold to `get_annotated_genes`, it is also possible to define brain regions, expression cutoffs and (optionally) genes directly.
-The function then returns all genes that have expression above the cutoffs in the respective brain regions.
-If `genes` are defined, the output is reduced to this set of genes; if not, all protein-coding genes with available expression data are analyzed.
+The output is analogous to the one for the hypergeometric test:
+```{r}
+head(res_willi[[1]])
+```
+Note that when p-values are used as scores, often one would want to look for enrichment of low ranks, i.e. low p-values (or alternatively use (1 - p-value) as score and check for enrichment of high-ranks).
+
+### Test enrichment using the binomial test
+When genes are associated with two counts, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in root node. To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
 
 ```{r}
-## find out which of the above genes have expression above the 70% and 90% expression-cutoff, respectively,
-## in the basal ganglia of the adult human brain (Allen:4276)
-anno2 = get_annotated_genes(structure_ids='Allen:4276', dataset='adult', 
-  cutoff_quantiles=c(0.7,0.9), genes=gene_ids)
-anno2
+## create a toy example dataset with two counts per gene
+high_A_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_A_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+A_counts = c(sample(20:30, length(high_A_genes)), sample(5:15, length(low_A_genes)))
+B_counts = c(sample(5:15, length(high_A_genes)), sample(20:30, length(low_A_genes)))
+input_binom = data.frame(gene_ids=c(high_A_genes, low_A_genes), A_counts, B_counts)
+head(input_binom)
 ```
 
-### <a name='dev_score'></a>Developmental effect score
-In the previous examples genes got annotated to brain regions based on their expression.
-Besides the two gene expression datasets `adult` and `5_stages`, the dataset `dev_effect` can be used, which provides scores for an age effect for genes based on their expression change during development.
-Using this dataset, the same analyses as above are performed, except that a gene is annotated to a brain region when its developmental effect score in that region is a above the `cutoff_quantiles`.  
-To test brain regions for enrichment of candidate genes in the set of all genes with a developmental effect score above cutoff, the `dataset` parameter has to be set to `dev_effect`.
-The output of the developmental effect enrichment analysis is equal to that of the expression enrichment analysis:
+In this example we also use the `domains` option to reduce the analysis to `molecular_function` and `cellular_component`. Also the `silent` option is used, which suppresses all output that would be written to the screen (except for warnings and errors):
 
 ```{r}
-## use previously defined input genes vector
-genes
-```
-```{r,results='hide'}
-## run enrichment analysis with developmental effect score
-res_dev_effect = aba_enrich(genes, dataset='dev_effect', cutoff_quantiles=c(0.5,0.7,0.9), n_randsets=100)
-```
-```{r}
-## see the 5 brain regions with the lowest FWERs
-top_regions = res_dev_effect[[1]][1:5, ]
-top_regions
+## run binomial test, excluding the 'biological_process' domain, suppress output to screen
+res_binom = go_enrich(input_binom, test='binomial', n_randsets=100, silent=TRUE,
+ domains=c('molecular_function', 'cellular_component'))
+head(res_binom[[1]])
 ```
 
-As for the expression datasets, the developmental effect scores can be retrieved with the functions `get_expression` and plotted with `plot_expression`:
+### Test enrichment using the 2x2-contingency table test
+When genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species, like for a McDonald-Kreitman test [3], the 2x2 contingency table test can be used. It can identify GO-categories which have a high ratio of (count_A / count_B) compared to (count_C / count_D):
+
 ```{r}
-## plot developmental effect score of the 5 brain structures with the lowest FWERs
-plot_expression(top_regions[ ,'structure_id'])
+## create a toy example with four counts per gene
+high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
+low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
+subs_non_syn = c(sample(5:15, length(high_substi_genes), replace=TRUE), sample(0:5, length(low_substi_genes), replace=TRUE))
+subs_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=TRUE)
+vari_non_syn = c(sample(0:5, length(high_substi_genes), replace=TRUE), sample(0:10, length(low_substi_genes), replace=TRUE))
+vari_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=TRUE)
+input_conti = data.frame(gene_ids=c(high_substi_genes, low_substi_genes),
+ subs_non_syn, subs_syn, vari_non_syn, vari_syn)
+head(input_conti)
+
+## the corresponding contingency table for the first gene would be:
+matrix(input_conti[1, 2:5], ncol=2,
+ dimnames=list(c('non-synonymous', 'synonymous'),c('substitution','variable')))
+```
+```{r, results='hide'}
+res_conti = go_enrich(input_conti, test='contingency', n_randset=100)
+```
+The output is analogous to that of the other tests:
+
+```{r}
+head(res_conti[[1]])
+```
+Depending on the counts for each GO-category a Chi-square or Fisher's exact test is performed.
+Note that this is the only test that is not dependent on the distribution of the gene-associated variables in the root nodes.
+
+### <a name='plot_anno'></a> Plot distribution of gene-associated variables from an enrichment analysis
+The function `plot_anno_scores` can be used to get a quick visual overview of the gene-associated variables in GO-categories, that were used in an enrichment analysis. `plot_anno_scores` takes a result from `go_enrich` as input together with a vector of GO-IDs. It then plots the combined scores of all input genes for the `go_enrich` analysis in each of the defined GO-categories. The type of the plot depends on the test that was used in `go_enrich`. 
+
+For the hypergeometric test pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node). The top panel shows the odds-ratio and 95%-CI from fisher's exact test (two-sided) comparing the GO-categories with their root nodes. Note that `go_enrich` reports the the hypergeometric test for over- and under-representation of candidate genes which correspond to the one-sided fisher's exact tests.
+```{r}
+## hypergeometric test
+top_gos1 = res_hyper[[1]][1:5, 'node_id']
+# GO-categories with a high proportion of candidate genes
+top_gos1
+plot_anno_scores(res_hyper, top_gos1)
+
+## hypergeometric test with defined background
+top_gos2 = res_hyper_bg[[1]][1:5, 'node_id']
+top_gos2
+plot_anno_scores(res_hyper_bg, top_gos2)
+```
+For the wilcoxon rank-sum test violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes. Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes. The wilcoxon rank-sum test reported in the `go_enrich` result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
+
+```{r}
+## scores used for wilcoxon rank-sum test
+top_gos3 = res_willi[[1]][1:5, 'node_id']
+# GO-categories with high scores
+top_gos3
+plot_anno_scores(res_willi, top_gos3)
+```
+
+For the binomial test pie charts show the amounts of A and B counts associated with each GO-category and root node, (A in the colour of the corresponding root node). The top-panel shows point estimates and the 95%-CI of p(A) in the nodes, as well as horizontal lines that correspond to p(A) in the root nodes. The p-value in the returned object is based on the null hypothesis that p(A) in a node equals p(A) in the corresponding root node. Note that `go_enrich` reports that value for one-sided binomial tests.
+
+```{r}
+## counts used for the binomial test
+top_gos4 = res_binom[[1]][1:5, 'node_id']
+# GO-categories with high proportion of A
+top_gos4
+plot_anno_scores(res_binom, top_gos4)
+```
+Note that domain `cellular_component` is missing in that plot because it was excluded from the GO-enrichment analysis in the first place (`res_binom` was created using the `domains` option of `go_enrich`).  
+
+For the 2x2 contingency table test pie charts show the proportions of A and B, as well as C and D counts associated with a GO-category. Root nodes are not shown, because this test is independent of the root category. The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing A/B and C/D inside one node. Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of fisher's exact test.
+
+```{r}
+## counts used for the 2x2 contingency table test
+top_gos5 = res_conti[[1]][1:5, 'node_id']
+# GO-categories with high A/B compared to C/D
+top_gos5
+plot_anno_scores(res_conti, top_gos5)
+```
+
+### <a name='graph'></a> Explore the GO-graph
+The functions `get_parent_nodes` and `get_child_nodes` can be used to explore the ontology-graph. They list all higher-level GO-categories and sub-GO-categories of input nodes, respectively, together with the distance between them:
+
+```{r}
+## get the parent nodes (higher level GO-categories) of two GO-IDs
+get_parent_nodes(c('GO:0051082', 'GO:0042254'))
+
+## get the child nodes (sub-categories) of two GO-IDs
+get_child_nodes(c('GO:0090070', 'GO:0000112'))
+```
+Note that a GO-category per definition is also its own parent and child with distance 0.  
+
+<a name='get_names'></a> Since these functions use the GO-identifiers, it is convenient to use the `get_names` function to get the name of GO-IDs:
+```{r}
+## get the full names and domains of two GO-IDs
+get_names(c('GO:0090070', 'GO:0000112'))
+```
+
+<a name='get_ids'></a> It is also possible to got the other way round and search for GO-categories given part of their name using the function `get_ids`:
+
+```{r}
+## get GO-IDs of categories that contain 'blood-brain barrier' in their names
+bbb = get_ids('blood-brain barrier')
+head(bbb)
+```
+Note that his is just a `grep(..., ignore.case=TRUE)` on the node names of the ontology.
+More sophisticated searches, e.g. with regular expressions, could be performed on the table returned by `get_ids('')` which lists all non-obsolete GO-categories.
+
+
+### Retrieve associations between genes and GO-categories
+
+<a name='get_anno_g'></a> `GOfuncR` also offers the functions `get_anno_genes` and `get_anno_categories` to get annotated genes given input GO-categories, and annotated GO-categories given input genes, respectively.  
+`get_anno_genes` takes a vector of GO-IDs as input, and returns all genes that are annotated to those categories. The optional argument `genes` to define the set of genes which is searched for annotations. This function implicitly includes annotations to child nodes. Like for `go_enrich` the parameter `ref_genome` defines the reference genome for the annotations (default='grch37').
+
+```{r}
+## find all genes that are annotated to GO:0000109
+head(get_anno_genes(go_ids='GO:0000109'))
+
+## find out wich genes from a set of genes
+## are annotated to some GO-categories
+genes = c('AGTR1', 'ANO1', 'CALB1', 'GYG1', 'PAX2')
+gos = c('GO:0001558', 'GO:0005536', 'GO:0072205', 'GO:0006821')
+anno_genes = get_anno_genes(go_ids=gos, genes=genes)
+# add the names and domains of the GO-categories
+cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
+
+## find all mouse-gene annotations to two GO-categories 
+gos = c('GO:0072205', 'GO:0000109')
+head(get_anno_genes(go_ids=gos, ref_genome='grcm38'))
+```
+
+<a name='get_anno_c'></a> `get_anno_categories` on the other hand uses gene-symbols as input and returns associated GO-categories:
+
+```{r}
+## get the GO-annotations for two random genes
+anno1 = get_anno_categories(c('BTC', 'SPAG5'))
+head(anno1)
+
+## get the GO-annotations for two mouse genes
+anno2 = get_anno_categories(c('Mus81', 'Papola'), ref_genome='grcm38')
+head(anno2)
+```
+
+This function only returns direct annotations. To get also the parent nodes of the GO-categories a gene is annotated to, the function `get_parent_nodes` can be used:
+```{r}
+## get all annotations of NXPH4, inlcuding higher-level GO-categories
+direct_anno = get_anno_categories('NXPH4')
+direct_anno
+parent_ids = unique(get_parent_nodes(direct_anno$go_id)[,2])
+# add GO-domain
+full_anno = get_names(parent_ids)
+head(full_anno)
 ```
 
 
@@ -363,13 +385,13 @@ plot_expression(top_regions[ ,'structure_id'])
 
 ![FWER calculation](./Skizze_Fig1.png 'hypergeometric test and FWER')
 
-The FWER for the Wilcoxon rank-sum test is computed in a similar way, with random permutations of the scores that are assigned to genes.
+The FWER for the other tests is computed in the same way: the gene-associated variables (scores or counts) are permuted while the annotations of genes to GO-categories stay fixed. Then the statistical tests are evaluated again for every GO-category.
 
 #### <a name='block_scheme'></a>Schematic 2: `circ_chrom` option for genomic regions input
 
 ![genomic regions](./Skizze_Fig2.png 'options for genomic regions input')
 
-To use genomic regions as input, the names of the `genes` input vector have to be of the form `chr:start-stop`.
+To use genomic regions as input, the first column of the `genes` input dataframe has to be of the form `chr:start-stop`.
 The option `circ_chrom` defines how candidate regions are randomly moved inside the background regions for computing the FWER.
 When `circ_chrom=FALSE` (default), candidate regions can be moved to any background region on any chromosome, but are not allowed to overlap multiple background regions.
 When `circ_chrom=TRUE`, candidate regions are only moved on the same chromosome and are allowed to overlap multiple background regions.
@@ -384,5 +406,7 @@ sessionInfo()
 
 [1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25-29. [doi:10.1038/75556]
 
-[2] Pruefer, K. et al. (2007) FUNC: A package for detecting significant associations between gene
+[2] Pruefer, K. et al. (2007). FUNC: A package for detecting significant associations between gene
 sets and ontological annotations, BMC Bioinformatics 8: 41. [doi:10.1186/1471-2105-8-41]
+
+[3] McDonald, J. H. Kreitman, M. (1991). Adaptive protein evolution at the Adh locus in Drosophila, Nature 351: 652-654. [doi:10.1038/351652a0]
