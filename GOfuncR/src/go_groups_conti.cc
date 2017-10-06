@@ -31,7 +31,7 @@ go_groups_conti::go_groups_conti( string &groups, istream *in, int co, string ro
 	}
 	if ( root_idx == -1 ) {
 		Rcpp::Rcerr << "Cannot find GOID \"" << root << "\"." << endl ;
-		exit( 1 ) ;
+		Rcpp::stop("Failed to create go_groups_conti.\n") ;
 	}
 	//Rcpp::Rcout << "GOs: " << names.size() << endl ;
 }

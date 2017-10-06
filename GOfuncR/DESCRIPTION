@@ -5,27 +5,10 @@ Version: 0.98.0
 Date: 2017-09-28
 Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
-Description: The package GOfuncR performs GO-enrichment analyses 
-		and provides functions that facilitate the interpretation
-		of the results.
-		The core function 'go_enrich' takes as input either candidate
-		and (optional) background genes, or genes together with 
-		user-defined scores. It then uses the hypergeometric or
-		wilcoxon rank-sum test to test GO-categories for enrichment 
-		of candidate or high-scored genes, respectively. 
-		'go_enrich' interfaces the ontology enrichment software FUNC,
-		which uses random permutations of candidate and background
-		or score assignments of genes to compute a family-wise error
-		rate to account for multiple testing.
-		Additional functions provided in this package like
-		'get_anno_genes', which returns the genes annotated to
-		given GO-categories, and 'get_names', 'get_parent_nodes'
-		and 'get_child_nodes' can be used to explore the GO-graph
-		and help to interpret the results of the enrichment
-		analyses. 
+Description: GOfuncR performs a gene ontology enrichment analysis for human and mouse genes based on the ontology enrichment software FUNC. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked, (ii) a binomial test is used when genes are associated with two counts and (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts. To correct for multiple testing and interdependency of the tests, family-wise error rates are computed based on random permutations of the gene-associated variables. GOfuncR also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.5), mapplots (>= 1.5), gtools (>= 3.5.0)
-Depends: R (>= 3.2), vioplot (>= 0.2)
+Imports: Rcpp (>= 0.11.5), mapplots (>= 1.5), gtools (>= 3.5.0), utils, grDevices, graphics, stats
+Depends: R (>= 3.4), vioplot (>= 0.2)
 LinkingTo: Rcpp
 Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr

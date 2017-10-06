@@ -10,9 +10,9 @@ Returns the full names and the domains of GO-categories given the GO-IDs, e.g. '
 get_names(go_ids)
 }
 \arguments{
-  \item{go_ids}{
-a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
-}
+    \item{go_ids}{
+        a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
+    }
 }
 \value{
 a dataframe with columns go_id, go_name and root_node (domain).

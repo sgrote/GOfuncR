@@ -11,9 +11,9 @@ Note that a GO-ID itself is also considered as child with distance 0.
 get_child_nodes(go_ids)
 }
 \arguments{
-  \item{go_ids}{
-a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
-}
+    \item{go_ids}{
+        a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
+    }
 }
 
 \value{

@@ -12,12 +12,12 @@ Uses the result of a GO-enrichment analysis performed with \code{\link{go_enrich
 plot_anno_scores(res, go_ids)
 }
 \arguments{
-  \item{res}{
-an object returned from \code{\link{go_enrich}} (list of 3 elements).
-}
-  \item{go_ids}{
-vector of GO-IDs, e.g. c('GO:0005737','GO:0071495'). This specifies the GO-categories that are plotted.
-}
+    \item{res}{
+        an object returned from \code{\link{go_enrich}} (list of 3 elements).
+    }
+    \item{go_ids}{
+        vector of GO-IDs, e.g. c('GO:0005737','GO:0071495'). This specifies the GO-categories that are plotted.
+    }
 }
 
 \details{

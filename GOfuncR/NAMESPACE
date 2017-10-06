@@ -3,6 +3,6 @@ export("go_enrich", "get_names", "get_anno_genes", "get_child_nodes", "get_paren
 importFrom("Rcpp", "evalCpp")
 importFrom("utils", "read.table", "write.table")
 importFrom("grDevices", "colors")
-importFrom("graphics", "abline", "arrows", "axis", "grid", "layout", "par", "plot", "text", "points")
-importFrom("stats", "fisher.test")
+importFrom("graphics", "abline", "arrows", "axis", "grid", "layout", "par", "plot", "text", "points", "legend")
+importFrom("stats", "fisher.test", "binom.test", "aggregate", "median")
 import("mapplots", "gtools", "vioplot")

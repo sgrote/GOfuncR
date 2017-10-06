@@ -10,12 +10,12 @@ Returns all associated GO-categories given a vector of gene-symbols, e.g. c('SPA
 get_anno_categories(genes, ref_genome = 'grch37')
 }
 \arguments{
-  \item{genes}{
-a vector of gene-symbols, e.g. c('SPAG5', 'BTC').
-}
-  \item{ref_genome}{
-One of 'grch37', 'grch38' or 'grcm38'. This specifies the reference genome used for GO-annotations.
-}
+    \item{genes}{
+        a vector of gene-symbols, e.g. c('SPAG5', 'BTC').
+    }
+    \item{ref_genome}{
+        One of 'grch37', 'grch38' or 'grcm38'. This specifies the reference genome used for GO-annotations.
+    }
 }
 
 \value{

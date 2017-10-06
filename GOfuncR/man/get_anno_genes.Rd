@@ -13,16 +13,15 @@ get_anno_genes(go_ids, ref_genome = "grch37", genes = NULL)
 }
 
 \arguments{
-  \item{go_ids}{
-vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
-}
-  \item{ref_genome}{
-One of 'grch37' (default), 'grch38' or 'grcm38'. This specifies the reference genome used for GO-annotations.
-}
-  \item{genes}{
-optional vector of gene-symbols. If defined, only annotations of those genes are returned.
-}
-
+    \item{go_ids}{
+        vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
+    }
+    \item{ref_genome}{
+        One of 'grch37' (default), 'grch38' or 'grcm38'. This specifies the reference genome used for GO-annotations.
+    }
+    \item{genes}{
+        optional vector of gene-symbols. If defined, only annotations of those genes are returned.
+    }
 }
 
 \value{

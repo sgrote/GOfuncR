@@ -10,9 +10,9 @@ Returns GO-categories given (part of) their name. Matching is not case-sensitive
 get_ids(go_name)
 }
 \arguments{
-  \item{go_name}{
-(partial) name of a GO-category 
-}
+    \item{go_name}{
+        (partial) name of a GO-category 
+    }
 }
 
 

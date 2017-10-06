@@ -12,11 +12,12 @@ The gene ontology (obtained from geneontology.org), the annotations and the gene
 
 \usage{
 go_enrich(genes, test = 'hyper', n_randsets = 1000, gene_len = FALSE, 
-  circ_chrom = FALSE, ref_genome = 'grch37', silent = FALSE, domains = NULL)
+    circ_chrom = FALSE, ref_genome = 'grch37', silent = FALSE, domains = NULL)
 }
 
 \arguments{
-  \item{genes}{
+
+\item{genes}{
 A dataframe with gene-symbols in the first column and test-dependent additional columns:\cr
 If \code{test='hyper'} (default) a second column with 1 for candidate genes and 0 for background
 genes. If no background genes are defined, all remaining genes from the internal dataset are used as background.\cr
@@ -25,25 +26,32 @@ If \code{test='binomial'} two additional columns with two gene-associated intege
 If \code{test='contingency'} four additional columns with four gene-associated integers.\cr
 For \code{test='hyper'} the first column may also describe chromosomal regions ('chr:start-stop').
 }
-  \item{test}{
+
+\item{test}{
 'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
 }
-  \item{n_randsets}{
+
+\item{n_randsets}{
 integer defining the number of random sets created to compute the FWER.
 }  
-  \item{gene_len}{
+
+\item{gene_len}{
 logical. If \code{test='hyper'} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. 
 }
-  \item{circ_chrom}{
+
+\item{circ_chrom}{
 logical. When \code{genes} defines chromosomal regions, \code{circ_chrom=TRUE} uses background regions from the same chromosome and allows randomly chosen blocks to overlap multiple background regions. Only if \code{test='hyper'}.
 }
-  \item{ref_genome}{
+
+\item{ref_genome}{
 'grch37' (default), 'grch38' or 'grcm38'. Defines the reference genome used for GO-annotations and gene coordinates.
 }
-  \item{silent}{
+
+\item{silent}{
 logical. If TRUE all output to the screen except for warnings and errors is suppressed.
 }
-  \item{domains}{
+
+\item{domains}{
 optional vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
 }
 
@@ -77,7 +85,7 @@ Steffi Grote
 \code{\link{get_child_nodes}}\cr
 \code{\link{get_anno_categories}}\cr
 \code{\link{get_anno_genes}}\cr
-\code{\link{plot_anno_scores_ratio}}\cr
+\code{\link{plot_anno_scores}}\cr
 \code{\link{get_names}}\cr
 \code{\link{get_ids}}\cr
 }
@@ -92,7 +100,7 @@ Steffi Grote
 #### Perform a GO-enrichment analysis for some human genes
 # create input dataframe that defines the candidate genes
 gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 
- 'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+    'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 gene_scores = rep(1, length(gene_ids))
 genes = data.frame(gene_ids, gene_scores)
 genes

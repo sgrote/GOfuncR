@@ -21,7 +21,7 @@ Date: October 05, 2017
 
 
 ## Overview
-`r Biocpkg('GOfuncR')` performs a gene ontology enrichment analysis for human and mouse genes based on the ontology enrichment software FUNC [1,2]. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked (ii) a binomial test that can be used when genes are associated with two counts, e.g. amino acid changes since a common ancestor in two different species. (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species.  
+`r Biocpkg('GOfuncR')` performs a gene ontology enrichment analysis for human and mouse genes based on the ontology enrichment software FUNC [1,2]. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked (ii) a binomial test that can be used when genes are associated with two counts, e.g. amino acid changes since a common ancestor in two different species, and (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species.  
 To correct for multiple testing and interdependency of the tests, family-wise error rates are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below). `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing. The gene ontology (obtained from geneontology.org), the annotations and the gene-coordinates (both obtained from biomart) are integrated in the package and updated regularly.
 
 
@@ -71,7 +71,7 @@ In this example GO-enrichment of 13 human genes will be tested:
 library(GOfuncR)
 ## create input dataframe with candidate genes
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', 'ANO1', 
-  'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+    'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 is_candidate = rep(1, length(gene_ids))
 input_hyper = data.frame(gene_ids, is_candidate)
 input_hyper
@@ -109,9 +109,9 @@ To define a background gene set, just add lines to the input dataframe where the
 
 ```{r}
 candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 
- 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+    'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
 bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'FN1', 'NODAL',
- 'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
+    'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
 is_candidate = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
 input_hyper_bg = data.frame(gene_ids = c(candi_gene_ids, bg_gene_ids), is_candidate)
 head(input_hyper_bg)
@@ -153,7 +153,7 @@ If multiple candidate regions are provided, in the randomsets they are placed ra
 ## create input vector with a candidate region on chromosome 8
 ## and background regions on chromosome 7, 8 and 9
 regions = c('8:81000000-83000000', '7:1300000-56800000', '7:74900000-148700000',
-  '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
+    '8:7400000-44300000', '8:47600000-146300000', '9:0-39200000', '9:69700000-140200000')
 is_candidate = c(1, rep(0,6))
 input_regions = data.frame(regions, is_candidate)
 input_regions
