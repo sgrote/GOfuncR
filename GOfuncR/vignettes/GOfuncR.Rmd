@@ -43,7 +43,7 @@ function | description
 
 The function `go_enrich` performs all enrichment analyses given input genes and has the following parameters:
 
-parameter | default | description TODO: maybe link parameters to examples
+parameter | default | description
 -------- | ---------- | ---------- 
 genes | - |  a dataframe with gene-symbols or genomic regions and gene-associated variables
 test | 'hyper' | statistical test to use ('hyper', 'wilcoxon', 'binomial' or 'contingency')
@@ -203,10 +203,10 @@ The output is analogous to the one for the hypergeometric test:
 ```{r}
 head(res_willi[[1]])
 ```
-Note that when p-values are used as scores, often one would want to look for enrichment of low ranks, i.e. low p-values (or alternatively use (1 - p-value) as score and check for enrichment of high-ranks).
+Note that when p-values are used as scores, often one would want to look for enrichment of low ranks, i.e. low p-values (or alternatively use (1 - p-value) as score and check for enrichment of high ranks).
 
 ### Test enrichment using the binomial test
-When genes are associated with two counts, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in root node. To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
+When genes are associated with two counts, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in the root node. To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
 
 ```{r}
 ## create a toy example dataset with two counts per gene
@@ -227,7 +227,7 @@ res_binom = go_enrich(input_binom, test='binomial', n_randsets=100, silent=TRUE,
 head(res_binom[[1]])
 ```
 
-### Test enrichment using the 2x2-contingency table test
+### Test enrichment using the 2x2 contingency table test
 When genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species, like for a McDonald-Kreitman test [3], the 2x2 contingency table test can be used. It can identify GO-categories which have a high ratio of (count_A / count_B) compared to (count_C / count_D):
 
 ```{r}
@@ -244,7 +244,7 @@ head(input_conti)
 
 ## the corresponding contingency table for the first gene would be:
 matrix(input_conti[1, 2:5], ncol=2,
- dimnames=list(c('non-synonymous', 'synonymous'),c('substitution','variable')))
+    dimnames=list(c('non-synonymous', 'synonymous'),c('substitution','variable')))
 ```
 ```{r, results='hide'}
 res_conti = go_enrich(input_conti, test='contingency', n_randset=100)
@@ -260,7 +260,7 @@ Note that this is the only test that is not dependent on the distribution of the
 ### <a name='plot_anno'></a> Plot distribution of gene-associated variables from an enrichment analysis
 The function `plot_anno_scores` can be used to get a quick visual overview of the gene-associated variables in GO-categories, that were used in an enrichment analysis. `plot_anno_scores` takes a result from `go_enrich` as input together with a vector of GO-IDs. It then plots the combined scores of all input genes for the `go_enrich` analysis in each of the defined GO-categories. The type of the plot depends on the test that was used in `go_enrich`. 
 
-For the hypergeometric test pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node). The top panel shows the odds-ratio and 95%-CI from fisher's exact test (two-sided) comparing the GO-categories with their root nodes. Note that `go_enrich` reports the the hypergeometric test for over- and under-representation of candidate genes which correspond to the one-sided fisher's exact tests.
+For the hypergeometric test pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node). The top panel shows the odds-ratio and 95%-CI from Fisher's exact test (two-sided) comparing the GO-categories with their root nodes. Note that `go_enrich` reports the the hypergeometric test for over- and under-representation of candidate genes which correspond to the one-sided Fisher's exact tests.
 ```{r}
 ## hypergeometric test
 top_gos1 = res_hyper[[1]][1:5, 'node_id']
@@ -294,7 +294,7 @@ plot_anno_scores(res_binom, top_gos4)
 ```
 Note that domain `cellular_component` is missing in that plot because it was excluded from the GO-enrichment analysis in the first place (`res_binom` was created using the `domains` option of `go_enrich`).  
 
-For the 2x2 contingency table test pie charts show the proportions of A and B, as well as C and D counts associated with a GO-category. Root nodes are not shown, because this test is independent of the root category. The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing A/B and C/D inside one node. Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of fisher's exact test.
+For the 2x2 contingency table test pie charts show the proportions of A and B, as well as C and D counts associated with a GO-category. Root nodes are not shown, because this test is independent of the root category. The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing A/B and C/D inside one node. Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of Fisher's exact test.
 
 ```{r}
 ## counts used for the 2x2 contingency table test
