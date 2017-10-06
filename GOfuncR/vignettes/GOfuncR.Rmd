@@ -223,7 +223,7 @@ In this example we also use the `domains` option to reduce the analysis to `mole
 ```{r}
 ## run binomial test, excluding the 'biological_process' domain, suppress output to screen
 res_binom = go_enrich(input_binom, test='binomial', n_randsets=100, silent=TRUE,
- domains=c('molecular_function', 'cellular_component'))
+    domains=c('molecular_function', 'cellular_component'))
 head(res_binom[[1]])
 ```
 
@@ -239,7 +239,7 @@ subs_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=
 vari_non_syn = c(sample(0:5, length(high_substi_genes), replace=TRUE), sample(0:10, length(low_substi_genes), replace=TRUE))
 vari_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=TRUE)
 input_conti = data.frame(gene_ids=c(high_substi_genes, low_substi_genes),
- subs_non_syn, subs_syn, vari_non_syn, vari_syn)
+    subs_non_syn, subs_syn, vari_non_syn, vari_syn)
 head(input_conti)
 
 ## the corresponding contingency table for the first gene would be:
