@@ -7,10 +7,23 @@ Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
 Description: GOfuncR performs a gene ontology enrichment analysis for human and mouse genes based on the ontology enrichment software FUNC. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked, (ii) a binomial test is used when genes are associated with two counts and (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts. To correct for multiple testing and interdependency of the tests, family-wise error rates are computed based on random permutations of the gene-associated variables. GOfuncR also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.5), mapplots (>= 1.5), gtools (>= 3.5.0), utils, grDevices, graphics, stats
-Depends: R (>= 3.4), vioplot (>= 0.2)
+Imports: 
+    Rcpp (>= 0.11.5),
+    mapplots (>= 1.5),
+    gtools (>= 3.5.0),
+    utils,
+    grDevices,
+    graphics,
+    stats,
+    Homo.sapiens
+Depends: 
+    R (>= 3.4),
+    vioplot (>= 0.2)
 LinkingTo: Rcpp
-Suggests: BiocStyle, knitr, testthat
+Suggests:
+    BiocStyle,
+    knitr,
+    testthat
 VignetteBuilder: knitr
 biocViews: GeneSetEnrichment, GO
 NeedsCompilation: yes

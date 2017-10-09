@@ -2,7 +2,7 @@
 # run "FUNC" with default GO and GO-annotations (update once in a while...)
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE, domains)
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, organismDb="Homo.sapiens", silent=FALSE, domains, orgDb, txDb)
 {
     
     #####   1. Check arguments and define parameters
@@ -74,9 +74,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     }
 
     # other arguments
-    if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
-        stop("Please use 'ref_genome=grch37', 'ref_genome=grch38' or 'ref_genome=grcm38'")
-    }
     if (length(n_randsets)>1 || !is.numeric(n_randsets) || n_randsets<1){
         stop("Please define 'n_randsets' as a positive integer.")
     }
@@ -101,6 +98,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     
     #####   2. Prepare for FUNC 
     
+    # get GO-annotations
+    go_anno = get(paste("go_anno_", ref_genome, sep=""))
+
     # Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
     directory = tempfile()
 #   dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
@@ -108,8 +108,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     # load gene coordinates
     gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
 
-    # load GO-annotation
-    go_anno = get(paste("go_anno_", ref_genome, sep=""))
     
     # detect identifier: are genes or genomic regions ('blocks') given as input?
     blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", genes[1,1]) # TODO: allow more than [0-9XY] as chroms?
@@ -322,6 +320,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     gene_values[,1] = as.character(gene_values[,1])
     rownames(gene_values) = 1:nrow(gene_values)
 
+	# TODO: version of OrganismDb
     final_output = list(results=out, genes=gene_values, ref_genome=ref_genome)
     if (!silent) message("\nDone.")
 

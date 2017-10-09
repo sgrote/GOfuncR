@@ -38,6 +38,9 @@ This gives only direct annotations of genes to GO-categories. By definition gene
 }
 
 \examples{
+## TODO: the new function does not add names anymore, show exampe here
+## TODO: also state that that categories that are not in internal GO-graph or obsolete are missing to be consistent with the annotations used for the enrichment analyses
+
 ## get the GO-annotations for two random genes
 anno1 = get_anno_categories(c('BTC', 'SPAG5'))
 head(anno1)
