@@ -2,7 +2,7 @@
 # run "FUNC" with default GO and GO-annotations (update once in a while...)
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE, domains=NULL)
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, ref_genome="grch37", silent=FALSE, domains)
 {
     
     #####   1. Check arguments and define parameters
@@ -91,7 +91,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         stop("Please set circ_chrom to TRUE or FALSE.")
     }
     root_nodes = c("molecular_function","biological_process","cellular_component")
-    if (!is.null(domains)){
+    if (!missing(domains)){
         if (!all(domains %in% root_nodes)){
             stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
         }
