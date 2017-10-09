@@ -2,7 +2,7 @@
 
 # return a dataframe with genes annotated to GOs 
 
-# input: genes, optional: ref_genome
+# input: genes, optional: database
 
 # output: gene, go_id
 
@@ -21,7 +21,7 @@ get_anno_categories = function(genes, database="Homo.sapiens"){
 	}
 	
     ## find annotated GO-categories
-    message(paste("find associated categories using database ",database,"...",sep=""))
+    message(paste("find associated categories using database '",database,"'...",sep=""))
     # load GO-annotation
     go_anno = select(get(database), keys=genes, columns=c("SYMBOL","GO"), keytype="SYMBOL")
 	go_anno = go_anno[!is.na(go_anno[,2]), 1:2]
@@ -40,15 +40,11 @@ get_anno_categories = function(genes, database="Homo.sapiens"){
     # add category name 
     # TODO: don't add name here but show get_names example in vignette and man
 #    out = cbind(out, get_names(out$go_id)[,c("go_name","root_node")])
-#    # sort TODO: rather keep input sorting?
-#    out = out[order(out$gene, out$go_id),]
-#    rownames(out) = 1:nrow(out)
+#    # sort
+    out = out[order(out$go_id, out$gene),]
+    rownames(out) = 1:nrow(out)
 
     return(out)
 }   
 
-# test
-#get_anno_categories(c("A1BG", "A2M", "A2MP1", "NAT1", "NAT2", "NATP"))
-#get_anno_categories(c("A1BG", "A2M", "A2MP1", "NAT1", "NAT2", "NATP"), "org.Hs.eg.db")
-#get_anno_categories(c("QUATSCH"), "org.Hs.eg.db")
-#get_anno_categories(c("QUATSCH"), "org.Alien.eg.db")
+

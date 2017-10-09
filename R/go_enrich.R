@@ -97,6 +97,23 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
 
     
     #####   2. Prepare for FUNC 
+
+    # detect identifier: are genes or genomic regions ('blocks') given as input?
+    blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", genes[1,1]) # TODO: allow more than [0-9XY] as chroms?
+
+    # convert genomic regions to single genes (get_genes_from_regions)
+    # TODO: blocks_to_genes using OrganismDb (or TxDb)
+    if (blocks){
+        genes = blocks_to_genes(directory, genes, test, gene_len, gene_coords, circ_chrom, silent)
+    } else {
+        if (circ_chrom == TRUE){
+            # warn if circ_chrom=TRUE, although individual genes are used
+            warning("Unused argument: 'circ_chrom = TRUE'.")
+        }
+    }
+    
+    # TODO ab hier neu get_anno_categories
+    
     
     # get GO-annotations
     go_anno = get(paste("go_anno_", ref_genome, sep=""))
@@ -109,18 +126,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
 
     
-    # detect identifier: are genes or genomic regions ('blocks') given as input?
-    blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", genes[1,1]) # TODO: allow more than [0-9XY] as chroms?
-
-    # convert genomic regions to single genes (get_genes_from_regions)
-    if (blocks){
-        genes = blocks_to_genes(directory, genes, test, gene_len, gene_coords, circ_chrom, silent)
-    } else {
-        if (circ_chrom == TRUE){
-            # warn if circ_chrom=TRUE, although individual genes are used
-            warning("Unused argument: 'circ_chrom = TRUE'.")
-        }
-    }
     
     if (!silent) message("get GOs for genes...")
     # remove obsolete terms
@@ -274,6 +279,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         #system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
             
         # check that FWER order follows p-value order (per root_node)
+        ## TODO: remove that
         colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
         groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
         if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
