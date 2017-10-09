@@ -1,67 +1,55 @@
 
 # return a dataframe with genes annotated to GOs 
 
-# input: go_ids, optional: genes, ref_genome
+# input: go_ids, optional: database, genes
 
 # output: go_id, gene
 
 
-get_anno_genes = function(go_ids, ref_genome="grch37", genes=NULL){
+get_anno_genes = function(go_ids, database="Homo.sapiens", genes){
     
     ## Check input  
     # GO-IDs
     if (!is.vector(go_ids) || !all(substr(go_ids,1,3) == "GO:")){
         stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0072221','GO:0004945')")
     }
-    # reference genome
-    if (!(ref_genome %in% c("grch37","grch38","grcm38"))){
-        stop("Please use ref_genome='grch37', ref_genome='grch38' or ref_genome='grcm38'")
-    }
+	# database
+	message(paste0("load database '", database, "'..."))
+    if (!suppressPackageStartupMessages(suppressWarnings(require(database, character.only=TRUE)))){
+		stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
+	}
 
-    ## GO-graph and GO-annotations  
-    # find children
+    # child nodes 
     message("find child nodes of GOs...")
-    children = get_child_nodes(go_ids)
-    children = tapply(children[,2], children[,1], as.character, simplify=FALSE)
+    children = get_child_nodes(go_ids)[,1:2]
 
-    # 3) find genes annotated to child nodes
-    message(paste("find genes annotated to child nodes using ref_genome ",ref_genome,"...",sep=""))
+    # find genes annotated to child nodes
+    message(paste("find genes annotated to child nodes using database '", database,"'...",sep=""))
+    child_anno = select(get(database), keys=unique(children[,2]), columns=c("GO","SYMBOL"), keytype="GO")
+    child_anno = child_anno[!is.na(child_anno[,4]), c(1,4)]
+    
     # remove obsolete terms
     term = term[term[,5]==0,]
-    # load GO-annotation
-    go_anno = get(paste("go_anno_", ref_genome, sep=""))
-    # remove empty genes in annotations
-    go_anno = go_anno[go_anno[,2]!="",]
     # restrict annotations to GOs present in term
-    anno = go_anno[go_anno[,1] %in% term[,4],]
+    child_anno = child_anno[child_anno[,1] %in% term[,4],]
     # restrict to genes
-    if(!is.null(genes)){
-        anno = anno[anno[,2] %in% genes, ]  
+    if(!missing(genes)){
+        child_anno = child_anno[child_anno[,2] %in% genes, ]  
     }
-    if(nrow(anno)==0){
-        warning("No GO-annotations found for the input genes.")
-        return(NULL)
+    if(nrow(child_anno) == 0){
+        stop("No GO-annotations found for the input genes.")
     }
-    # restrict to child-GOs
-    child_anno = lapply(children, function(x) unique(anno[anno[,1] %in% x,2]))
-    # rearrange to dataframe
-    message("rearrange output...")
-    go_id = lapply(seq_along(child_anno), function(i) rep(names(child_anno)[i], length(child_anno[[i]])))
-    go_id = unlist(go_id)
-    if(length(go_id)==0){
-        warning("No GO-annotations found for the input.")
-        return(NULL)
-    }
-    anno_gene = unlist(child_anno)
-    out = data.frame(go_id, anno_gene)
-
+    # remap to parents (accounts also for multiple parents of same child)
+	out = merge(children,child_anno, by.x="child_go_id", by.y="GO")
+	out = out[,2:3]
+	colnames(out) = c("go_id", "gene")
+	
     # sort  
-    out = out[mixedorder(out$anno_gene),]
-    out = out[order(out$go_id),]
-
-    out[,1:2] = apply(out[,1:2], 2, as.character)
+    out = out[order(out$gene, out$go_id),]
     row.names(out) = 1:nrow(out)
     message("Done.")
 
     return(out)
 }   
+
+
