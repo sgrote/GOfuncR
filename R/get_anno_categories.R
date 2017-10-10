@@ -10,20 +10,20 @@
 get_anno_categories = function(genes, database="Homo.sapiens"){
     
     ## Check input  
-    if(is.null(genes)){
-        stop("Please provide gene-symbols as input.")
-    }
-    if (!suppressPackageStartupMessages(suppressWarnings(require(database, character.only=TRUE)))){
+    if (!suppressPackageStartupMessages(suppressMessages(require(database, character.only=TRUE)))){
 		stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
 	}
-    if(!any(genes %in% keys(get(database), keytype="SYMBOL"))){
+	# if genes are not provided use all from database (useful for default background in hypergeometric test)
+	if (missing(genes)){
+		genes = keys(get(database), keytype="SYMBOL")
+	} else if(!any(genes %in% keys(get(database), keytype="SYMBOL"))){
 		stop(paste0("None of the genes entered are present in the SYMBOL column of '" ,database, "'. Check head(keys(", database, ", keytype='SYMBOL')) to see valid examples."))
 	}
 	
     ## find annotated GO-categories
     message(paste("find associated categories using database '",database,"'...",sep=""))
     # load GO-annotation
-    go_anno = select(get(database), keys=genes, columns=c("SYMBOL","GO"), keytype="SYMBOL")
+    go_anno = suppressMessages(select(get(database), keys=genes, columns=c("SYMBOL","GO"), keytype="SYMBOL"))
 	go_anno = go_anno[!is.na(go_anno[,2]), 1:2]
 
     ## remove obsolete terms
@@ -41,7 +41,7 @@ get_anno_categories = function(genes, database="Homo.sapiens"){
     # TODO: don't add name here but show get_names example in vignette and man
 #    out = cbind(out, get_names(out$go_id)[,c("go_name","root_node")])
 #    # sort
-    out = out[order(out$go_id, out$gene),]
+    out = out[order(out$gene, out$go_id),]
     rownames(out) = 1:nrow(out)
 
     return(out)

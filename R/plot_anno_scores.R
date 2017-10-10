@@ -8,7 +8,7 @@ plot_anno_scores = function(res, go_ids){
 
     ### check input
     # check that res could be go_enrich-output
-    if (!(is.list(res) && all(names(res) == c("results","genes","ref_genome")))){
+    if (!(is.list(res) && all(names(res) == c("results","genes","databases")))){
         stop("Please use an object returned from go_enrich as input (list with 3 elements).")
     }
     # check that all go_ids are in res
@@ -49,7 +49,7 @@ plot_anno_scores = function(res, go_ids){
     }
     
     ### get annotation for nodes
-    anno = get_anno_genes(go_ids, genes=genes, ref_genome=res[[3]])
+    anno = get_anno_genes(go_ids, database=res[[3]][1,2], genes=genes)
     if (is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
     # add scores to nodes
     anno_scores = cbind(anno, in_genes[match(anno[,2], in_genes[,1]), 2:ncol(in_genes)])
@@ -77,7 +77,7 @@ plot_anno_scores = function(res, go_ids){
         root_ids = root_names[,4]
     
         # get annotation for root nodes
-        root_anno = get_anno_genes(root_ids, genes=genes, ref_genome=res[[3]])
+        root_anno = get_anno_genes(root_ids, database=res[[3]][1,2], genes=genes)
         # add scores to root
         root_anno_scores = cbind(root_anno, in_genes[match(root_anno[,2], in_genes[,1]), 2:ncol(in_genes)])
 

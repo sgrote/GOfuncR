@@ -2,7 +2,7 @@
 # run "FUNC" with default GO and GO-annotations (update once in a while...)
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_chrom=FALSE, organismDb="Homo.sapiens", silent=FALSE, domains, orgDb, txDb)
+go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, organismDb="Homo.sapiens", silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL)
 {
     
     #####   1. Check arguments and define parameters
@@ -13,7 +13,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     }
     if (is.vector(genes)){
         genes = data.frame(gene=names(genes), score=unname(genes), stringsAsFactors=FALSE)
-    }
+    } else {
+		genes[,1] = as.character(genes[,1])
+	}
 
     ## Check arguments
     if (!silent) message("Checking arguments...")
@@ -39,35 +41,29 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         if (nrow(genes) < 2){
             stop("Only one gene provided as input.")
         }
-        if (gene_len == TRUE){
-            stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-        }
     } else if (test=="binomial"){
         if (!(is.data.frame(genes) && ncol(genes)==3 && all(sapply(genes,is.numeric) == c(0,1,1)))){
             stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test.")
         }
-        if (any(c(genes[,2],genes[,3]) != round(c(genes[,2],genes[,3]))) || any(c(genes[,2], genes[,3]) < 0)){
-            stop("Please provide a data frame with columns [gene, count1, count2] as input for binomial test. count1 and count2 need to be integers >= 0.")
-        }
-        if (test=="binomial" && all(c(genes[,2],genes[,3]) == 0)) {
-            stop(paste("All input values are 0.",sep=""))
-        }
-        if (gene_len == TRUE){
-            stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+        if (any(genes[,2:3] < 0) | any(genes[,2:3] != round(genes[,2:3]))){
+            stop("Please provide non-negative integers in columns 2-3.")
         }
     } else if (test=="contingency"){
         if (!(is.data.frame(genes) && ncol(genes)==5 && all(sapply(genes,is.numeric) == c(0,1,1,1,1)))){
             stop("Please provide a data frame with columns [gene, count1A, count2A, count1B, count2B] as input for contingency table test.")
         }
-        if (any(sapply(genes[,2:5], function(x) x<0))){
-            stop("Please provide non-negative values.")
+        if (any(genes[,2:5] < 0) | any(genes[,2:5] != round(genes[,2:5]))){
+            stop("Please provide non-negative integers in columns 2-5.")
         }
     } else {
         stop("Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
     }
+    if (gene_len == TRUE & !(test == "hyper")){
+		stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+	}
 
     # check for multiple assignment for one gene
-    genes = unique(genes)
+    genes = unique(genes) # allow for multiple assignment of same value
     multi_genes = sort(unique(genes[,1][duplicated(genes[,1])]))
     if (length(multi_genes) > 0){
         stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
@@ -88,65 +84,79 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         stop("Please set circ_chrom to TRUE or FALSE.")
     }
     root_nodes = c("molecular_function","biological_process","cellular_component")
-    if (!missing(domains)){
+    if (!is.null(domains)){
         if (!all(domains %in% root_nodes)){
             stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
         }
         root_nodes = domains
     }
-
     
-    #####   2. Prepare for FUNC 
+    # if orgDb is defined use that one instead of default organismDb
+    if (!is.null(orgDb)){
+		anno_db = orgDb
+	} else {
+		anno_db = organismDb
+	}
+	databases = data.frame(type="go_annotations", db=anno_db, version=packageVersion(anno_db), stringsAsFactors=FALSE)
+	# check if blocks or gene-len; warn that if orgDb is defined, also TxDb has to be defined
+    if (regions || gene_len){
+		if (!is.null(orgDb)){
+			if (is.null(txDb)){
+				stop("Please provide a 'txDb' object from bioconductor (if 'orgDb' is defined for GO-annotations, then 'txDb' is used for gene-coordinates).")
+			}
+			coord_db = txDb
+		} else {
+			coord_db = organismDb
+		}
+		databases = rbind(databases, list("gene_coordinates", coord_db, packageVersion(coord_db)))
+	} else {
+		coord_db = NULL
+	}	
 
-    # detect identifier: are genes or genomic regions ('blocks') given as input?
-    blocks = grepl("^[0-9XY]*:[0-9]*-[0-9]*$", genes[1,1]) # TODO: allow more than [0-9XY] as chroms?
-
-    # convert genomic regions to single genes (get_genes_from_regions)
-    # TODO: blocks_to_genes using OrganismDb (or TxDb)
-    if (blocks){
-        genes = blocks_to_genes(directory, genes, test, gene_len, gene_coords, circ_chrom, silent)
-    } else {
-        if (circ_chrom == TRUE){
-            # warn if circ_chrom=TRUE, although individual genes are used
-            warning("Unused argument: 'circ_chrom = TRUE'.")
-        }
-    }
-    
-    # TODO ab hier neu get_anno_categories
-    
-    
-    # get GO-annotations
-    go_anno = get(paste("go_anno_", ref_genome, sep=""))
-
+	
+	
     # Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
     directory = tempfile()
 #   dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
 
-    # load gene coordinates
-    gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
 
+   
+    #####   2. Prepare for FUNC 
+
+
+
+    # convert genomic regions to single genes (also check them and write to file for C++)
+    # TODO: blocks_to_genes using OrganismDb (or TxDb)
+    if (regions){
+        genes = blocks_to_genes(directory, genes, test, gene_len, gene_coords, circ_chrom, silent)
+    } else {
+        if (circ_chrom==TRUE){
+            warning("Unused argument: 'circ_chrom = TRUE'.")
+        }
+    }
     
-    
+    ### get GO-annotations
     if (!silent) message("get GOs for genes...")
-    # remove obsolete terms
-    term = term[term[,5]==0,]
-    # subset to GOs present in term.txt and flip colums [gene, GO]
-    gene_go = go_anno[go_anno[,1] %in% term[,4] & go_anno[,1]!="", 2:1]
-
-    # subset genes to annotated genes (GOs contained in the ontology)
+    # if test=hyper and default background get annotations for all genes in database
+    if (test=="hyper" && all(genes[,2]==1)){
+		go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
+	} else {
+		go_anno = suppressMessages(get_anno_categories(genes[,1], anno_db))
+	}
+    # subset genes to annotated genes (also reduced to internal ontology)
     if (!silent) message("Remove invalid genes...")
-    gene_values = genes[genes[,1] %in% gene_go[,1],] # restrict
+    gene_values = genes[genes[,1] %in% go_anno[,1],] # restrict
     not_in = genes[,1][!genes[,1] %in% gene_values[,1]] # removed
-    if (length(not_in) > 0 && !blocks){ # this message is usually too long when blocks are used. 
+    if (length(not_in) > 0 && !regions){ # this message is usually too long when regions are used
         not_in_string = paste(not_in,collapse=", ")
         warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
     }
 
-    # subset GO-annotations to input genes (unless test=hyper & no background genes defined)
-    if (!(test=="hyper" && all(gene_values[,2]==1))){
-        gene_go = gene_go[gene_go[,1] %in% gene_values[,1],]
-    }
-
+	### get coordinates
+	if (regions || gene_len){
+		# load gene coordinates # TODO: use OrganismDb or OrgDb for that
+		gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
+	}
     # subset to genes that have coordinates and warn about the rest
     if (gene_len){ # only for test==hyper
         no_coords = gene_values[,1][!(gene_values[,1] %in% gene_coords[,4])] # removed
@@ -157,7 +167,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
             not_in = c(not_in, no_coords)
         }
     }
-    # after removing genes without expression data or coordinates: are enough genes left?
+    
+    # after removing genes without annotations or coordinates: are enough genes left?
     if (length(not_in) > 0){
         # is any gene in the data? if not, stop.
         if (nrow(gene_values) == 0) {
@@ -172,7 +183,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         }
         # at least two for wilcoxon
         if (test=="wilcoxon" && nrow(gene_values) < 2) {
-            stop(paste("Less than 2 genes have annotated GOs.",sep=""))
+            stop(paste("Less than 2 genes have annotated GO-categories.",sep=""))
         }
     }
 
@@ -201,7 +212,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         if (!silent) message(paste("\n\nProcessing root node: ", root_node,"...\n", sep=""))
         
         # subset GO-annotations to nodes that belong to current root node (col 3 in term.txt is root-node)
-        gene_go_root = gene_go[term[match(gene_go[,2],term[,4]),3]==root_node,]
+        gene_go_root = go_anno[term[match(go_anno[,2],term[,4]),3]==root_node,]
         
         # NEW: skip root-node if no annotations of input genes (at least two for wilcoxon) 
         if (nrow(gene_go_root) == 0 || (test == "wilcoxon" && nrow(gene_go_root) < 2)){
@@ -216,8 +227,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         # gene | (chrom | start | end) | GO1 GO2 GO3
         go_string = tapply(gene_go_root[,2],gene_go_root[,1],function(x){paste(x,collapse=" ")})
         gene = as.character(names(go_string))
-        # add gene-coordinates, despite for classic FUNC option 
-        if (blocks || gene_len){
+        # add gene-coordinates, despite for classic FUNC options
+        if (regions || gene_len){
             # one line per gene: gene | chrom | start | end | GO1 GO2 GO3
             # add coordinates
             gene_position = gene_coords[match(gene, gene_coords[,4]),1:3]   
@@ -251,9 +262,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
         if (!silent) message("Run Func...\n")
         if (test == "hyper"){
             # randomset
-            if (blocks & circ_chrom){
+            if (regions & circ_chrom){
                 hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll" , silent)
-            } else if (blocks){
+            } else if (regions){
                 hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id,"block", silent)
             } else if (gene_len){
                 hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "gene_len", silent)
@@ -320,14 +331,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, circ_ch
     } else if (test == "contingency"){
         colnames(out)=c("ontology","node_id","node_name","raw_p_high_CD","raw_p_high_AB","FWER_high_CD","FWER_high_AB")
     }
-    # also return input genes (reduced to those with expression data, candidate genes(no bg defined), with coords(gene_len==T))
-    # NEW: dataframe
+    # also return input genes (reduced to those with annotations, candidate genes(no bg defined), with coords(gene_len/regions))
     gene_values = gene_values[mixedorder(gene_values[,1]),]
     gene_values[,1] = as.character(gene_values[,1])
     rownames(gene_values) = 1:nrow(gene_values)
-
-	# TODO: version of OrganismDb
-    final_output = list(results=out, genes=gene_values, ref_genome=ref_genome)
+	
+    final_output = list(results=out, genes=gene_values, databases=databases)
     if (!silent) message("\nDone.")
 
     return(final_output)
