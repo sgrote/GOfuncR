@@ -88,6 +88,7 @@ The output of `go_enrich` is a list of 3 elements:
 The most important is the first element which contains the results from the enrichment analysis (ordered by FWER for over-representation of candidate genes):
 
 ```{r}
+## first element of go_enrich result has the stats
 stats = res_hyper[[1]]
 ## top-GO categories
 head(stats)
@@ -369,9 +370,10 @@ head(anno2)
 
 This function only returns direct annotations. To get also the parent nodes of the GO-categories a gene is annotated to, the function `get_parent_nodes` can be used:
 ```{r}
-## get all annotations of NXPH4, inlcuding higher-level GO-categories
+# get all direct annotations of NXPH4
 direct_anno = get_anno_categories('NXPH4')
 direct_anno
+# get parent nodes of directly annotated GO-categories
 parent_ids = unique(get_parent_nodes(direct_anno$go_id)[,2])
 # add GO-domain
 full_anno = get_names(parent_ids)

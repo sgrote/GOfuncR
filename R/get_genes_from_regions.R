@@ -1,42 +1,91 @@
 
-# get genes from genomic regions and return normal genes-input for hypergeometric test
-# write regions to file
+# get genes from genomic regions
 
-blocks_to_genes = function(directory, genes, test, gene_len, gene_coords, circ_chrom, silent){
-    # check that test is hyper
-    if (test != "hyper"){
-        stop("chromosomal regions can only be used with test='hyper'.")
-    }
-    # check that background region is specified
-    if (all(genes[,2]==1)){
-        stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
-    }
-    # warn if gene_len=TRUE, although regions are used
-    if (gene_len == TRUE){
-        warning("Unused argument: 'gene_len = TRUE'.")
-    }
-    # convert coords from genes-vector to bed format, SORT, CHECK and extract genes overlapping regions
-    regions = get_genes_from_regions(genes, gene_coords, circ_chrom) # gene_coords from sysdata.rda HGNC
-    test_regions = regions[[1]]
-    bg_regions = regions[[2]]
-    genes = regions[[3]]
+# 'genes' is the input-dataframe for go_enrich, in this case it's genomic regions like 9:123-1225
+# output: list of
+	# classic single genes go_enrich input-dataframe
+	# gene_coords chr, start, end, gene for all genes (test+bg)
+# side-effect: write regions to file for FUNC
+# requires database to be laoded
 
-    # avoid scientific notation in regions (read in c++)
-    test_regions = format(test_regions, scientific=FALSE, trim=TRUE)
-    bg_regions = format(bg_regions, scientific=FALSE, trim=TRUE)
+blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="Homo.sapiens", circ_chrom=FALSE, silent=FALSE){
 
+	# check regions are valid, remove unused chroms for circ_chrom,
+	# get two bed-dataframes back (candidate and background)
+	regions = check_regions(genes, circ_chrom)
+	
+    # add "chr" substring (like in databases)
+    regions = lapply(regions, function(x) {x[,1] = paste0("chr", x[,1]); return(x)})
+	test_regions = regions[[1]]
+	bg_regions = regions[[2]]
     if (!silent){
         message("Candidate regions:")
         print(test_regions)
         message("Background regions:")
         print(bg_regions)
     }
-
+    
+	# load database
+	if (!silent){
+		message(paste("load database '", coord_db,"'...",sep=""))
+	}
+    if (!suppressPackageStartupMessages(suppressMessages(require(coord_db, character.only=TRUE)))){
+		stop(paste0("database '" ,coord_db, "' is not installed. Please install it from bioconductor."))
+	}
+	if (!silent){
+		message(paste("find genes in input-regions using database '", coord_db,"'...",sep=""))
+	}
+    
+    # convert to GRanges
+    test_range = GRanges(test_regions[,1], IRanges(test_regions[,2], test_regions[,3]))
+    bg_range = GRanges(bg_regions[,1], IRanges(bg_regions[,2], bg_regions[,3]))
+    
+	# check if OrganismDb or OrgDb/TxDb
+	if (coord_db == anno_db){
+		gene_identifier = "SYMBOL"
+	} else {
+		gene_identifier = "GENEID"
+	}
+    # get overlapping genes
+	all_genes = suppressMessages(geneRanges(get(coord_db), column=gene_identifier))
+	test_genes = get_genes_from_regions(all_genes, test_range)
+	bg_genes = get_genes_from_regions(all_genes, bg_range)
+	# convert EntrezID from TxDb to symbol using orgDb
+	if (gene_identifier == "GENEID"){
+		test_genes[,4] = entrez_to_symbol(test_genes[,4])[,2]
+		bg_genes[,4] = entrez_to_symbol(bg_genes[,4])[,2]
+		test_genes = test_genes[!is.na(test_genes[,4]),]
+		bg_genes = bg_genes[!is.na(test_genes[,4]),]
+	}
+    
+    # check that candidate and background contain genes
+    if (nrow(test_genes) == 0){
+        stop("Candidate regions do not contain protein-coding genes.")
+    }
+    if (nrow(bg_genes) == 0){
+        stop("Background regions do not contain any genes.")
+    }
+    
+    ## write candidate and background bed-files for C++
+    # merge candidate into background for randomsets
+    full_bg_range = suppressWarnings(reduce(c(test_range, bg_range)))
+    full_bg_regions = data.frame(chr=seqnames(full_bg_range), start=start(full_bg_range), end=end(full_bg_range))
+    # avoid scientific notation in regions (read in c++)
+    test_regions = format(test_regions, scientific=FALSE, trim=TRUE)
+    full_bg_regions = format(full_bg_regions, scientific=FALSE, trim=TRUE)
     # write regions to files
     write.table(test_regions,file=paste(directory, "_test_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-    write.table(bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+    write.table(full_bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 
-    return(genes)
+    # combine gene coords of background and test regions (to create input for FUNC in go_enrich)
+	gene_coords = unique(rbind(test_genes, bg_genes))
+
+    # convert to classic go_enrich input avoiding double-assignment of candidate/background
+    genes_df = data.frame(genes=gene_coords$gene, score=rep(0,nrow(gene_coords)))
+    genes_df[,1] = as.character(genes_df[,1])
+    genes_df[genes_df$genes %in% test_genes[,4], 2] = 1
+    
+    return(list(genes_df, gene_coords))
 }
 
 
@@ -44,19 +93,20 @@ blocks_to_genes = function(directory, genes, test, gene_len, gene_coords, circ_c
 
 # input: 
     # dataframe with genomic regions (chr:from-to) and 1/0
-    # gene_coords (bed)
     # circ_chrom-option T/F
 # output: list with elements
     # test-regions (bed)
     # background_regions (merged with test-regions) (bed)
-    # genes-vector ("normal hyper-input" for genes from test-regions)
-
-get_genes_from_regions = function(genes, gene_coords, circ_chrom){
+check_regions = function(genes, circ_chrom){
+	
+	# check that background region is specified
+    if (all(genes[,2]==1)){
+        stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
+    }
     
-    # convert coordinates from 'genes'-names to bed-format 
+    # convert coordinates from 'genes'-names to bed-format
     genes[,1] = as.character(genes[,1])
     bed = do.call(rbind, strsplit(genes[,1], "[:-]"))
-#   bed[,1] = substring(bed[,1], 4)  ## if chrom is given as chr21 instead of 21 
     bed = as.data.frame(bed)
     bed[,2:3] = apply(bed[,2:3], 2, as.numeric)
     bed[,1] = as.character(bed[,1])
@@ -120,43 +170,32 @@ get_genes_from_regions = function(genes, gene_coords, circ_chrom){
         # sort candidate regions by length (better chances that random placement works with small bg-regions)
         test_reg = test_reg[order(test_reg[,3] - test_reg[,2], decreasing=TRUE),]
     }
-    
-    # get genes overlapping background-regions
-    bg_genes = c()
-    for (i in 1:nrow(bg_reg)){
-        bg_genes = c(bg_genes, gene_coords[gene_coords[,1]==bg_reg[i,1] & ((gene_coords[,2] >= bg_reg[i,2] & gene_coords[,2] < bg_reg[i,3]) | (gene_coords[,3] >= bg_reg[i,2] & gene_coords[,3] < bg_reg[i,3]) |  (gene_coords[,2] <= bg_reg[i,2] & gene_coords[,3] >= bg_reg[i,3])), 4])
-    }
-    # check that bg-region contains genes
-    # (if no bg-genes here, all non-candidate genes would be background in go_enrich -> unwanted)
-    if (length(bg_genes)==0){
-        stop("Background regions do not contain protein-coding genes.")
-    }
-    
-    # get genes overlapping test-regions
-    test_genes = c()
-    for (i in 1:nrow(test_reg)){
-        test_genes = c(test_genes, gene_coords[gene_coords[,1]==test_reg[i,1] & ((gene_coords[,2] >= test_reg[i,2] & gene_coords[,2] < test_reg[i,3]) | (gene_coords[,3] >= test_reg[i,2] & gene_coords[,3] < test_reg[i,3]) | (gene_coords[,2] <= test_reg[i,2] & gene_coords[,3] >= test_reg[i,3])), 4])
-    }
-    # check that test-region contains genes
-    if (length(test_genes)==0){
-        stop("Candidate regions do not contain protein-coding genes.")
-    }
 
-    # convert to classic "genes" func-input-dataframe (and avoid double-assignment of test+bg)
-    gene_names = unique(c(test_genes, bg_genes))
-    genes_df = data.frame(gene_names, score=rep(0, length(gene_names)))
-    genes_df[genes_df$gene_names %in% test_genes, 2] = 1
-
-    # NEW: merge candidate into background regions (single-genes-FUNC also implicitly integrates candidate into background genes to choose from in randomsets)
-    bg_reg = merge_bed(rbind(bg_reg,test_reg))
-    
-    return(list(test_reg, bg_reg, genes_df))    
+    return(list(test_reg, bg_reg))    
 }
-    
-    
-    
-    
-    
-    
-    
-    
+ 
+
+# taken from https://gist.github.com/mtmorgan/bcacbea1b46445769f1cb91f87e25c30
+geneRanges = function(db=Homo.sapiens, column="SYMBOL"){
+    g = genes(db, columns=column)
+    col = mcols(g)[[column]]
+    genes = granges(g)[rep(seq_along(g), elementNROWS(col))]
+    mcols(genes)[[column]] = as.character(unlist(col))
+    genes
+}
+
+# find overlaps of genes, ranges and convert to data.frame chr, start, end, gene
+get_genes_from_regions = function(gene_coords, ranges){
+    genes = subsetByOverlaps(gene_coords, ranges)
+    out = data.frame(chr=seqnames(genes), start=start(genes), end=end(genes), gene=elementMetadata(genes)[,1])
+	return(out)
+}
+
+# convert EntrezID from TxDb to symbol using orgDb
+entrez_to_symbol = function(entrez, orgDb=org.Hs.eg.db){
+	symbol = suppressMessages(select(orgDb, keys=as.character(entrez), columns=c("ENTREZID","SYMBOL"), keytype="ENTREZID"))
+	# just double-check
+	if(any(symbol[,1] != entrez)) {stop("Unexpected order in entrez_to_symbol.")}
+	return(symbol)
+}
+

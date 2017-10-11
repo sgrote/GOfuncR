@@ -11,6 +11,7 @@ Imports:
     Rcpp (>= 0.11.5),
     mapplots (>= 1.5),
     gtools (>= 3.5.0),
+    GenomicRanges (>= 1.28.4),
     utils,
     grDevices,
     graphics,

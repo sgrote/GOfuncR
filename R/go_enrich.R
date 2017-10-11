@@ -58,9 +58,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
     } else {
         stop("Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
     }
-    if (gene_len == TRUE & !(test == "hyper")){
-		stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-	}
 
     # check for multiple assignment for one gene
     genes = unique(genes) # allow for multiple assignment of same value
@@ -89,6 +86,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
             stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
         }
         root_nodes = domains
+    }
+    if (gene_len & !(test == "hyper")){
+		stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+	}
+    if (regions & !(test == "hyper")){
+		stop("Argument 'regions = TRUE' can only be used with 'test = 'hyper''.")
+	}
+    if (circ_chrom & !regions){
+            warning("Unused argument: 'circ_chrom = TRUE'.")
     }
     
     # if orgDb is defined use that one instead of default organismDb
@@ -123,20 +129,16 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
    
     #####   2. Prepare for FUNC 
 
-
-
     # convert genomic regions to single genes (also check them and write to file for C++)
     # TODO: blocks_to_genes using OrganismDb (or TxDb)
     if (regions){
-        genes = blocks_to_genes(directory, genes, test, gene_len, gene_coords, circ_chrom, silent)
-    } else {
-        if (circ_chrom==TRUE){
-            warning("Unused argument: 'circ_chrom = TRUE'.")
-        }
+		if (!silent) message("get genes from regions...")
+        block_info = blocks_to_genes(directory, genes, anno_db, coord_db, circ_chrom, silent)
+        genes = block_info[[1]]
+        gene_coords = block_info[[2]]
     }
-    
     ### get GO-annotations
-    if (!silent) message("get GOs for genes...")
+    if (!silent) message(paste0("get GOs for genes using ", anno_db,"..."))
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
 		go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
@@ -146,6 +148,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
     # subset genes to annotated genes (also reduced to internal ontology)
     if (!silent) message("Remove invalid genes...")
     gene_values = genes[genes[,1] %in% go_anno[,1],] # restrict
+    if (nrow(gene_values) == 0) {
+        stop("No GO-annotations for input genes.")
+    }
     not_in = genes[,1][!genes[,1] %in% gene_values[,1]] # removed
     if (length(not_in) > 0 && !regions){ # this message is usually too long when regions are used
         not_in_string = paste(not_in,collapse=", ")
@@ -153,7 +158,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
     }
 
 	### get coordinates
-	if (regions || gene_len){
+	if (gene_len){
 		# load gene coordinates # TODO: use OrganismDb or OrgDb for that
 		gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
 	}
