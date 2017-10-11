@@ -133,12 +133,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
     # TODO: blocks_to_genes using OrganismDb (or TxDb)
     if (regions){
 		if (!silent) message("get genes from regions...")
-        block_info = blocks_to_genes(directory, genes, anno_db, coord_db, circ_chrom, silent)
+        block_info = blocks_to_genes(directory, genes, get(anno_db), get(coord_db), circ_chrom, silent)
         genes = block_info[[1]]
         gene_coords = block_info[[2]]
     }
     ### get GO-annotations
-    if (!silent) message(paste0("get GOs for genes using ", anno_db,"..."))
+    if (!silent) message(paste0("get GOs for genes using database", anno_db,"..."))
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
 		go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
@@ -160,7 +160,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
 	### get coordinates
 	if (gene_len){
 		# load gene coordinates # TODO: use OrganismDb or OrgDb for that
-		gene_coords = get(paste("gene_coords_", ref_genome, sep=""))
+		gene_coords = suppressWarnings(get_gene_coords(genes[,1], get(anno_db), get(coord_db)))
 	}
     # subset to genes that have coordinates and warn about the rest
     if (gene_len){ # only for test==hyper

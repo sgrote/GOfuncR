@@ -8,7 +8,7 @@
 # side-effect: write regions to file for FUNC
 # requires database to be laoded
 
-blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="Homo.sapiens", circ_chrom=FALSE, silent=FALSE){
+blocks_to_genes = function(directory, genes, anno_db=Homo.sapiens, coord_db=Homo.sapiens, circ_chrom=FALSE, silent=FALSE){
 
 	# check regions are valid, remove unused chroms for circ_chrom,
 	# get two bed-dataframes back (candidate and background)
@@ -52,8 +52,8 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
 	bg_genes = get_genes_from_regions(all_genes, bg_range)
 	# convert EntrezID from TxDb to symbol using orgDb
 	if (gene_identifier == "GENEID"){
-		test_genes[,4] = entrez_to_symbol(test_genes[,4])[,2]
-		bg_genes[,4] = entrez_to_symbol(bg_genes[,4])[,2]
+		test_genes[,4] = entrez_to_symbol(test_genes[,4], anno_db)[,2]
+		bg_genes[,4] = entrez_to_symbol(bg_genes[,4], anno_db)[,2]
 		test_genes = test_genes[!is.na(test_genes[,4]),]
 		bg_genes = bg_genes[!is.na(test_genes[,4]),]
 	}
@@ -181,7 +181,7 @@ geneRanges = function(db=Homo.sapiens, column="SYMBOL"){
     col = mcols(g)[[column]]
     genes = granges(g)[rep(seq_along(g), elementNROWS(col))]
     mcols(genes)[[column]] = as.character(unlist(col))
-    genes
+    return(genes)
 }
 
 # find overlaps of genes, ranges and convert to data.frame chr, start, end, gene
@@ -198,4 +198,41 @@ entrez_to_symbol = function(entrez, orgDb=org.Hs.eg.db){
 	if(any(symbol[,1] != entrez)) {stop("Unexpected order in entrez_to_symbol.")}
 	return(symbol)
 }
+
+# in: vector of gene-symbols
+# out: chr, start, end, gene-symbol
+get_gene_coords = function(symbols, anno_db=Homo.sapiens, coord_db=Homo.sapiens, silent=FALSE){
+	# load database (anno should have been loaded before)
+	if (!silent){
+		message(paste("load database '", coord_db,"'...",sep=""))
+	}
+    if (!suppressPackageStartupMessages(suppressMessages(require(coord_db, character.only=TRUE)))){
+		stop(paste0("database '" ,coord_db, "' is not installed. Please install it from bioconductor."))
+	}
+	if (!silent){
+		message(paste("find gene coordinates using database '", coord_db,"'...",sep=""))
+	}
+	if (coord_db == anno_db){
+		# OrganismDb
+		coords = select(coord_db, keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL")
+	} else {
+		# OrgDb/TxDb (combine possible different Entrez per Symbol)
+		entrez = select(anno_db, keys=symbols, columns=c("ENTREZID", "SYMBOL"), keytype="SYMBOL")
+		en_coords = select(coord_db, keys=entrez[,2], columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID")
+		coords = merge(entrez, en_coords, by.x="ENTREZID", by.y="GENEID")[,2:4]
+	}
+	# take the lowest transcript start and the highest end
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
 
