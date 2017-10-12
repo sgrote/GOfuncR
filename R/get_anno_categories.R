@@ -9,7 +9,8 @@
 
 get_anno_categories = function(genes, database="Homo.sapiens"){
     
-    ## Check input  
+    ## Check input
+    message(paste0("load database '", database, "'..."))
     if (!suppressPackageStartupMessages(suppressMessages(require(database, character.only=TRUE)))){
 		stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
 	}
