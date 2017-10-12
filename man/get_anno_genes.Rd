@@ -4,20 +4,22 @@
 Get genes that are annotated to GO-categories
 }
 \description{
-Given a vector of GO-IDs, e.g. c('GO:0072025','GO:0072221') the function returns all genes that are annotated to these GO-categories. This includes genes that are annotated to any of the child nodes of a GO-category.
+Given a vector of GO-IDs, e.g. c('GO:0072025','GO:0072221') the function returns all genes that are annotated to these GO-categories.
+This includes genes that are annotated to any of the child nodes of a GO-category.
+Besides the default 'Homo.sapiens', also other OrganismDb or OrgDb packages from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp), can be used.
 It is also possible to only consider a user-defined set of genes.
 }
 
 \usage{
-get_anno_genes(go_ids, ref_genome = "grch37", genes = NULL)
+get_anno_genes(go_ids, database = 'Homo.sapiens', genes = NULL)
 }
 
 \arguments{
     \item{go_ids}{
         vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
     }
-    \item{ref_genome}{
-        One of 'grch37' (default), 'grch38' or 'grcm38'. This specifies the reference genome used for GO-annotations.
+    \item{database}{
+        optional OrganismDb or OrgDb annotation package from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp).
     }
     \item{genes}{
         optional vector of gene-symbols. If defined, only annotations of those genes are returned.
@@ -57,16 +59,10 @@ anno_genes = get_anno_genes(go_ids=gos, genes=genes)
 # add the names and domains of the GO-categories
 cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
 
-## find all mouse-gene annotations to two GO-categories 
-gos = c('GO:0072205', 'GO:0000109')
-get_anno_genes(go_ids=gos, ref_genome='grcm38')
-
 ## find all annotations to GO-categories containing 'serotonin receptor'
 sero_ids = get_ids('serotonin receptor')
 sero_anno = get_anno_genes(go_ids=sero_ids$go_id)
-# annotated genes
-head(sero_anno)
-# names of GO-categories with annotations
-get_names(unique(sero_anno$go_id))
+# merge with names of GO-categories
+head(merge(sero_ids, sero_anno))
 }
 

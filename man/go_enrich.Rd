@@ -1,18 +1,21 @@
 \name{go_enrich}
 \alias{go_enrich}
 \title{
-Test human or mouse genes for enrichment in GO-categories
+Test gene sets for enrichment in GO-categories
 }
 \description{
-Tests all GO-categories from the three domains 'biological process', 'cellular component' and 'molecular function' for enrichment of user defined gene sets [1]. The statistical analysis is based on the ontology enrichment software FUNC [2].\cr
-\code{go_enrich} offers four different statistical tests: (1) the hypergeometric test for a candidate and a background gene set; (2) the wilcoxon rank-sum test for genes that are ranked by scores (e.g. p-value for differential expression); (3) the binomial test for genes that have two associated counts (e.g. amino-acid changes on the human and the chimp lineage); and (4) a 2x2-contingency table test for genes that have four associated counts (e.g. for a McDonald-Kreitman test). 
-Besides naming candidate genes explicitly, for the hypergeometric test it is also possible to provide entire genomic regions as input. The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes. Note that this option requires the input of background regions.\cr
-The gene ontology (obtained from geneontology.org), the annotations and the gene-coordinates (both obtained from biomart) are integrated in the package and updated regularly.
+Tests all GO-categories from the three domains 'biological process', 'cellular component' and 'molecular function' for enrichment of user defined gene sets [1]. Human GO-annotations are used by default (from OrganismDb package 'Homo.sapiens'), but also other OrganismDb or OrgDb packages can be used. \cr
+The statistical analysis is based on the ontology enrichment software FUNC [2].
+\code{go_enrich} offers four different statistical tests: (1) the hypergeometric test for a candidate and a background gene set; (2) the wilcoxon rank-sum test for genes that are ranked by scores (e.g. p-value for differential expression); (3) the binomial test for genes that have two associated counts (e.g. amino-acid changes on the human and the chimp lineage); and (4) a 2x2-contingency table test for genes that have four associated counts (e.g. for a McDonald-Kreitman test).\cr
+To account for multiple testing family-wise error rates are computed using randomsets.
+Besides naming candidate genes explicitly, for the hypergeometric test it is also possible to provide entire genomic regions as input.
+The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes.
 }
 
 \usage{
-go_enrich(genes, test = 'hyper', n_randsets = 1000, gene_len = FALSE, 
-    circ_chrom = FALSE, ref_genome = 'grch37', silent = FALSE, domains = NULL)
+go_enrich(genes, test = 'hyper', n_randsets = 1000, gene_len = FALSE, regions = FALSE,
+    circ_chrom = FALSE, organismDb = 'Homo.sapiens', silent = FALSE, domains = NULL,
+    orgDb = NULL, txDb = NULL)
 }
 
 \arguments{
@@ -24,7 +27,7 @@ genes. If no background genes are defined, all remaining genes from the internal
 If \code{test='wilcoxon'} a second column with the score that is associated with each gene.\cr
 If \code{test='binomial'} two additional columns with two gene-associated integers.\cr
 If \code{test='contingency'} four additional columns with four gene-associated integers.\cr
-For \code{test='hyper'} the first column may also describe chromosomal regions ('chr:start-stop').
+For \code{test='hyper'} with \code{regions=TRUE} the first column describes chromosomal regions ('chr:start-stop', e.g. '9:0-39200000').
 }
 
 \item{test}{
@@ -39,12 +42,16 @@ integer defining the number of random sets created to compute the FWER.
 logical. If \code{test='hyper'} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. 
 }
 
+\item{regions}{
+logical. When TRUE chromosomal regions are analysed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
+}
+
 \item{circ_chrom}{
 logical. When \code{genes} defines chromosomal regions, \code{circ_chrom=TRUE} uses background regions from the same chromosome and allows randomly chosen blocks to overlap multiple background regions. Only if \code{test='hyper'}.
 }
 
-\item{ref_genome}{
-'grch37' (default), 'grch38' or 'grcm38'. Defines the reference genome used for GO-annotations and gene coordinates.
+\item{organismDb}{
+annotation package for GO-annotations and gene coordinates. Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
 }
 
 \item{silent}{
@@ -55,10 +62,18 @@ logical. If TRUE all output to the screen except for warnings and errors is supp
 optional vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
 }
 
+\item{orgDb}{
+optional string naming an OrgDb annotation package from Bioconductor. If \code{orgDb} is set, \code{organismDb} is not used. OrgDb annotations are available for a wider range of species, e.g. 'org.Pt.eg.db' for chimp and 'org.Gg.eg.db' for chicken. Note that options \code{gene_len} and \code{regions} also need a \code{txDb} for the gene coordinates (which are integrated in OrganismDb).
+}
+
+\item{txDb}{
+optional string naming an TxDb annotation package from Bioconductor (e.g. 'TxDb.Ptroglodytes.UCSC.panTro4.refGene') for the gene coordinates. Only needed when \code{orgDb} is specified, and options \code{gene_len} or \code{regions} are set.
+}
+
 }
 
 \details{
-For details please refer to \code{vignette("GOfuncR", package="GOfuncR")}.
+For details please refer to the package vignette.
 }
 
 \value{
@@ -67,8 +82,8 @@ A list with components
 a dataframe with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep', -'FWER_underrep', -'raw_p_underrep', 'ontology' and 'node_id', or the corresponding columns if another test then the hypegeometric test is used. This table contains the combined results for all three ontology domains. Note that GO-categories without any annotations of candidate or background genes are not listed.}
 \item{genes}{
 the input \code{genes} dataframe, excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}
-\item{ref_genome}{
-the reference genome used.}
+\item{databases}{
+the annotation packages used.}
 }
 
 \references{
@@ -115,7 +130,7 @@ head(go_res[[1]])
 by(go_res[[1]], go_res[[1]][,'ontology'], head)
 # 2) all valid input genes
 go_res[[2]]
-# 3) reference genome used (default=grch37)
+# 3) annotation databases used
 go_res[[3]]
 
 }
