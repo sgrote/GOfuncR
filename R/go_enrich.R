@@ -14,8 +14,8 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
     if (is.vector(genes)){
         genes = data.frame(gene=names(genes), score=unname(genes), stringsAsFactors=FALSE)
     } else {
-		genes[,1] = as.character(genes[,1])
-	}
+        genes[,1] = as.character(genes[,1])
+    }
 
     ## Check arguments
     if (!silent) message("Checking arguments...")
@@ -88,62 +88,62 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
         root_nodes = domains
     }
     if (gene_len & !(test == "hyper")){
-		stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
-	}
+        stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
+    }
     if (regions & !(test == "hyper")){
-		stop("Argument 'regions = TRUE' can only be used with 'test = 'hyper''.")
-	}
+        stop("Argument 'regions = TRUE' can only be used with 'test = 'hyper''.")
+    }
     if (circ_chrom & !regions){
             warning("Unused argument: 'circ_chrom = TRUE'.")
     }
     
     # if orgDb is defined use that one instead of default organismDb
     if (!is.null(orgDb)){
-		anno_db = orgDb
-	} else {
-		anno_db = organismDb
-	}
-	databases = data.frame(type="go_annotations", db=anno_db, version=packageVersion(anno_db), stringsAsFactors=FALSE)
-	# check if blocks or gene-len; warn that if orgDb is defined, also TxDb has to be defined
+        anno_db = orgDb
+    } else {
+        anno_db = organismDb
+    }
+    databases = data.frame(type="go_annotations", db=anno_db, version=packageVersion(anno_db), stringsAsFactors=FALSE)
+    # check if blocks or gene-len; warn that if orgDb is defined, also TxDb has to be defined
     if (regions || gene_len){
-		if (!is.null(orgDb)){
-			if (is.null(txDb)){
-				stop("Please provide a 'txDb' object from bioconductor (if 'orgDb' is defined for GO-annotations, then 'txDb' is used for gene-coordinates).")
-			}
-			coord_db = txDb
-		} else {
-			coord_db = organismDb
-		}
-		databases = rbind(databases, list("gene_coordinates", coord_db, packageVersion(coord_db)))
-	} else {
-		coord_db = NULL
-	}	
+        if (!is.null(orgDb) & is.null(txDb)){
+            stop("Please provide a 'txDb' object from bioconductor (if 'orgDb' is defined for GO-annotations, then 'txDb' is used for gene-coordinates).")
+        }
+        if (!is.null(txDb)){
+            coord_db = txDb
+        } else {
+            coord_db = organismDb
+        }
+        databases = rbind(databases, list("gene_coordinates", coord_db, packageVersion(coord_db)))
+    } else {
+        coord_db = NULL
+    }   
 
-	
-	
+    
+    
     # Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
     directory = tempfile()
 #   dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
 
 
-   
+
     #####   2. Prepare for FUNC 
 
     # convert genomic regions to single genes (also check them and write to file for C++)
     if (regions){
-		if (!silent) message("get genes from regions...")
+        if (!silent) message("get genes from regions...")
         block_info = blocks_to_genes(directory, genes, anno_db, coord_db, circ_chrom, silent)
         genes = block_info[[1]]
         gene_coords = block_info[[2]]
     }
     ### get GO-annotations
-    if (!silent) message(paste0("get GOs for genes using database ", anno_db,"..."))
+    if (!silent) message(paste0("get GOs for genes using database '", anno_db,"'..."))
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
-		go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
-	} else {
-		go_anno = suppressMessages(get_anno_categories(genes[,1], anno_db))
-	}
+        go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
+    } else {
+        go_anno = suppressMessages(get_anno_categories(genes[,1], anno_db))
+    }
     # subset genes to annotated genes (also reduced to internal ontology)
     if (!silent) message("Remove invalid genes...")
     gene_values = genes[genes[,1] %in% go_anno[,1],] # restrict
@@ -157,15 +157,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
         warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
     }
 
-	### get coordinates
-	if (gene_len){
-		# load gene coordinates
-		 if (test=="hyper" && all(genes[,2]==1)){
-			gene_coords = suppressWarnings(get_all_coords(coord_db, anno_db, silent))
-		} else {
-			gene_coords = suppressWarnings(get_gene_coords(genes[,1], coord_db, anno_db, silent))
-		}
-	}
+    ### get coordinates
+    if (gene_len){
+        # load gene coordinates
+        if (test=="hyper" && all(genes[,2]==1)){
+            gene_coords = suppressWarnings(get_all_coords(coord_db, anno_db, silent))
+        } else {
+            gene_coords = suppressWarnings(get_gene_coords(genes[,1], coord_db, anno_db, silent))
+        }
+    }
     # subset to genes that have coordinates and warn about the rest
     if (gene_len){ # only for test==hyper
         no_coords = gene_values[,1][!(gene_values[,1] %in% gene_coords[,4])] # removed
@@ -344,7 +344,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
     gene_values = gene_values[mixedorder(gene_values[,1]),]
     gene_values[,1] = as.character(gene_values[,1])
     rownames(gene_values) = 1:nrow(gene_values)
-	
+    
     final_output = list(results=out, genes=gene_values, databases=databases)
     if (!silent) message("\nDone.")
 

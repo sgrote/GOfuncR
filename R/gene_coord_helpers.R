@@ -3,21 +3,21 @@
 
 # 'genes' is the input-dataframe for go_enrich, in this case it's genomic regions like 9:123-1225
 # output: list of
-	# classic single genes go_enrich input-dataframe
-	# gene_coords chr, start, end, gene for all genes (test+bg)
+    # classic single genes go_enrich input-dataframe
+    # gene_coords chr, start, end, gene for all genes (test+bg)
 # side-effect: write regions to file for FUNC
 # requires database to be laoded
 
 blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="Homo.sapiens", circ_chrom=FALSE, silent=FALSE){
 
-	# check regions are valid, remove unused chroms for circ_chrom,
-	# get two bed-dataframes back (candidate and background)
-	regions = check_regions(genes, circ_chrom)
-	
+    # check regions are valid, remove unused chroms for circ_chrom,
+    # get two bed-dataframes back (candidate and background)
+    regions = check_regions(genes, circ_chrom)
+    
     # add "chr" substring (like in databases)
     regions = lapply(regions, function(x) {x[,1] = paste0("chr", x[,1]); return(x)})
-	test_regions = regions[[1]]
-	bg_regions = regions[[2]]
+    test_regions = regions[[1]]
+    bg_regions = regions[[2]]
     if (!silent){
         message("Candidate regions:")
         print(test_regions)
@@ -25,38 +25,38 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
         print(bg_regions)
     }
     
-	# load database
-	if (!silent){
-		message(paste("load database '", coord_db,"'...",sep=""))
-	}
+    # load database
+    if (!silent){
+        message(paste("load database '", coord_db,"'...",sep=""))
+    }
     if (!suppressPackageStartupMessages(suppressMessages(require(coord_db, character.only=TRUE)))){
-		stop(paste0("database '" ,coord_db, "' is not installed. Please install it from bioconductor."))
-	}
-	if (!silent){
-		message(paste("find genes in input-regions using database '", coord_db,"'...",sep=""))
-	}
+        stop(paste0("database '" ,coord_db, "' is not installed. Please install it from bioconductor."))
+    }
+    if (!silent){
+        message(paste("find genes in input-regions using database '", coord_db,"'...",sep=""))
+    }
     
     # convert to GRanges
     test_range = GRanges(test_regions[,1], IRanges(test_regions[,2], test_regions[,3]))
     bg_range = GRanges(bg_regions[,1], IRanges(bg_regions[,2], bg_regions[,3]))
     
-	# check if OrganismDb or OrgDb/TxDb
-	if (coord_db == anno_db){
-		gene_identifier = "SYMBOL"
-	} else {
-		gene_identifier = "GENEID"
-	}
+    # check if OrganismDb or OrgDb/TxDb
+    if (coord_db == anno_db){
+        gene_identifier = "SYMBOL"
+    } else {
+        gene_identifier = "GENEID"
+    }
     # get overlapping genes
-	all_genes = suppressMessages(geneRanges(get(coord_db), column=gene_identifier))
-	test_genes = get_genes_from_regions(all_genes, test_range)
-	bg_genes = get_genes_from_regions(all_genes, bg_range)
-	# convert EntrezID from TxDb to symbol using orgDb
-	if (gene_identifier == "GENEID"){
-		test_genes[,4] = entrez_to_symbol(test_genes[,4], get(anno_db))[,2]
-		bg_genes[,4] = entrez_to_symbol(bg_genes[,4], get(anno_db))[,2]
-		test_genes = test_genes[!is.na(test_genes[,4]),]
-		bg_genes = bg_genes[!is.na(test_genes[,4]),]
-	}
+    all_genes = suppressMessages(geneRanges(get(coord_db), column=gene_identifier))
+    test_genes = get_genes_from_regions(all_genes, test_range)
+    bg_genes = get_genes_from_regions(all_genes, bg_range)
+    # convert EntrezID from TxDb to symbol using orgDb
+    if (gene_identifier == "GENEID"){
+        test_genes[,4] = entrez_to_symbol(test_genes[,4], get(anno_db))[,2]
+        bg_genes[,4] = entrez_to_symbol(bg_genes[,4], get(anno_db))[,2]
+        test_genes = test_genes[!is.na(test_genes[,4]),]
+        bg_genes = bg_genes[!is.na(test_genes[,4]),]
+    }
     
     # check that candidate and background contain genes
     if (nrow(test_genes) == 0){
@@ -78,7 +78,7 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     write.table(full_bg_regions,file=paste(directory, "_bg_regions.bed",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 
     # combine gene coords of background and test regions (to create input for FUNC in go_enrich)
-	gene_coords = unique(rbind(test_genes, bg_genes))
+    gene_coords = unique(rbind(test_genes, bg_genes))
 
     # convert to classic go_enrich input avoiding double-assignment of candidate/background
     genes_df = data.frame(genes=gene_coords$gene, score=rep(0,nrow(gene_coords)))
@@ -98,17 +98,17 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     # test-regions (bed)
     # background_regions (merged with test-regions) (bed)
 check_regions = function(genes, circ_chrom){
-	
-	# check that background region is specified
+    
+    # check that background region is specified
     if (all(genes[,2]==1)){
         stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
     }
     
     # remove invalid ranges on (mt)-chromosome
-	inval = genes[! grepl("^[0-9XYMT]*:[0-9]*-[0-9]*$", genes[,1]),1]
-	if (length(inval) > 0){
-		stop(paste("Invalid regions:", paste(inval, collapse=", ")))
-	}
+    inval = genes[! grepl("^[0-9XYMT]*:[0-9]*-[0-9]*$", genes[,1]),1]
+    if (length(inval) > 0){
+        stop(paste("Invalid regions:", paste(inval, collapse=", ")))
+    }
     
     # convert coordinates from 'genes'-names to bed-format
     genes[,1] = as.character(genes[,1])
@@ -179,7 +179,7 @@ check_regions = function(genes, circ_chrom){
 
     return(list(test_reg, bg_reg))    
 }
- 
+
 
 # taken from https://gist.github.com/mtmorgan/bcacbea1b46445769f1cb91f87e25c30
 geneRanges = function(db=Homo.sapiens, column="SYMBOL"){
@@ -194,84 +194,84 @@ geneRanges = function(db=Homo.sapiens, column="SYMBOL"){
 get_genes_from_regions = function(gene_coords, ranges){
     genes = subsetByOverlaps(gene_coords, ranges)
     out = data.frame(chr=seqnames(genes), start=start(genes), end=end(genes), gene=elementMetadata(genes)[,1])
-	return(out)
+    return(out)
 }
 
 # convert EntrezID from TxDb to symbol using orgDb
 entrez_to_symbol = function(entrez, orgDb=org.Hs.eg.db){
-	symbol = suppressMessages(select(orgDb, keys=as.character(entrez), columns=c("ENTREZID","SYMBOL"), keytype="ENTREZID"))
-	# just double-check
-	if(any(symbol[,1] != entrez)) {stop("Unexpected order in entrez_to_symbol.")}
-	return(symbol)
+    symbol = suppressMessages(select(orgDb, keys=as.character(entrez), columns=c("ENTREZID","SYMBOL"), keytype="ENTREZID"))
+    # just double-check
+    if(any(symbol[,1] != entrez)) {stop("Unexpected order in entrez_to_symbol.")}
+    return(symbol)
 }
 
 # load database
 load_db = function(db, silent=FALSE){
-	if (!silent){
-		message(paste("load database '", db,"'...",sep=""))
-	}
+    if (!silent){
+        message(paste("load database '", db,"'...",sep=""))
+    }
     if (!suppressPackageStartupMessages(suppressMessages(require(db, character.only=TRUE)))){
-		stop(paste0("database '" ,db, "' is not installed. Please install it from bioconductor."))
-	}
+        stop(paste0("database '" ,db, "' is not installed. Please install it from bioconductor."))
+    }
 }
 
 # take the lowest transcript start and the highest end (cols in: gene, chr, start, end)
 combine_tx = function(coords){
-	c1 = aggregate(TXSTART ~ SYMBOL + TXCHROM, coords, min)
-	c2 = aggregate(TXEND ~ SYMBOL + TXCHROM, coords, max)
-	out = merge(c1, c2)[,c(2:4,1)] # move gene to last column
-	return(out)
+    c1 = aggregate(TXSTART ~ SYMBOL + TXCHROM, coords, min)
+    c2 = aggregate(TXEND ~ SYMBOL + TXCHROM, coords, max)
+    out = merge(c1, c2)[,c(2:4,1)] # move gene to last column
+    return(out)
 }
 
 # get chr, start, stop, symbol for all genes in coord_db
 get_all_coords = function(coord_db="Homo.sapiens", anno_db="Homo.sapiens", silent=FALSE){
-	load_db(coord_db, silent)
-	if (!silent){
-		message(paste("find gene coordinates using database '", coord_db,"'...",sep=""))
-	}	
-	if (coord_db == anno_db){
-		# OrganismDb
-		symbols = keys(get(coord_db), keytype="SYMBOL")
-		coords = suppressMessages(select(get(coord_db), keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL"))
-	} else {
-		# OrgDb/TxDb (combine possible different Entrez per Symbol)
-		load_db(anno_db, silent)
-		entrez = keys(get(coord_db), keytype="GENEID")
-		coords = suppressMessages(select(get(coord_db), keys=entrez, columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
-		coords[,1] = entrez_to_symbol(coords[,1], get(anno_db))[,2]
-		colnames(coords)[1] = "SYMBOL"
-	}
-	# remove invalid chroms like "chr6_qbl_hap6"
-	coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]
-	# maximum transcript range
-	coords = combine_tx(coords)
-	# remove genes that are still duplicated (on different chroms, mostly X/Y)
-	coords = coords[!(coords[,4] %in% coords[duplicated(coords[,4]),4]) ,]
-	
-	return(coords)
+    load_db(coord_db, silent)
+    if (!silent){
+        message(paste("find gene coordinates using database '", coord_db,"'...",sep=""))
+    }   
+    if (coord_db == anno_db){
+        # OrganismDb
+        symbols = keys(get(coord_db), keytype="SYMBOL")
+        coords = suppressMessages(select(get(coord_db), keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL"))
+    } else {
+        # OrgDb/TxDb (combine possible different Entrez per Symbol)
+        load_db(anno_db, silent)
+        entrez = keys(get(coord_db), keytype="GENEID")
+        coords = suppressMessages(select(get(coord_db), keys=entrez, columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
+        coords[,1] = entrez_to_symbol(coords[,1], get(anno_db))[,2]
+        colnames(coords)[1] = "SYMBOL"
+    }
+    # remove invalid chroms like "chr6_qbl_hap6"
+    coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]
+    # maximum transcript range
+    coords = combine_tx(coords)
+    # remove genes that are still duplicated (on different chroms, mostly X/Y)
+    coords = coords[!(coords[,4] %in% coords[duplicated(coords[,4]),4]) ,]
+    
+    return(coords)
 }
 
 # get chr, start, stop, symbol for input symbols
 get_gene_coords = function(symbols, coord_db="Homo.sapiens", anno_db="Homo.sapiens", silent=FALSE){
-	load_db(coord_db, silent)
-	if (coord_db == anno_db){
-		# OrganismDb
-		coords = suppressMessages(select(get(coord_db), keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL"))
-	} else {
-		# OrgDb/TxDb (combine possible different Entrez per Symbol)
-		load_db(anno_db, silent)
-		entrez = suppressMessages(select(get(anno_db), keys=symbols, columns=c("ENTREZID", "SYMBOL"), keytype="SYMBOL"))
-		en_coords = suppressMessages(select(get(coord_db), keys=entrez[,2], columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
-		coords = merge(entrez, en_coords, by.x="ENTREZID", by.y="GENEID")[,2:5]
-	}
-	# remove invalid chroms like "chr6_qbl_hap6"
-	coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]
-	# maximum transcript range
-	coords = combine_tx(coords)
-	# remove genes that are still duplicated (on different chroms, mostly X/Y)
-	coords = coords[!(coords[,4] %in% coords[duplicated(coords[,4]),4]) ,]
-	
-	return(coords)
+    load_db(coord_db, silent)
+    if (coord_db == anno_db){
+        # OrganismDb
+        coords = suppressMessages(select(get(coord_db), keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL"))
+    } else {
+        # OrgDb/TxDb (combine possible different Entrez per Symbol)
+        load_db(anno_db, silent)
+        entrez = suppressMessages(select(get(anno_db), keys=symbols, columns=c("ENTREZID", "SYMBOL"), keytype="SYMBOL"))
+        en_coords = suppressMessages(select(get(coord_db), keys=entrez[,2], columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
+        coords = merge(entrez, en_coords, by.x="ENTREZID", by.y="GENEID")[,2:5]
+    }
+    # remove invalid chroms like "chr6_qbl_hap6"
+    coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]
+    # maximum transcript range
+    coords = combine_tx(coords)
+    # remove genes that are still duplicated (on different chroms, mostly X/Y)
+    coords = coords[!(coords[,4] %in% coords[duplicated(coords[,4]),4]) ,]
+    
+    return(coords)
 }
 
 

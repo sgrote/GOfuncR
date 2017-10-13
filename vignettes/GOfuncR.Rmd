@@ -4,12 +4,12 @@ title: "GOfuncR: Gene Ontology Enrichment Using FUNC"
 author: "Steffi Grote"
 date: "October 13, 2017"
 output:
-  BiocStyle::html_document:
+    BiocStyle::html_document:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Introduction to GOfuncR}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Introduction to GOfuncR}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
 

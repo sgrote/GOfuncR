@@ -13,11 +13,11 @@ get_anno_genes = function(go_ids, database="Homo.sapiens", genes=NULL){
     if (!is.vector(go_ids) || !all(substr(go_ids,1,3) == "GO:")){
         stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0072221','GO:0004945')")
     }
-	# database
-	message(paste0("load database '", database, "'..."))
+    # database
+    message(paste0("load database '", database, "'..."))
     if (!suppressPackageStartupMessages(suppressMessages(require(database, character.only=TRUE)))){
-		stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
-	}
+        stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
+    }
 
     # child nodes 
     message("find child nodes of GOs...")
@@ -41,12 +41,12 @@ get_anno_genes = function(go_ids, database="Homo.sapiens", genes=NULL){
     }
     # remap to parents (accounts also for multiple parents of same child)
     # (another way would be to get annotations separately for every node, but that might involve recurrent db-queries of shared child-nodes)
-	out = merge(children,child_anno, by.x="child_go_id", by.y="GO")
-	out = out[,2:3]
-	out = unique(out) # remove dupicates (e.g. different children with same annotations)
-	colnames(out) = c("go_id", "gene")
-	
-	
+    out = merge(children,child_anno, by.x="child_go_id", by.y="GO")
+    out = out[,2:3]
+    out = unique(out) # remove dupicates (e.g. different children with same annotations)
+    colnames(out) = c("go_id", "gene")
+    
+    
     # sort  
     out = out[order(out$go_id, out$gene),]
     row.names(out) = 1:nrow(out)

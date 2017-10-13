@@ -12,20 +12,20 @@ get_anno_categories = function(genes, database="Homo.sapiens"){
     ## Check input
     message(paste0("load database '", database, "'..."))
     if (!suppressPackageStartupMessages(suppressMessages(require(database, character.only=TRUE)))){
-		stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
-	}
-	# if genes are not provided use all from database (useful for default background in hypergeometric test)
-	if (missing(genes)){
-		genes = keys(get(database), keytype="SYMBOL")
-	} else if(!any(genes %in% keys(get(database), keytype="SYMBOL"))){
-		stop(paste0("None of the genes entered are present in the SYMBOL column of '" ,database, "'. Check head(keys(", database, ", keytype='SYMBOL')) to see valid examples."))
-	}
-	
+        stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
+    }
+    # if genes are not provided use all from database (useful for default background in hypergeometric test)
+    if (missing(genes)){
+        genes = keys(get(database), keytype="SYMBOL")
+    } else if(!any(genes %in% keys(get(database), keytype="SYMBOL"))){
+        stop(paste0("None of the genes entered are present in the SYMBOL column of '" ,database, "'. Check head(keys(", database, ", keytype='SYMBOL')) to see valid examples."))
+    }
+    
     ## find annotated GO-categories
     message(paste("find associated categories using database '",database,"'...",sep=""))
     # load GO-annotation
     go_anno = suppressMessages(select(get(database), keys=genes, columns=c("SYMBOL","GO"), keytype="SYMBOL"))
-	go_anno = go_anno[!is.na(go_anno[,2]), 1:2]
+    go_anno = go_anno[!is.na(go_anno[,2]), 1:2]
 
     ## remove obsolete terms
     term = term[term[,5]==0,]
