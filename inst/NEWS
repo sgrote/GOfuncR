@@ -1,0 +1,8 @@
+CHANGES IN VERSION 0.99.1
+------------------------
+
+NEW FEATURES
+	  
+	o use OrganismDb or OrgDb + TxDb packages
+	  for GO-annotations and gene-coordinates
+
