@@ -1,7 +1,7 @@
 Package: GOfuncR
 Type: Package
 Title: Gene ontology enrichment using FUNC
-Version: 0.99.1
+Version: 0.99.2
 Date: 2017-09-28
 Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
@@ -34,8 +34,8 @@ Depends:
     R (>= 3.4),
     vioplot (>= 0.2),
 LinkingTo: Rcpp
-Suggests: 
-	Homo.sapiens,
+Suggests:
+    Homo.sapiens,
     BiocStyle,
     knitr,
     testthat
