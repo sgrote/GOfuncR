@@ -162,7 +162,8 @@ Note that the default annotation package `r Biocpkg('Homo.sapiens')` uses the *h
 Instead of defining candidate and background genes explicitly in the input dataframe, it is also possible to define entire chromosomal regions as candidate and background regions.
 The GO-enrichment is then tested for all genes located in, or overlapping the candidate regions on the plus or the minus strand.
 In comparison to defining candidate and background genes explicitly, this option has the advantage that the FWER accounts for spatial clustering of genes.
-For the random permutations used to compute the FWER, blocks as long as candidate regions are chosen from the merged candidate and background regions and genes contained in these blocks are considered candidate genes ([Schematic 2](#block_scheme)).
+For the random permutations used to compute the FWER, blocks as long as candidate regions are chosen from the merged candidate and background regions and genes contained in these blocks are considered candidate genes.
+The option `circ_chrom` defines whether random candidate blocks are chosen from the same chromosome or not ([Schematic 2](#block_scheme)).
 
 To define chromosomal regions in the input dataframe, the entries in the first column have to be of the form `chr:start-stop`, where `start` always has to be smaller than `stop`.
 Note that this option requires the input of background regions.
@@ -203,7 +204,7 @@ When genes are not divided into candidate and background genes, but are ranked b
 ## create input dataframe with scores in second column
 high_score_genes = c('GCK', 'CALB1', 'PAX2', 'GYS1','SLC2A8', 'UGP2', 'BTBD3', 'MTUS1', 'SYP', 'PSEN1')
 low_score_genes = c('CACNG2', 'ANO1', 'ZWINT', 'ENGASE', 'HK2', 'PYGL', 'GYG1')
-gene_scores = c(runif(length(high_score_genes), 0.5, 1), runif(low_score_genes, 0, 0.5))
+gene_scores = c(runif(length(high_score_genes), 0.5, 1), runif(length(low_score_genes), 0, 0.5))
 input_willi = data.frame(gene_ids = c(high_score_genes, low_score_genes), gene_scores)
 head(input_willi)
 ```

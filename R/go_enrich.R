@@ -1,5 +1,5 @@
 
-# run "FUNC" with default GO and GO-annotations (update once in a while...)
+# run "FUNC" with integrated GO-graph and GO-annotations from OrganismDb or OrgDb packages
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
 go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, organismDb="Homo.sapiens", silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL)
@@ -94,7 +94,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
         stop("Argument 'regions = TRUE' can only be used with 'test = 'hyper''.")
     }
     if (circ_chrom & !regions){
-            warning("Unused argument: 'circ_chrom = TRUE'.")
+        stop("Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
     }
     
     # if orgDb is defined use that one instead of default organismDb
@@ -185,7 +185,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
         }
         # for 0/1 data: are test genes and background genes in the data (background only if background specified)?
         if (test=="hyper" && sum(gene_values[,2])==0) {
-            stop("No requested test genes in data.")
+            stop("No requested candidate genes in data.")
         }
         if (test=="hyper" && 0 %in% genes[,2] && all(gene_values[,2]==1)) {
             stop("No requested background genes in data.")
@@ -274,7 +274,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
             if (regions & circ_chrom){
                 hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll" , silent)
             } else if (regions){
-                hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id,"block", silent)
+                hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "block", silent)
             } else if (gene_len){
                 hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "gene_len", silent)
             } else {
@@ -297,21 +297,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions
         groupy = read.table(paste(directory,"_category_test_out",sep=""))
         # for debugging: save output-files per root-node
         #system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
-            
-        # check that FWER order follows p-value order (per root_node)
-        ## TODO: remove that
-        colnames(groupy)[1:5]=c("node_id","p_under","p_over","FWER_under","FWER_over")
-        groupy_sorted = groupy[signif (round(groupy$p_over,12), -groupy$FWER_over),]
-        if (any(groupy_sorted$FWER_over != cummax(groupy_sorted$FWER_over))){
-            print(data.frame(groupy_sorted[,c(1,3,5)], FWER_check=groupy_sorted$FWER_over == cummax(groupy_sorted$FWER_over)))
-            stop("FWER_over does not strictly follow p_over. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de")
-        }
-        groupy_sorted = groupy[order(signif (groupy$p_under,12), -groupy$FWER_under),]
-        if (any(groupy_sorted$FWER_under != cummax(groupy_sorted$FWER_under))){
-            print(data.frame(groupy_sorted[,c(1,2,4)], FWER_check=groupy_sorted$FWER_under == cummax(groupy_sorted$FWER_under)))
-            stop("FWER_under does not strictly follow p_under. This looks like a bug.\n  Please contact steffi_grote@eva.mpg.de.")
-        }
-                
         out[[r]] = groupy
     } # end root_nodes
 

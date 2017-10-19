@@ -60,7 +60,7 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     
     # check that candidate and background contain genes
     if (nrow(test_genes) == 0){
-        stop("Candidate regions do not contain protein-coding genes.")
+        stop("Candidate regions do not contain any genes.")
     }
     if (nrow(bg_genes) == 0){
         stop("Background regions do not contain any genes.")
@@ -101,7 +101,7 @@ check_regions = function(genes, circ_chrom){
     
     # check that background region is specified
     if (all(genes[,2]==1)){
-        stop("All values of the 'genes[,2]'-input are 1. Using chromosomal regions as input requires defining background regions with 0.")
+        stop("All values of the genes[,2] input are 1. Using chromosomal regions as input requires defining background regions with 0.")
     }
     
     # remove invalid ranges on (mt)-chromosome
