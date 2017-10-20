@@ -35,13 +35,13 @@ plot_conti = function(aggrego){
     par(mar=c(0.5,4,3,2), bty="l") #, bty="n")
     ymin = min(c(1,fish_odds$ci95_low[is.finite(fish_odds$ci95_low) & fish_odds$odds_ratio!=0]))
     ymax = max(c(1,fish_odds$ci95_high[is.finite(fish_odds$ci95_high) & fish_odds$odds_ratio!=0]))
-    suppressWarnings(plot(fish_odds$odds_ratio, pch=19, ylab="", xaxt="n", xlab="", main="odds ratio (A/B) / (C/D)", xlim=c(0.5,nrow(fish_odds)+1), ylim=c(ymin,ymax), cex.axis=0.8, log="y", las=2, 
+    suppressWarnings(plot(fish_odds$odds_ratio, pch=19, ylab="", xaxt="n", xlab="", main="odds ratio (A/B) / (C/D)", xlim=c(0.5,nrow(fish_odds)+1), ylim=c(ymin,ymax), cex.axis=0.9, log="y", las=2, 
     panel.first={grid(0, NULL, lty=1, col=colors()[2])}))
     # 95%-CI
     suppressWarnings(arrows(c(1:nrow(fish_odds),1:nrow(fish_odds)),c(fish_odds$ci95_high,fish_odds$ci95_low), c(1:nrow(fish_odds),1:nrow(fish_odds)), c(fish_odds$odds_ratio, fish_odds$odds_ratio), angle=90, code=1, length=0.03))
     # horizontal line at 1
     abline(h=1, col="#F15A60")
-    axis(4,at=1,labels="1", col="#F15A60", col.axis="#F15A60", las=1, cex.axis=0.8)
+    axis(4,at=1,labels="1", col="#F15A60", col.axis="#F15A60", las=1, cex.axis=0.9)
     
     # pie charts
     pie_cols = colors()[c(124,132,59,137)]
@@ -56,9 +56,9 @@ plot_conti = function(aggrego){
         
     }
     legend("right", fill=pie_cols, bty="n", legend=c("A","B","C","D"))
-    text(x=1:nrow(fish_odds), y=1.9, labels=paste0("n=",rowSums(fish_odds[,2:5])), xpd=TRUE, cex=0.6, pos=3, offset=0.5)
-    axis(1, at=1:nrow(fish_odds), labels=FALSE, cex.axis=0.8)
-    text(x=1:nrow(fish_odds), y=-0.35, labels=fish_odds$go_id, srt=45, adj=1, xpd=TRUE, cex=0.8)
+    text(x=1:nrow(fish_odds), y=1.9, labels=paste0("n=",rowSums(fish_odds[,2:5])), xpd=TRUE, cex=0.8, pos=3, offset=0.7)
+    axis(1, at=1:nrow(fish_odds), labels=FALSE)
+    text(x=1:nrow(fish_odds), y=-0.35, labels=fish_odds$go_id, srt=45, adj=1, xpd=TRUE, cex=0.85)
     
     par(op)
     return(invisible(out))

@@ -25,7 +25,7 @@ plot_binomial = function(aggrego, root_aggrego){
     ymax = min(1, rangy[2] + 0.2 * (rangy[2] - rangy[1]))
 #   ymin = 0
 #   ymax = 1
-    suppressWarnings(plot(binom$p_A_node, pch=19, ylab="", xaxt="n", xlab="", main="p(A) in node", xlim=c(0.5,nrow(binom)+0.5), ylim=c(ymin,ymax), cex.axis=0.8, las=2, 
+    suppressWarnings(plot(binom$p_A_node, pch=19, ylab="", xaxt="n", xlab="", main="p(A) in node", xlim=c(0.5,nrow(binom)+0.5), ylim=c(ymin,ymax), cex.axis=0.9, las=2, 
     panel.first={grid(0, NULL, lty=1, col=colors()[2])}))
     # 95%-CI
     suppressWarnings(arrows(c(1:nrow(binom),1:nrow(binom)),c(binom$ci95_high,binom$ci95_low), c(1:nrow(binom),1:nrow(binom)), c(binom$p_A_node, binom$p_A_node), angle=90, code=1, length=0.03))
@@ -42,9 +42,9 @@ plot_binomial = function(aggrego, root_aggrego){
         b = binom[i,3]
         add.pie(z=c(b,a), x=i, y=0.6, radius=log(a+b+1)*radi_units, labels="", col=c("#737373", binom[i,"root_col"]))
     }
-    text(x=1:nrow(binom), y=0.08, labels=paste(binom[,2], rowSums(binom[,2:3]),sep=" / "), col=binom$root_col, xpd=TRUE, cex=0.8)
-    axis(1, at=1:nrow(binom), labels=FALSE, cex.axis=0.8)
-    text(x=1:nrow(binom), y=-0.25, labels=binom$go_id, srt=45, adj=1, xpd=TRUE, cex=0.8)
+    text(x=1:nrow(binom), y=0.08, labels=paste(binom[,2], rowSums(binom[,2:3]),sep=" / "), col=binom$root_col, xpd=TRUE, cex=0.9)
+    axis(1, at=1:nrow(binom), labels=FALSE, cex.axis=0.9)
+    text(x=1:nrow(binom), y=-0.25, labels=binom$go_id, srt=45, adj=1, xpd=TRUE, cex=1)
     
     # pie charts for root nodes
     par(mar=c(5.5,1,3,1), bty="l")
@@ -55,8 +55,8 @@ plot_binomial = function(aggrego, root_aggrego){
         b = root_aggrego[i,3]
         add.pie(z=c(b,a), x=1, y=i, radius=log(b+a+1)*radi_units, labels="", col=c("#737373",root_aggrego[i,"root_col"]))
     }
-    text(x=1, y=(0.4 + 1:nrow(root_aggrego)), labels=root_aggrego$root_name, col=root_aggrego$root_col, cex=0.8)
-    text(x=1, y=(-0.4 + 1:nrow(root_aggrego)), labels=paste(root_aggrego[,2],rowSums(root_aggrego[,2:3]), sep=" / "), cex=0.8, col=root_aggrego$root_col)
+    text(x=1, y=(0.4 + 1:nrow(root_aggrego)), labels=root_aggrego$root_name, col=root_aggrego$root_col, cex=0.9)
+    text(x=1, y=(-0.4 + 1:nrow(root_aggrego)), labels=paste(root_aggrego[,2],rowSums(root_aggrego[,2:3]), sep=" / "), cex=0.9, col=root_aggrego$root_col)
     
     par(op)
 

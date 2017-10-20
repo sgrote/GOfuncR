@@ -52,6 +52,8 @@ violine = function(plotty, root_info, node_to_root, ylim, root=FALSE){
     plot(1, type="n", ylim=ylim, xlim=xlim, ylab="score", xaxt="n", xlab="", main=mainy) #, log="y")
     if(root){
         xlabel = root_info$root_name
+        # molecular_function -> mole_func
+        xlabel = sapply(xlabel, function(x) {paste(substr(unlist(strsplit(x,"_")),1,4), collapse="_")}) 
         labelcol = root_info$root_col
     } else {
         xlabel = gos[,1]
