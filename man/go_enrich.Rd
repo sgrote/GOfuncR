@@ -13,9 +13,8 @@ The enrichment analysis is then performed for all genes located in or overlappin
 }
 
 \usage{
-go_enrich(genes, test = 'hyper', n_randsets = 1000, gene_len = FALSE, regions = FALSE,
-    circ_chrom = FALSE, organismDb = 'Homo.sapiens', silent = FALSE, domains = NULL,
-    orgDb = NULL, txDb = NULL)
+go_enrich(genes, test = 'hyper', n_randsets = 1000, organismDb = 'Homo.sapiens', gene_len = FALSE,
+    regions = FALSE, circ_chrom = FALSE, silent = FALSE, domains = NULL, orgDb = NULL, txDb = NULL)
 }
 
 \arguments{
@@ -38,6 +37,10 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 integer defining the number of random sets created to compute the FWER.
 }  
 
+\item{organismDb}{
+annotation package for GO-annotations and gene coordinates. Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
+}
+
 \item{gene_len}{
 logical. If \code{test='hyper'} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. 
 }
@@ -48,10 +51,6 @@ logical. When TRUE chromosomal regions are analysed, and genes are automatically
 
 \item{circ_chrom}{
 logical. When \code{genes} defines chromosomal regions, \code{circ_chrom=TRUE} uses background regions from the same chromosome and allows randomly chosen blocks to overlap multiple background regions. Only if \code{test='hyper'}.
-}
-
-\item{organismDb}{
-annotation package for GO-annotations and gene coordinates. Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
 }
 
 \item{silent}{

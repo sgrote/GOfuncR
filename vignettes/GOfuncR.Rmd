@@ -54,10 +54,10 @@ parameter | default | description
 `genes` | - |  a dataframe with gene-symbols or genomic regions and gene-associated variables
 `test` | 'hyper' | statistical test to use ('hyper', 'wilcoxon', 'binomial' or 'contingency')
 `n_randsets` | 1000 | number of randomsets to compute the family-wise error rate
+`organismDb`| 'Homo.sapiens' | *OrganismDb* package for GO-annotations and gene coordinates
 `gene_len` | FALSE | correct for gene length (only for `test='hyper'`)
 `regions` | FALSE | chromosomal regions as input instead of independent genes (only for `test='hyper'`)
 `circ_chrom` | FALSE |  use background on circularized chromosome (only for `test='hyper'` and `regions=TRUE`)
-`organismDb`| 'Homo.sapiens' | *OrganismDb* package for GO-annotations and gene coordinates
 `silent` | FALSE | suppress output to screen
 `domains` | NULL | optional vector of GO-domains (if NULL all 3 domains are analyzed)
 `orgDb`| NULL | *OrgDb* package for GO-annotations (overrides `organismDb`)

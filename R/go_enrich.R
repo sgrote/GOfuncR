@@ -2,7 +2,7 @@
 # run "FUNC" with integrated GO-graph and GO-annotations from OrganismDb or OrgDb packages
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, organismDb="Homo.sapiens", silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL)
+go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL)
 {
     
     #####   1. Check arguments and define parameters
