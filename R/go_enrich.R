@@ -168,15 +168,14 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     }
     # subset to genes that have coordinates and warn about the rest
     if (gene_len){ # only for test==hyper
-        no_coords = gene_values[,1][!(gene_values[,1] %in% gene_coords[,4])] # removed
+        no_coords = gene_values[!(gene_values[,1] %in% gene_coords[,4]), 1] # removed
         if (length(no_coords) > 0){
-            gene_values = gene_values[!(gene_values[,1] %in% no_coords)] # restrict
+            gene_values = gene_values[!(gene_values[,1] %in% no_coords),] # restrict
             no_coords_string = paste(no_coords,collapse=", ")
             warning(paste("No coordinates available for genes: ",no_coords_string,".\n  These genes were not included in the analysis.",sep=""))
             not_in = c(not_in, no_coords)
         }
     }
-    
     # after removing genes without annotations or coordinates: are enough genes left?
     if (length(not_in) > 0){
         # is any gene in the data? if not, stop.
@@ -195,7 +194,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
             stop(paste("Less than 2 genes have annotated GO-categories.",sep=""))
         }
     }
-
     # write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
     if (!silent) message("Write temporary files...")
     write.table(term,file=paste(directory, "_term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
