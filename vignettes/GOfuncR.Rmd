@@ -247,9 +247,11 @@ When genes are associated with four counts, e.g. non-synonymous or synonymous va
 ## create a toy example with four counts per gene
 high_substi_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
 low_substi_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'C21orf59')
-subs_non_syn = c(sample(5:15, length(high_substi_genes), replace=TRUE), sample(0:5, length(low_substi_genes), replace=TRUE))
+subs_non_syn = c(sample(5:15, length(high_substi_genes), replace=TRUE),
+    sample(0:5, length(low_substi_genes), replace=TRUE))
 subs_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=TRUE)
-vari_non_syn = c(sample(0:5, length(high_substi_genes), replace=TRUE), sample(0:10, length(low_substi_genes), replace=TRUE))
+vari_non_syn = c(sample(0:5, length(high_substi_genes), replace=TRUE),
+    sample(0:10, length(low_substi_genes), replace=TRUE))
 vari_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=TRUE)
 input_conti = data.frame(gene_ids=c(high_substi_genes, low_substi_genes),
     subs_non_syn, subs_syn, vari_non_syn, vari_syn)
@@ -299,7 +301,7 @@ Besides *OrganismDb* packages also *OrgDb* packages can be used to get GO-annota
 ```{r, eval=FALSE}
 ## perform enrichment analysis for chimp genes 
 ## ('org.Pt.eg.db' has to be installed)
-chimp_gene_ids = c('TYR', 'RHBDL2', 'SLC2A2', 'XPO4', 'DCD', 'PITX2', 'KCNC4', 'ELP3')
+chimp_gene_ids = c("SIAH1", "MIIP", 'ELP3', "CFB", "ADARB1", "TRNT1", "DEFB124", "OR1A1" 'TYR', 'HOXA7')
 is_candidate = rep(1, length(chimp_gene_ids))
 input_hyper_chimp = data.frame(chimp_gene_ids, is_candidate)
 res_hyper_chimp = go_enrich(input_hyper_chimp, orgDb='org.Pt.eg.db')
