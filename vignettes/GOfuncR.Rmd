@@ -301,7 +301,7 @@ Besides *OrganismDb* packages also *OrgDb* packages can be used to get GO-annota
 ```{r, eval=FALSE}
 ## perform enrichment analysis for chimp genes 
 ## ('org.Pt.eg.db' has to be installed)
-chimp_gene_ids = c("SIAH1", "MIIP", 'ELP3', "CFB", "ADARB1", "TRNT1", "DEFB124", "OR1A1" 'TYR', 'HOXA7')
+chimp_gene_ids = c('SIAH1', 'MIIP', 'ELP3', 'CFB', 'ADARB1', 'TRNT1', 'DEFB124', 'OR1A1', 'TYR', 'HOXA7')
 is_candidate = rep(1, length(chimp_gene_ids))
 input_hyper_chimp = data.frame(chimp_gene_ids, is_candidate)
 res_hyper_chimp = go_enrich(input_hyper_chimp, orgDb='org.Pt.eg.db')
