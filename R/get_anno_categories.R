@@ -10,10 +10,7 @@
 get_anno_categories = function(genes, database="Homo.sapiens"){
     
     ## Check input
-    message(paste0("load database '", database, "'..."))
-    if (!suppressPackageStartupMessages(suppressMessages(require(database, character.only=TRUE)))){
-        stop(paste0("database '" ,database, "' is not installed. Please install it from bioconductor."))
-    }
+	load_db(database)
     # if genes are not provided use all from database (useful for default background in hypergeometric test)
     if (missing(genes)){
         genes = keys(get(database), keytype="SYMBOL")
