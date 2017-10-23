@@ -1,8 +1,8 @@
 Package: GOfuncR
 Type: Package
 Title: Gene ontology enrichment using FUNC
-Version: 0.99.3
-Date: 2017-10-20
+Version: 0.99.4
+Date: 2017-10-23
 Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
 Description: GOfuncR performs a gene ontology enrichment analysis based on
@@ -11,7 +11,7 @@ Description: GOfuncR performs a gene ontology enrichment analysis based on
     It provides the standard candidate vs. background enrichment analysis 
     using the hypergeometric test, as well as three additional tests: 
     (i) the Wilcoxon rank-sum test that is used when genes are ranked, 
-    (ii) a binomial test is used when genes are associated with two counts and 
+    (ii) a binomial test that is used when genes are associated with two counts and 
     (iii) a Chi-square or Fisher's exact test that is used in cases when 
     genes are associated with four counts. 
     To correct for multiple testing and interdependency of the tests, 

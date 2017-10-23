@@ -219,7 +219,7 @@ head(res_willi[[1]])
 Note that when p-values are used as scores, often one would want to look for enrichment of low ranks, i.e. low p-values (or alternatively use (1 - p-value) as score and check for enrichment of high ranks).
 
 ## Test for enrichment using the binomial test
-When genes are associated with two counts, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in the root node. To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
+When genes are associated with two counts *A* and *B*, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in the root node. To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
 
 ```{r}
 ## create a toy example dataset with two counts per gene
@@ -241,7 +241,7 @@ head(res_binom[[1]])
 ```
 
 ## Test for enrichment using the 2x2 contingency table test
-When genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species, like for a McDonald-Kreitman test [3], the 2x2 contingency table test can be used. It can identify GO-categories which have a high ratio of (count_A / count_B) compared to (count_C / count_D):
+When genes are associated with four counts (*A*-*D*), e.g. non-synonymous or synonymous variants that are fixed between or variable within species, like for a McDonald-Kreitman test [3], the 2x2 contingency table test can be used. It can identify GO-categories which have a high ratio of *A/B* compared to *C/D*, which in this example would correspond to a high ratio of *non-synonymous substitutions / synonymous substitutions* compared to *non-synonymous variable / synonymous variable*:
 
 ```{r}
 ## create a toy example with four counts per gene
