@@ -10,7 +10,7 @@
 get_anno_categories = function(genes, database="Homo.sapiens"){
     
     ## Check input
-	load_db(database)
+    load_db(database)
     # if genes are not provided use all from database (useful for default background in hypergeometric test)
     if (missing(genes)){
         genes = keys(get(database), keytype="SYMBOL")

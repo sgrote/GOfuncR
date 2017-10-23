@@ -432,7 +432,7 @@ genes = c('AGTR1', 'ANO1', 'CALB1', 'GYG1', 'PAX2')
 gos = c('GO:0001558', 'GO:0005536', 'GO:0072205', 'GO:0006821')
 anno_genes = get_anno_genes(go_ids=gos, genes=genes)
 # add the names and domains of the GO-categories
-cbind(anno_genes ,get_names(anno_genes$go_id)[,2:3])
+cbind(anno_genes, get_names(anno_genes$go_id)[,2:3])
 ```
 ```{r, eval=FALSE}
 ## find all mouse-gene annotations to two GO-categories
@@ -473,7 +473,7 @@ head(full_anno)
 
 <a name='hyper_scheme'></a>
 
-### Schematic 1: Hypergeometric test and FWER calculation
+## Schematic 1: Hypergeometric test and FWER calculation
 
 ![FWER calculation](./Skizze_Fig1.png 'hypergeometric test and FWER')
 
@@ -481,7 +481,7 @@ The FWER for the other tests is computed in the same way: the gene-associated va
 
 <a name='block_scheme'></a>
 
-### Schematic 2: `circ_chrom` option for genomic regions input
+## Schematic 2: `circ_chrom` option for genomic regions input
 
 ![genomic regions](./Skizze_Fig2.png 'options for genomic regions input')
 

@@ -9,7 +9,7 @@
 get_anno_genes = function(go_ids, database="Homo.sapiens", genes=NULL){
     
     ## Check input  
-	load_db(database)
+    load_db(database)
     # GO-IDs
     if (!is.vector(go_ids) || !all(substr(go_ids,1,3) == "GO:")){
         stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0072221','GO:0004945')")
