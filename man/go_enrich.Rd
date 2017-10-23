@@ -105,18 +105,20 @@ Steffi Grote
 }
 
 \examples{
-#### see the package vignette for more examples
 
 #### Note that argument 'n_randsets' is reduced 
 #### to lower computational time in the following examples. 
 #### Using the default value is recommended.
 
-#### Perform a GO-enrichment analysis for some human genes
-# create input dataframe that defines the candidate genes
-gene_ids = c('NCAPG', 'QUATSCH1', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 
-    'CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-gene_scores = rep(1, length(gene_ids))
-genes = data.frame(gene_ids, gene_scores)
+#### Perform a GO-enrichment analysis for some human genes 
+#### with a defined background set
+# create input dataframe that defines the candidate and backround genes
+candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 
+    'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'FN1', 'NODAL',
+    'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
+is_candidate = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
+genes = data.frame(gene_ids=c(candi_gene_ids, bg_gene_ids), is_candidate)
 genes
 
 # run enrichment analysis
@@ -132,6 +134,7 @@ go_res[[2]]
 # 3) annotation databases used
 go_res[[3]]
 
+#### see the package vignette for more examples
 }
 
 \keyword{ htest }

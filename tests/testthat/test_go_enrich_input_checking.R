@@ -28,17 +28,17 @@ test_that("general genes input gets checked",{
 		"Please provide only 1/0-values in 2nd column of 'genes'-input for hypergeometric test.")
 })
 
-## hyper
-# one gene without annotation
-genes_no_anno = data.frame(gene_ids='QUATSCH1' , scores=1) 
-candi_no_anno = data.frame(gene_ids=c('QUATSCH1','APOL4') , scores=c(1,0))
-bg_no_anno = data.frame(gene_ids=c('QUATSCH1','APOL4') , scores=c(0,1))
+### hyper (outcommented to reduce time)
+## one gene without annotation
+#genes_no_anno = data.frame(gene_ids='QUATSCH1' , scores=1) 
+#candi_no_anno = data.frame(gene_ids=c('QUATSCH1','APOL4') , scores=c(1,0))
+#bg_no_anno = data.frame(gene_ids=c('QUATSCH1','APOL4') , scores=c(0,1))
 
-test_that("hyper genes input gets checked",{
-	expect_error(go_enrich(genes_no_anno), "No GO-annotations for input genes.")
-	expect_error(go_enrich(candi_no_anno), "No requested candidate genes in data.")
-	expect_error(go_enrich(bg_no_anno), "No requested background genes in data.")
-})
+#test_that("hyper genes input gets checked",{
+#	expect_error(go_enrich(genes_no_anno), "No GO-annotations for input genes.")
+#	expect_error(go_enrich(candi_no_anno), "No requested candidate genes in data.")
+#	expect_error(go_enrich(bg_no_anno), "No requested background genes in data.")
+#})
 
 # regions
 # background < candidate on chrom, in blocks, overlapping input regions
@@ -61,7 +61,8 @@ names(no_bg_genes) = c("8:82000000-83000000", "21:1-3000000")
 test_that("input_regions are checked - blocks",{
     expect_that(go_enrich(overlap, regions=TRUE), throws_error("Background regions overlap: 2:5-20, 2:10-12"))
     expect_error(go_enrich(overlap2, regions=TRUE), "Candidate regions overlap: 2:0-8, 2:5-10")
-    expect_error(go_enrich(tight, regions=TRUE), "Background regions too small.")
+    # outcommented to reduce time:
+#    expect_error(go_enrich(tight, regions=TRUE), "Background regions too small.") 
     expect_error(go_enrich(no_bg, regions=TRUE), "All values of the genes") # longer message fails ("["?)
 	expect_error(go_enrich(reverse, regions=TRUE), 
 	    "Invalid regions: 2:15-10.\n  In 'chr:start-stop' start < stop is required.")

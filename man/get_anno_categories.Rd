@@ -30,7 +30,7 @@ Steffi Grote
 }
 
 \note{
-This gives only direct annotations of genes to GO-categories. By definition genes are also indirectly annotated to all parent nodes of those categories. Use \code{\link{get_parent_nodes}} to get a complete list of annotations (see examples).\cr
+This gives only direct annotations of genes to GO-categories. By definition genes are also indirectly annotated to all parent nodes of those categories. Use \code{\link{get_parent_nodes}} to get the higher level categories of the directly annotated GO-categories.\cr
 Also note that GO-categories which are not represented or obsolete in the internal GO-graph of GOfuncR are removed to be consistent with the annotations used in \code{\link{go_enrich}}.
 }
 
@@ -48,14 +48,6 @@ head(anno1)
 # add the names and domains of the GO-categories
 named_anno1 = merge(anno1, get_names(anno1$go_id))
 head(named_anno1)
-
-## get all annotations of NXPH4, inlcuding higher-level GO-categories
-direct_anno = get_anno_categories('NXPH4')
-direct_anno
-parent_ids = unique(get_parent_nodes(direct_anno$go_id)[,2])
-# add GO-domain
-full_anno = get_names(parent_ids)
-full_anno
 
 }
 
