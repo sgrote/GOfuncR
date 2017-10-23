@@ -98,8 +98,6 @@ genes::~genes(  )
 
 class c_prng {
 	public:
-// steffi:
-//		int operator()( int n ) { return( rand() % n ); } ;
 		int operator()( int n ) { return( R::runif(0,1) * n ); } ;
 } ;
 

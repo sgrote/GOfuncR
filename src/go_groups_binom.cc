@@ -237,13 +237,6 @@ int* go_groups_binom::calculate_rand( string &data, ostream *os )
 
 void go_groups_binom::print_pvals( int nr_randsets, ostream &os ) {
 	
-	// vector<double> *fdr_q_c = c_sig.fdr_qvals( 0 ) ; 
-	// vector<double> *fdr_q_h = h_sig.fdr_qvals( 0 ) ; 
-	/*steffi: fuer R-package keine FDR
-	map<double,double> *fdr_q_c = c_sig.fdr_qvals( 0 ) ; 
-	map<double,double> *fdr_q_h = h_sig.fdr_qvals( 0 ) ; 
-	*/
-	
 	// loop over GOs and compute FWER
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
 		if ( check[i] == 1 ) { 
@@ -270,23 +263,5 @@ void go_groups_binom::print_pvals( int nr_randsets, ostream &os ) {
 				<< endl ;
 		}
 	} 
-
-	//delete fdr_q_c ;
-	//delete fdr_q_h ;
-
-	//os << endl << endl 
-           //<< "global-test-statistics (0 - 0.05): " << endl 
-	   //<< c_sig.significance( 0, 0.05 ) << "\t" << h_sig.significance( 0, 0.05 ) << endl ;
-	//os << endl ;
-
-	//vector<double> *fdr_c = c_sig.fdr( 0 ) ; 
-	//vector<double> *fdr_h = h_sig.fdr( 0 ) ; 
-
-	//os << "FDR" << endl ;
-	//os << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" <<  endl ;
-	//for ( int i = 0 ; i < 5 ; i++ ) os << (*fdr_c)[i] << "\t" ;
-	//for ( int i = 0 ; i < 5 ; i++ ) os << (*fdr_h)[i] << "\t" ;
-	//os << endl ;
-	//os << endl ;
 
 }

@@ -15,11 +15,6 @@
 #include "go_obj_hyper.h" 
 #include <cmath>
 
-//steffi:
-//#include <Rcpp.h>
-//using std::cerr;
-//using std::cout;
-
 using std::endl;
 
 go_obj_hyper::go_obj_hyper( string &name_ ) : name( name_ )

@@ -8,7 +8,6 @@
 #include <iostream>
 #include <sstream>
 
-// steffi:
 #include <set>
 //#include "overall_sign.h" 
 

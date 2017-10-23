@@ -16,17 +16,10 @@ using namespace Rcpp;
 void hyper_category_test(std::string directory, int cutoff, std::string root, bool silent)
 
 {
-	/*steffi: veraltet: noch argument fuer profile-output: std::string output_profile, aber profile fuer R-package nicht noetig
-
-	if ( argc != 6 ) {
-		cerr << "Usage " << argv[0] << " randset outfile profile cutoff GO:ID" << endl ;
-		exit( 1 ) ;
-	}
-	*/
+	
 	/*************
          * parsing arguments, creating in and outstreams
          ************/
-	// steffi: in R-package wird nur Datei gelesen, und so kann einfach ein "delete" benutzt werden
 	string input = directory + "_randset_out";
 	istream *in ;
 	in = new ifstream( input.c_str() ) ;
@@ -38,22 +31,6 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 	if ( ! out ) {
 		Rcpp::Rcerr << "Cannot open " << output << endl ;
 	}
-
-	/* steffi: istringstream converts string to int, but already int handed in to R-function
-	int cutoff=1 ;
-	{
-		istringstream cutoff_s( argv[4] ) ;
-		cutoff_s >> cutoff ;
-	}
-	*/
-
-	//string root_go ; // just use root
-	//{	
-		////istringstream ppp( argv[5] ) ;
-		//istringstream ppp( root.c_str() ) ;
-		//ppp >> root_go ;
-	//}
-
 
 	/*************
          * start reading from randomset-file  
@@ -67,8 +44,6 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 	getline( *in, groups ) ; // GO IDs
 	if ( groups == "" ) {
 		Rcpp::stop("Error reading randomsets") ;
-		//Rcpp::Rcerr << "Error reading randomsets" << endl ;
-		//exit( 1 ) ;
 	}
 	
 	string detected, changed ;
@@ -84,10 +59,6 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 	// returns number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001
 	// for under and over respresentation -> 10 values, also printed to console below
 	int *realdata = gos.calculate_data( ) ;
-
-//	int *realdata = gos.calculate_data( &profile ) ;
-//	out << endl << endl ;
-	
 
 	int sum_randdata[10] ; // sum significant groups across all randomsets 
 	for ( int i=0 ; i < 10 ; ++i ) sum_randdata[i] = 0 ;
@@ -119,7 +90,6 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 			}
 			Rcpp::Rcout << "\n" ;
 		}
-		//steffi:
 		delete[] randdata ;
 		num_randdata++ ;
 	}
@@ -151,7 +121,6 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 		Rcpp::Rcout << endl << endl ;
 	}
 
-	// steffi: delete ifstream and realdata
 	delete in;
 	delete[] realdata;
 }

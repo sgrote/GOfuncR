@@ -6,9 +6,6 @@
 #include <fstream>
 #include <iomanip>      // std::setprecision
 
-// steffi: Rcpp contains Rmath (eg. R::pnorm())
-//#define MATHLIB_STANDALONE
-//#include "../../include/Rmath.h"
 #include <Rcpp.h>
 
 using namespace std ;
@@ -82,11 +79,9 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 				     )
 				   ) ; 
 		double corr = -0.5 ;
-		//steffi:
 		prob_less = R::pnorm( (z-corr) / sigma, 0., 1., 1, 0 ) ;
 		data_pvals_l[i] = prob_less ;
 		corr = 0.5 ;
-		//steffi:
 		prob_greater = 1. - R::pnorm( (z-corr) / sigma, 0., 1., 1, 0 ) ;
 		data_pvals_g[i] = prob_greater ;
 
@@ -231,15 +226,6 @@ int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os )
 
 void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 
-	
-	// vector<double> *fdr_qless = less_sig.fdr_qvals( 0 ) ; 
-	// vector<double> *fdr_qgreater = greater_sig.fdr_qvals( 0 ) ; 
-
-	//steffi: das unten war einkommentiert - fuer R-package keine FDR
-
-	// map<double,double> *fdr_qless = less_sig.fdr_qvals( 0 ) ; 
-	// map<double,double> *fdr_qgreater = greater_sig.fdr_qvals( 0 ) ; 
-
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
 		if ( nr_of_genes[i] >= cutoff ) { 
 			// FWER: number of randsets with smallest p <= p-val 
@@ -262,32 +248,6 @@ void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 				<< static_cast<double>(n_g)/static_cast<double>(nr_randsets) << "\t" //FWER high ranks
 				<< ranksums_expected[i] << "\t" << ranksums[i]  //NEW: expected and real sum of ranks
 				<< endl;
-				//<< (*fdr_qless)[data_pvals_l[i]] << "\t" 
-				//<< (*fdr_qgreater)[data_pvals_g[i]] << endl ;
 		}
 	} 
-	// steffi:
-	//delete fdr_qless ;
-	//delete fdr_qgreater ;
-
-	// steffi: stoert im FUNC-package (out-Datei kein data.frame mehr)
-	// steffi: falls man vllt. das einkommentiert braeuchte man vllt. noch ein delete fuer fdr_less und fdr_greater
-	/*
-	os << endl << endl 
-           << "global-test-statistics (0 - 0.05): " << endl 
-	   << less_sig.significance( 0, 0.05 ) << "\t" << greater_sig.significance( 0, 0.05 ) << endl ;
-	os << endl ;
-	
-
-	vector<double> *fdr_less = less_sig.fdr( 0 ) ; 
-	vector<double> *fdr_greater = greater_sig.fdr( 0 ) ; 
-
-	os << "FDR" << endl ;
-	os << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" <<  endl ;
-	for ( int i = 0 ; i < 5 ; i++ ) os << (*fdr_less)[i] << "\t" ;
-	for ( int i = 0 ; i < 5 ; i++ ) os << (*fdr_greater)[i] << "\t" ;
-	os << endl ;
-	os << endl ;
-	*/
-
 }

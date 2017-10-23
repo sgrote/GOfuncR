@@ -17,9 +17,7 @@
 #include "go_graph_hyper.h"
 #include <sstream>
 
-// steffi:
 #include <Rcpp.h>
-//using std::cerr;
 
 using std::endl;
 using std::istringstream;
@@ -91,7 +89,6 @@ void go_graph_hyper::get_parents( string &go, set<string>* parents ) {
 	if ( graph[go] ) {
 		graph[go]->get_parents( parents ) ;
 	} else {
-		//steffi:
 		Rcpp::Rcerr << "Error: Cannot find " << go 
 			<< ". Maybe taxonomies are not in the right order." << endl ;
 	}

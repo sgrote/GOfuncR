@@ -6,9 +6,6 @@
 #include <fstream>
 #include <iomanip>      // std::setprecision
 
-// steffi: Rcpp contains Rmath (eg. R::pnorm())
-//#define MATHLIB_STANDALONE
-//#include "../../include/Rmath.h"
 #include <Rcpp.h>
 
 using namespace std ;
@@ -229,13 +226,6 @@ int* go_groups_hyper::calculate_rand( string &data, ostream *os )
 
 void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 
-	// vector<double> *fdr_q_l = osig_l.fdr_qvals( 0 ) ; 
-	// vector<double> *fdr_q_r = osig_r.fdr_qvals( 0 ) ; 
-
-	/*steffi: fuer R-package keine FDR
-	map<double,double> *fdr_q_l = osig_l.fdr_qvals( 0 ) ; 
-	map<double,double> *fdr_q_r = osig_r.fdr_qvals( 0 ) ; 
-	*/
 
 	// loop over GOs and compute FWER
 	for( unsigned int i = 0 ; i < names.size() ; ++i ) {
@@ -260,38 +250,7 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 				<< static_cast<double>(n_r)/ static_cast<double>(nr_randsets) << "\t" // FWER_over
 				<< n_anno_expected[i] << "\t" << changed_data[i]  //NEW: exp and real number of candi genes
 				<< endl;
-				/*steffi:
-				<< (*fdr_q_l)[data_pvals_l[i]] << "\t" 
-				<< (*fdr_q_r)[data_pvals_r[i]] << endl ;
-				*/
 		}
 	} 
-	/*steffi:
-	delete fdr_q_l ;
-	delete fdr_q_r ;
-	*/
-	// steffi: stoert im FUNC-package (out-Datei kein data.frame mehr)
-	// steffi: falls man vllt. das einkommentiert braeuchte man vllt. noch ein delete fuer fdr_less und fdr_greater
-	/*
-	os << endl << endl 
-           << "global-test-statistics (0 - 0.05): " << endl 
-	    << osig_l.significance( 0, 0.05 ) << "\t" << osig_r.significance( 0, 0.05 ) << endl ;
-	os << endl ;
-
-//	ofstream ooo( "cdfs-left.txt" ) ;
-//	osig_l.print_cdfs( ooo ) ;
-//	ooo.close() ;
-
-	vector<double> *fdr_l = osig_l.fdr( 0 ) ; 
-	vector<double> *fdr_r = osig_r.fdr( 0 ) ; 
-
-	os << "FDR" << endl ;
-	os << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" <<  endl ;
-	for ( int i = 0 ; i < 5 ; i++ ) os << (*fdr_l)[i] << "\t" ;
-	for ( int i = 0 ; i < 5 ; i++ ) os << (*fdr_r)[i] << "\t" ;
-	os << endl ;
-	os << endl ;
-	*/
-
-
+	
 }

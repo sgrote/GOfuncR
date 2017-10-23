@@ -30,15 +30,6 @@ void conti_category_test(std::string directory, int cutoff, std::string root, bo
 		Rcpp::Rcerr << "Cannot open " << outfile << endl ;
 	}
 
-	//ofstream *profile = new ofstream( argv[6] ) ;
-	//if ( ! *profile ) profile = 0 ;
-
-	//int co_genes_per_group ; // use cutoff from argument
-	//{
-		//istringstream cutoff( argv[4] ) ;
-		//cutoff >> co_genes_per_group ;
-	//}
-
 	/*************
          * start reading from randomset-file  
          ************/
@@ -124,23 +115,6 @@ void conti_category_test(std::string directory, int cutoff, std::string root, bo
 	
 	// write outfile	
     gos.print_pvals( num_randdata, out ) ;
-	
-	// steffi: Fuer R-package nicht noetig
-	// write outfile
-	//out << "Randomsets: " << num_randdata << endl ;
-	//out << endl ;
-	//out << "# sig. groups dataset" << endl ;
-	//for ( int i = 0 ; i < 10 ; ++i ) 
-		//out << realdata[i] << "\t" ;
-	//out << endl ;
-	//out << "# sig. groups mean randomsets" << endl ;
-	//for ( int i = 0 ; i < 10 ; ++i ) 
-		//out << sum_randdata[i]/static_cast<double>(num_randdata) << "\t" ;
-	//out << endl ;
-	//out << "# p value" << endl ;
-	//for ( int i = 0 ; i < 10 ; ++i ) 
-		//out << nr_groups_ge[i]/static_cast<double>(num_randdata) << "\t" ;
-	//out << endl ;	
 	
 	delete in;
 	delete[] realdata;

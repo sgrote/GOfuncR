@@ -87,7 +87,6 @@ void binom_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 	if ( !silent ){
 		Rcpp::Rcout << "Data and annotation file parsed." << endl ;
 		Rcpp::Rcout << "Number of randomsets: " << number_of_randomsets << "." <<endl;	
-		// steffi:
 		Rcpp::Rcout << "Computing randomsets..." << number_of_randomsets << "." <<endl;
 	}
 	
