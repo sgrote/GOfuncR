@@ -1,3 +1,35 @@
+CHANGES IN VERSION 0.99.5
+------------------------
+
+Improvements
+	  
+	o register native routines
+
+
+CHANGES IN VERSION 0.99.3
+------------------------
+
+Improvements
+	  
+	o bigger font in plots
+	o improve vignette example
+	
+Bug Fixes
+
+    o fix bug in when restricting to genes with
+      coordinates and subsequent handling of too few
+      genes left
+    o fix loading of database orgDb for options gene_len + txDb
+
+
+CHANGES IN VERSION 0.99.2
+------------------------
+
+Improvements
+	  
+	o add unit tests
+
+
 CHANGES IN VERSION 0.99.1
 ------------------------
 
