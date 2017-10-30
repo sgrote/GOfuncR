@@ -1,4 +1,4 @@
-useDynLib(GOfuncR, .registration = TRUE)
+useDynLib(GOfuncR)
 export("go_enrich", "get_names", "get_anno_genes", "get_child_nodes", "get_parent_nodes", "get_anno_categories", "get_ids", "plot_anno_scores")
 importFrom("Rcpp", "evalCpp")
 importFrom("utils", "read.table", "write.table", "packageVersion")
