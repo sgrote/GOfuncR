@@ -16,7 +16,8 @@ plot_anno_scores(res, go_ids)
         an object returned from \code{\link{go_enrich}} (list of 3 elements).
     }
     \item{go_ids}{
-        vector of GO-IDs, e.g. c('GO:0005737','GO:0071495'). This specifies the GO-categories that are plotted.
+        vector of GO-IDs, e.g. c('GO:0005737','GO:0071495').
+        This specifies the GO-categories that are plotted.
     }
 }
 
@@ -56,10 +57,14 @@ Steffi Grote
 
 ## Assign two random counts and to some random genes to create example input
 set.seed(123)
-high_A_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8', 'UGP2', 'ZWINT', 'ENGASE')
-low_A_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-A_counts = c(sample(15:25, length(high_A_genes)), sample(5:15, length(low_A_genes)))
-B_counts = c(sample(5:15, length(high_A_genes)), sample(15:25, length(low_A_genes)))
+high_A_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8',
+    'UGP2', 'ZWINT', 'ENGASE')
+low_A_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1',
+    'GYG1', 'PAX2')
+A_counts = c(sample(15:25, length(high_A_genes)),
+    sample(5:15, length(low_A_genes)))
+B_counts = c(sample(5:15, length(high_A_genes)),
+    sample(15:25, length(low_A_genes)))
 genes = data.frame(gene=c(high_A_genes, low_A_genes), A_counts, B_counts)
 
 ## perform enrichment analysis to find GO-categories with high fraction of A

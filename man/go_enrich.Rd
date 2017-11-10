@@ -115,8 +115,9 @@ Steffi Grote
 # create input dataframe that defines the candidate and backround genes
 candi_gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 
     'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'FN1', 'NODAL',
-    'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
+bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2',
+    'FN1', 'NODAL', 'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2',
+    'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
 is_candidate = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
 genes = data.frame(gene_ids=c(candi_gene_ids, bg_gene_ids), is_candidate)
 genes
@@ -125,7 +126,8 @@ genes
 go_res = go_enrich(genes, n_randset=100)
 
 # go_enrich returns a list with 3 elements:
-# 1) results from the anlysis (ordered by FWER for overrepresentation of candidate genes)
+# 1) results from the anlysis
+# (ordered by FWER for overrepresentation of candidate genes)
 head(go_res[[1]])
 # see the top GOs from every GO-domain
 by(go_res[[1]], go_res[[1]][,'ontology'], head)
@@ -134,7 +136,7 @@ go_res[[2]]
 # 3) annotation databases used
 go_res[[3]]
 
-#### see the package vignette for more examples
+#### see the package's vignette for more examples
 }
 
 \keyword{ htest }
