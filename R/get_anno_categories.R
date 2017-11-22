@@ -15,11 +15,11 @@ get_anno_categories = function(genes, database="Homo.sapiens"){
     if (missing(genes)){
         genes = keys(get(database), keytype="SYMBOL")
     } else if(!any(genes %in% keys(get(database), keytype="SYMBOL"))){
-        stop(paste0("None of the genes entered are present in the SYMBOL column of '" ,database, "'. Check head(keys(", database, ", keytype='SYMBOL')) to see valid examples."))
+        stop("None of the genes entered are present in the SYMBOL column of '" ,database, "'. Check head(keys(", database, ", keytype='SYMBOL')) to see valid examples.")
     }
     
     ## find annotated GO-categories
-    message(paste("find associated categories using database '",database,"'...",sep=""))
+    message("find associated categories using database '",database,"'...")
     # load GO-annotation
     go_anno = suppressMessages(select(get(database), keys=genes, columns=c("SYMBOL","GO"), keytype="SYMBOL"))
     go_anno = go_anno[!is.na(go_anno[,2]), 1:2]

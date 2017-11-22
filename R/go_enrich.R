@@ -63,7 +63,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     genes = unique(genes) # allow for multiple assignment of same value
     multi_genes = sort(unique(genes[,1][duplicated(genes[,1])]))
     if (length(multi_genes) > 0){
-        stop(paste("Genes with multiple assignment in input:", paste(multi_genes,collapse=", ")))
+        stop("Genes with multiple assignment in input: ", paste(multi_genes,collapse=", "))
     }
 
     # other arguments
@@ -72,7 +72,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     }
     if (n_randsets != round(n_randsets)){
         n_randsets = round(n_randsets)
-        warning(paste("'n_randsets' is expected to be an integer and was rounded to ",n_randsets,".",sep=""))
+        warning("'n_randsets' is expected to be an integer and was rounded to ",n_randsets,".")
     }
     if (!is.logical(gene_len)){
         stop("Please set gene_len to TRUE or FALSE.")
@@ -137,7 +137,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         gene_coords = block_info[[2]]
     }
     ### get GO-annotations
-    if (!silent) message(paste0("get GOs for genes using database '", anno_db,"'..."))
+    if (!silent) message("get GOs for genes using database '", anno_db,"'...")
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
         go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
@@ -154,7 +154,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     not_in = genes[,1][!genes[,1] %in% gene_values[,1]] # removed
     if (length(not_in) > 0 && !regions){ # this message is usually too long when regions are used
         not_in_string = paste(not_in,collapse=", ")
-        warning(paste("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.",sep=""))
+        warning("No GO-annotation for genes: ",not_in_string,".\n  These genes were not included in the analysis.")
     }
 
     ### get coordinates
@@ -172,7 +172,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         if (length(no_coords) > 0){
             gene_values = gene_values[!(gene_values[,1] %in% no_coords),] # restrict
             no_coords_string = paste(no_coords,collapse=", ")
-            warning(paste("No coordinates available for genes: ",no_coords_string,".\n  These genes were not included in the analysis.",sep=""))
+            warning("No coordinates available for genes: ",no_coords_string,".\n  These genes were not included in the analysis.")
             not_in = c(not_in, no_coords)
         }
     }
@@ -191,7 +191,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         }
         # at least two for wilcoxon
         if (test=="wilcoxon" && nrow(gene_values) < 2) {
-            stop(paste("Less than 2 genes have annotated GO-categories.",sep=""))
+            stop("Less than 2 genes have annotated GO-categories.")
         }
     }
     # write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
@@ -216,15 +216,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     for (r in 1:length(root_nodes)){        
         root_node = root_nodes[r]
         root_id = root_node_ids[r]
-        if (!silent) message(paste("\n\nProcessing root node: ", root_node,"...\n", sep=""))
+        if (!silent) message("\n\nProcessing root node: ", root_node,"...\n")
         
         # subset GO-annotations to nodes that belong to current root node (col 3 in term.txt is root-node)
         gene_go_root = go_anno[term[match(go_anno[,2],term[,4]),3]==root_node,]
         
         # NEW: skip root-node if no annotations of input genes (at least two for wilcoxon) 
         if (nrow(gene_go_root) == 0 || (test == "wilcoxon" && nrow(gene_go_root) < 2)){
-            warning(paste0("No GO-annotations for root node '", root_node,"'."))
-            message(paste0("\nSkipping root node '", root_node,"'.\n"))
+            warning("No GO-annotations for root node '", root_node,"'.")
+            message("\nSkipping root node '", root_node,"'.\n")
             next
         }
 
