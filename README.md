@@ -22,7 +22,7 @@ biocLite(c("BiocStyle","Homo.sapiens"))
 ## install GOfuncR from the console
 git clone https://github.com/sgrote/GOfuncR
 R CMD build GOfuncR
-R CMD INSTALL GOfuncR_0.99.7.tar.gz
+R CMD INSTALL GOfuncR_0.99.8.tar.gz
 ```
 
 
@@ -32,7 +32,7 @@ R CMD INSTALL GOfuncR_0.99.7.tar.gz
 ## install GOfuncR from the console
 git clone https://github.com/sgrote/GOfuncR
 R CMD build --no-build-vignettes GOfuncR
-R CMD INSTALL GOfuncR_0.99.7.tar.gz
+R CMD INSTALL GOfuncR_0.99.8.tar.gz
 ```
 
 or
