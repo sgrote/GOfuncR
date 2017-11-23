@@ -50,7 +50,7 @@ plot_conti = function(aggrego){
     par(mar=c(5.5,4,3,2), bty="l")
     plot(1,xlim=c(0.5,nrow(fish_odds)+1), ylim=c(0,2),type="n", main="annotated genes", xlab="", ylab="", xaxt="n", yaxt="n")
     radi_units = 0.4/log(max(rowSums(fish_odds[,2:5]))+1)
-    for(i in 1:nrow(fish_odds)){
+    for(i in seq_len(nrow(fish_odds))){
         add.pie(z=as.numeric(fish_odds[i,2:3]), x=i, y=1.6, radius=log(sum(fish_odds[i,2:3])+1)*radi_units, labels="", col=pie_cols[1:2])
         add.pie(z=as.numeric(fish_odds[i,4:5]), x=i, y=0.6, radius=log(sum(fish_odds[i,4:5])+1)*radi_units, labels="", col=pie_cols[3:4])
         

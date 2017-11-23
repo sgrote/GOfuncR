@@ -120,7 +120,7 @@ check_regions = function(genes, circ_chrom){
     ## test that regions are non-overlapping (separately for candidate and background)
     # candidate
     overlap_indis = c()
-    for (i in 1:nrow(test_reg)){ 
+    for (i in seq_len(nrow(test_reg))){
         # if (chrom=chrom & (start inside | end inside | including)) any other region
         if (any(test_reg[i,1] == test_reg[,1] & ((test_reg[i,2] > test_reg[,2] & test_reg[i,2] < test_reg[,3]) | (test_reg[i,3] > test_reg[,2] & test_reg[i,3] < test_reg[,3]) | (test_reg[i,2] < test_reg[,2] & test_reg[i,3] > test_reg[,3])))){
             overlap_indis = c(overlap_indis, i)
@@ -132,7 +132,7 @@ check_regions = function(genes, circ_chrom){
     }
     # background
     overlap_indis = c()
-    for (i in 1:nrow(bg_reg)){ 
+    for (i in seq_len(nrow(bg_reg))){
         if (any(bg_reg[i,1] == bg_reg[,1] & ((bg_reg[i,2] > bg_reg[,2] & bg_reg[i,2] < bg_reg[,3]) | (bg_reg[i,3] > bg_reg[,2] & bg_reg[i,3] < bg_reg[,3]) | (bg_reg[i,2] < bg_reg[,2] & bg_reg[i,3] > bg_reg[,3])))){
             overlap_indis = c(overlap_indis, i)
         }   
