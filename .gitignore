@@ -6,3 +6,4 @@ GOfuncR.Rcheck/
 tests/test_plot_anno_scores.pdf
 build/vignette.rds
 *.html
+vignettes/.Rhistory

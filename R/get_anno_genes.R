@@ -20,7 +20,7 @@ get_anno_genes = function(go_ids, database="Homo.sapiens", genes=NULL){
     children = get_child_nodes(go_ids)[,1:2]
 
     # find genes annotated to child nodes
-    message(paste("find genes annotated to child nodes using database '", database,"'...",sep=""))
+    message("find genes annotated to child nodes using database '", database,"'...")
     child_anno = suppressMessages(select(get(database), keys=unique(children[,2]), columns=c("GO","SYMBOL"), keytype="GO"))
     child_anno = child_anno[!is.na(child_anno[,4]), c(1,4)]
     

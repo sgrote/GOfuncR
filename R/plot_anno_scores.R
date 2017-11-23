@@ -14,7 +14,7 @@ plot_anno_scores = function(res, go_ids){
     # check that all go_ids are in res
     if (!all(go_ids %in% res[[1]][,2])){
         inval = go_ids[!go_ids %in% res[[1]][,2]]
-        stop(paste("go_ids not present in res (go_enrich result):", paste(inval,collapse=", ")))
+        stop("go_ids not present in res (go_enrich result): ", paste(inval,collapse=", "))
     }
     # infer test
     in_genes = res[[2]]

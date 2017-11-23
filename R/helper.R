@@ -2,10 +2,10 @@
 # load database
 load_db = function(db, silent=FALSE){
     if (!silent){
-        message(paste("load database '", db,"'...",sep=""))
+        message("load database '", db,"'...")
     }
     if (!suppressPackageStartupMessages(suppressMessages(require(db, character.only=TRUE)))){
-        stop(paste0("database '" ,db, "' is not installed. Please install it from bioconductor."))
+        stop("database '" ,db, "' is not installed. Please install it from bioconductor.")
     }
 }
 
@@ -45,7 +45,7 @@ combine_tx = function(coords){
 get_all_coords = function(coord_db="Homo.sapiens", anno_db="Homo.sapiens", silent=FALSE){
     load_db(coord_db, silent)
     if (!silent){
-        message(paste("find gene coordinates using database '", coord_db,"'...",sep=""))
+        message("find gene coordinates using database '", coord_db,"'...")
     }   
     if (coord_db == anno_db){
         # OrganismDb

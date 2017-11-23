@@ -15,11 +15,11 @@ plot_hyper = function(aggrego, root_aggrego){
     # replace Inf or -Inf CI for plotting
     inf_go = fish_odds[is.infinite(fish_odds$odds_ratio),"go_id"]
     if(length(inf_go) > 0){
-        warning(paste("The following GO-categories have an infinite odds ratio due to no background gene annotation: "), paste(inf_go, collapse=", "), sep="")
+        warning("The following GO-categories have an infinite odds ratio due to no background gene annotation: ", paste(inf_go, collapse=", "))
     }
     zero_go = fish_odds[fish_odds$odds_ratio==0,"go_id"]
     if(length(zero_go) > 0){
-        warning(paste("The following GOs have an odds ratio of 0: "), paste(zero_go, collapse=", "), sep="")
+        warning("The following GOs have an odds ratio of 0: ", paste(zero_go, collapse=", "))
     }
 
     ### plot the odds-ratios, with CI

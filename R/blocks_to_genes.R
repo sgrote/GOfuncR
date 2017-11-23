@@ -17,12 +17,6 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     regions = lapply(regions, function(x) {x[,1] = paste0("chr", x[,1]); return(x)})
     test_regions = regions[[1]]
     bg_regions = regions[[2]]
-    if (!silent){
-        message("Candidate regions:")
-        print(test_regions)
-        message("Background regions:")
-        print(bg_regions)
-    }
     
     # load databases and check if OrganismDb or OrgDb/TxDb
     load_db(anno_db, silent)
@@ -34,7 +28,7 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     }
     
     if (!silent){
-        message(paste("find genes in input-regions using database '", coord_db,"'...",sep=""))
+        message("find genes in input-regions using database '", coord_db,"'...")
     }
     
     # convert to GRanges
@@ -102,7 +96,7 @@ check_regions = function(genes, circ_chrom){
     # remove invalid ranges on (mt)-chromosome
     inval = genes[! grepl("^[0-9XYMT]*:[0-9]*-[0-9]*$", genes[,1]),1]
     if (length(inval) > 0){
-        stop(paste("Invalid regions:", paste(inval, collapse=", ")))
+        stop("Invalid regions: ", paste(inval, collapse=", "))
     }
     
     # convert coordinates from 'genes'-names to bed-format
@@ -116,7 +110,7 @@ check_regions = function(genes, circ_chrom){
     reverse_indi = bed[,2] > bed[,3]
     if(sum(reverse_indi) > 0){
         reverse = paste(genes[,1][reverse_indi], collapse=", ")
-        stop(paste("Invalid regions: ", reverse, ".\n  In 'chr:start-stop' start < stop is required.", sep=""))
+        stop("Invalid regions: ", reverse, ".\n  In 'chr:start-stop' start < stop is required.")
     }
         
     # split in test and background
@@ -134,7 +128,7 @@ check_regions = function(genes, circ_chrom){
     }
     if (length(overlap_indis) > 0){
         over = paste(genes[genes[,2]==1,1][overlap_indis], collapse=", ")
-        stop(paste("Candidate regions overlap: ", over, sep=""))
+        stop("Candidate regions overlap: ", over)
     }
     # background
     overlap_indis = c()
@@ -145,7 +139,7 @@ check_regions = function(genes, circ_chrom){
     }
     if (length(overlap_indis) > 0){
         over = paste(genes[genes[,2]==0,1][overlap_indis], collapse=", ")
-        stop(paste("Background regions overlap: ", over, sep=""))
+        stop("Background regions overlap: ", over)
     }
         
     # sort  (mixedorder does not work with multiple columns) 
@@ -159,13 +153,13 @@ check_regions = function(genes, circ_chrom){
         if(!(all(bg_reg[,1] %in% test_reg[,1]))){
             not_used = unique(bg_reg[!(bg_reg[,1] %in% test_reg[,1]),1])
             not_used = paste(not_used, collapse=", ")
-            warning(paste("Unused chromosomes in background regions: ", not_used, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.",sep=""))
+            warning("Unused chromosomes in background regions: ", not_used, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.")
             bg_reg = bg_reg[bg_reg[,1] %in% test_reg[,1],]
         }           
         if(!(all(test_reg[,1] %in% bg_reg[,1]))){
             wo_bg = unique(test_reg[!(test_reg[,1] %in% bg_reg[,1]),1])
             wo_bg = paste(wo_bg, collapse=", ")
-            stop(paste("No background region for chromosomes: ",  wo_bg, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used." ,sep=""))
+            stop("No background region for chromosomes: ",  wo_bg, ".\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.")
         }
     } else {  # normal blocks option
         # sort candidate regions by length (better chances that random placement works with small bg-regions)
