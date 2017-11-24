@@ -213,7 +213,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     
     out = list()
 
-    for (r in 1:length(root_nodes)){        
+    for (r in seq_along(root_nodes)){
         root_node = root_nodes[r]
         root_id = root_node_ids[r]
         if (!silent) message("\n\nProcessing root node: ", root_node,"...\n")

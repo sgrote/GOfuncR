@@ -44,7 +44,7 @@ plot_hyper = function(aggrego, root_aggrego){
     par(mar=c(5.5,4,3,1), bty="l")
     plot(1,xlim=c(0.5,nrow(fish_odds)+0.5), ylim=c(0,1),type="n", main="annotated genes", xlab="", ylab="", xaxt="n", yaxt="n")
     radi_units = 0.4/log(max(rowSums(fish_odds[,2:3]))+1)
-    for(i in 1:nrow(fish_odds)){
+    for(i in seq_len(nrow(fish_odds))){
         w = fish_odds[i,2]
         b = fish_odds[i,3]
         add.pie(z=c(b,w), x=i, y=0.6, radius=log(b+w+1)*radi_units, labels="", col=c("#737373",fish_odds[i,"root_col"]))
@@ -57,7 +57,7 @@ plot_hyper = function(aggrego, root_aggrego){
     par(mar=c(5.5,1,3,1), bty="l") # TODO, replace 3 with number of root nodes
     plot(1,xlim=c(-0.3,2), ylim=c(0.5,3.5),type="n", main="annotated genes\nroot nodes", xlab="", ylab="", xaxt="n", yaxt="n", yaxs="i")
     radi_units = 0.3/log(max(rowSums(root_aggrego[,2:3]))+1)
-    for(i in 1:nrow(root_aggrego)){
+    for(i in seq_len(nrow(root_aggrego))){
         w = root_aggrego[i,2]
         b = root_aggrego[i,3]
         add.pie(z=c(b,w), x=1, y=i, radius=log(b+w+1)*radi_units, labels="", col=c("#737373",root_aggrego[i,"root_col"]))

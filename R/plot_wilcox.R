@@ -66,7 +66,7 @@ violine = function(plotty, root_info, node_to_root, ylim, root=FALSE){
 #   xlabpos = ylim[1]-(ylim[2]-ylim[1])/50  # for log-axis
     axis(1, at=1:nrow(gos), labels=FALSE, cex.axis=0.9)
     text(x=1:nrow(gos), y=xlabpos , labels=xlabel, srt=45, adj=c(1,1), xpd=TRUE, cex=0.8, col=labelcol)
-    for(i in 1:nrow(gos)){
+    for(i in seq_len(nrow(gos))){
         scores = plotty[plotty$go_id == gos[i,1], "score"]
         # divide by root median
 #       scores = scores / gos[i,"median"]

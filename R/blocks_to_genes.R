@@ -119,24 +119,13 @@ check_regions = function(genes, circ_chrom){
     
     ## test that regions are non-overlapping (separately for candidate and background)
     # candidate
-    overlap_indis = c()
-    for (i in 1:nrow(test_reg)){ 
-        # if (chrom=chrom & (start inside | end inside | including)) any other region
-        if (any(test_reg[i,1] == test_reg[,1] & ((test_reg[i,2] > test_reg[,2] & test_reg[i,2] < test_reg[,3]) | (test_reg[i,3] > test_reg[,2] & test_reg[i,3] < test_reg[,3]) | (test_reg[i,2] < test_reg[,2] & test_reg[i,3] > test_reg[,3])))){
-            overlap_indis = c(overlap_indis, i)
-        }   
-    }
+    overlap_indis = check_overlap(test_reg)
     if (length(overlap_indis) > 0){
         over = paste(genes[genes[,2]==1,1][overlap_indis], collapse=", ")
         stop("Candidate regions overlap: ", over)
     }
     # background
-    overlap_indis = c()
-    for (i in 1:nrow(bg_reg)){ 
-        if (any(bg_reg[i,1] == bg_reg[,1] & ((bg_reg[i,2] > bg_reg[,2] & bg_reg[i,2] < bg_reg[,3]) | (bg_reg[i,3] > bg_reg[,2] & bg_reg[i,3] < bg_reg[,3]) | (bg_reg[i,2] < bg_reg[,2] & bg_reg[i,3] > bg_reg[,3])))){
-            overlap_indis = c(overlap_indis, i)
-        }   
-    }
+    overlap_indis = check_overlap(bg_reg)
     if (length(overlap_indis) > 0){
         over = paste(genes[genes[,2]==0,1][overlap_indis], collapse=", ")
         stop("Background regions overlap: ", over)
@@ -170,6 +159,21 @@ check_regions = function(genes, circ_chrom){
 }
 
 
-
+# take a bed-format dataframe and check if regions overlap
+# return a vector of row-indices that overlap any other region
+check_overlap = function(regions_bed){
+    overlap_indis = c()
+    for (i in seq_len(nrow(regions_bed))){
+        # if (chrom=chrom & (start inside | end inside | including)) any other region
+        chrom_match = regions_bed[i,1] == regions_bed[,1]
+        start_inside = regions_bed[i,2] > regions_bed[,2] & regions_bed[i,2] < regions_bed[,3]
+        end_inside = regions_bed[i,3] > regions_bed[,2] & regions_bed[i,3] < regions_bed[,3]
+        include = regions_bed[i,2] < regions_bed[,2] & regions_bed[i,3] > regions_bed[,3]
+        if (any(chrom_match & (start_inside | end_inside | include))){
+            overlap_indis = c(overlap_indis, i)
+        }
+    }
+    return(overlap_indis)
+}
 
 

@@ -37,7 +37,7 @@ plot_binomial = function(aggrego, root_aggrego){
 
     plot(1,xlim=c(0.5,nrow(binom)+0.5), ylim=c(0,1),type="n", main="proportion of A", xlab="", ylab="", xaxt="n", yaxt="n")
     radi_units = 0.4/log(max(rowSums(binom[,2:3]))+1)
-    for(i in 1:nrow(binom)){
+    for(i in seq_len(nrow(binom))){
         a = binom[i,2]
         b = binom[i,3]
         add.pie(z=c(b,a), x=i, y=0.6, radius=log(a+b+1)*radi_units, labels="", col=c("#737373", binom[i,"root_col"]))
@@ -50,7 +50,7 @@ plot_binomial = function(aggrego, root_aggrego){
     par(mar=c(5.5,1,3,1), bty="l")
     plot(1,xlim=c(-0.3,2), ylim=c(0.5,3.5),type="n", main="proportion of A\nroot nodes", xlab="", ylab="", xaxt="n", yaxt="n", yaxs="i")
     radi_units = 0.3/log(max(rowSums(root_aggrego[,2:3]))+1)
-    for(i in 1:nrow(root_aggrego)){
+    for(i in seq_len(nrow(root_aggrego))){
         a = root_aggrego[i,2]
         b = root_aggrego[i,3]
         add.pie(z=c(b,a), x=1, y=i, radius=log(b+a+1)*radi_units, labels="", col=c("#737373",root_aggrego[i,"root_col"]))

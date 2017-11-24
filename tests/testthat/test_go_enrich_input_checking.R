@@ -15,32 +15,40 @@ input_non_bin[3,2] = 2
 
 ## general input
 test_that("general genes input gets checked",{
-	expect_error(go_enrich(1:10),"Please provide a data frame as 'genes' input")
-	expect_error(go_enrich(input_hyper, n_randset="abc"),
-	    "Please define 'n_randsets' as a positive integer.")
-	expect_error(go_enrich(input_hyper, circ_chrom=TRUE),
-		"Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
-	expect_error(go_enrich(input_hyper, test="invalid_test"),
-		"Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
-	expect_error(go_enrich(input_multi),
-		"Genes with multiple assignment in input: APOL4, NCAPG")
-	expect_error(go_enrich(input_non_bin),
-		"Please provide only 1/0-values in 2nd column of 'genes'-input for hypergeometric test.")
+    expect_error(go_enrich(1:10),"Please provide a data frame as 'genes' input")
+    expect_error(go_enrich(input_hyper, n_randset="abc"),
+        "Please define 'n_randsets' as a positive integer.")
+    expect_error(go_enrich(input_hyper, circ_chrom=TRUE),
+        "Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
+    expect_error(go_enrich(input_hyper, test="invalid_test"),
+        "Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
+    expect_error(go_enrich(input_multi),
+        "Genes with multiple assignment in input: APOL4, NCAPG")
+    expect_error(go_enrich(input_non_bin),
+        "Please provide only 1/0-values in 2nd column of 'genes'-input for hypergeometric test.")
 })
 
 ### hyper (outcommented to reduce time)
+## TODO: maybe use new longtest option
 ## one gene without annotation
 #genes_no_anno = data.frame(gene_ids='QUATSCH1' , scores=1) 
 #candi_no_anno = data.frame(gene_ids=c('QUATSCH1','APOL4') , scores=c(1,0))
 #bg_no_anno = data.frame(gene_ids=c('QUATSCH1','APOL4') , scores=c(0,1))
 
 #test_that("hyper genes input gets checked",{
-#	expect_error(go_enrich(genes_no_anno), "No GO-annotations for input genes.")
-#	expect_error(go_enrich(candi_no_anno), "No requested candidate genes in data.")
-#	expect_error(go_enrich(bg_no_anno), "No requested background genes in data.")
+#   expect_error(go_enrich(genes_no_anno), "No GO-annotations for input genes.")
+#   expect_error(go_enrich(candi_no_anno), "No requested candidate genes in data.")
+#   expect_error(go_enrich(bg_no_anno), "No requested background genes in data.")
 #})
 
-# regions
+### regions
+# overlaps
+chroms = c(1,1,1,2,3,4,2)
+starts = c(2,8,1,2,1,1,1)
+ends = c(4,9,3,3,4,3,4)
+over_regions = data.frame(chroms, starts, ends)
+expect_equal(check_overlap(over_regions), c(1,3,4,7))
+
 # background < candidate on chrom, in blocks, overlapping input regions
 too_small = c(rep(1,4),rep(0,5)) 
 names(too_small) = c("X:0-2","2:0-3","2:5-10","13:0-20",  "2:5-15","13:0-10","X:0-3","4:0-10","2:10-12") 
@@ -59,15 +67,15 @@ no_bg_genes = c(1,0)
 names(no_bg_genes) = c("8:82000000-83000000", "21:1-3000000")
 
 test_that("input_regions are checked - blocks",{
-    expect_that(go_enrich(overlap, regions=TRUE), throws_error("Background regions overlap: 2:5-20, 2:10-12"))
+    expect_error(go_enrich(overlap, regions=TRUE),"Background regions overlap: 2:5-20, 2:10-12")
     expect_error(go_enrich(overlap2, regions=TRUE), "Candidate regions overlap: 2:0-8, 2:5-10")
     # outcommented to reduce time:
 #    expect_error(go_enrich(tight, regions=TRUE), "Background regions too small.") 
     expect_error(go_enrich(no_bg, regions=TRUE), "All values of the genes") # longer message fails ("["?)
-	expect_error(go_enrich(reverse, regions=TRUE), 
-	    "Invalid regions: 2:15-10.\n  In 'chr:start-stop' start < stop is required.")
-	expect_error(go_enrich(no_can_genes, regions=TRUE), "Candidate regions do not contain any genes.")
-	expect_error(go_enrich(no_bg_genes, regions=TRUE), "Background regions do not contain any genes.")
+    expect_error(go_enrich(reverse, regions=TRUE), 
+        "Invalid regions: 2:15-10.\n  In 'chr:start-stop' start < stop is required.")
+    expect_error(go_enrich(no_can_genes, regions=TRUE), "Candidate regions do not contain any genes.")
+    expect_error(go_enrich(no_bg_genes, regions=TRUE), "Background regions do not contain any genes.")
 })    
 
 test_that("input_regions are checked - circ_chrom",{
@@ -89,10 +97,10 @@ input_willi = data.frame(gene_ids = c(high_score_genes, low_score_genes), gene_s
 input_extra_col = cbind(input_willi, input_willi[,2])
 
 test_that("willi genes input gets checked",{
-	expect_error(go_enrich(input_willi[1:2,], test="wilcoxon"),
-	    "Less than 2 genes have annotated GO-categories.")
-	expect_error(go_enrich(input_extra_col, test="wilcoxon"),
-	    "Please provide a data frame with 2 columns.") # again [ character can not be checked
+    expect_error(go_enrich(input_willi[1:2,], test="wilcoxon"),
+        "Less than 2 genes have annotated GO-categories.")
+    expect_error(go_enrich(input_extra_col, test="wilcoxon"),
+        "Please provide a data frame with 2 columns.") # again [ character can not be checked
 
 })
 
@@ -103,10 +111,10 @@ B_counts = 2:5
 input_binom = data.frame(gene_ids, A_counts, B_counts)
 
 test_that("binom genes input gets checked",{
-	expect_error(go_enrich(input_binom[4,], test="binomial"),
-	    "None of the genes entered are present in the SYMBOL column of 'Homo.sapiens'. Check head")
-	expect_error(go_enrich(input_binom[,c(1:3,3)], test="binomial"),
-	    "Please provide a data frame with columns ") # again [ character can not be checked
+    expect_error(go_enrich(input_binom[4,], test="binomial"),
+        "None of the genes entered are present in the SYMBOL column of 'Homo.sapiens'. Check head")
+    expect_error(go_enrich(input_binom[,c(1:3,3)], test="binomial"),
+        "Please provide a data frame with columns ") # again [ character can not be checked
 })
 
 # contingency
@@ -118,9 +126,9 @@ D_counts = 2:5
 input_conti = data.frame(gene_ids, A_counts, B_counts, C_counts, D_counts)
 
 test_that("conti genes input gets checked",{
-	expect_error(go_enrich(input_conti[4,], test="contingency"),
-	    "None of the genes entered are present in the SYMBOL column of 'Homo.sapiens'. Check head")
-	expect_error(go_enrich(input_conti[,c(1:3,3)], test="contingency"),
-	    "Please provide a data frame with columns ") # again [ character can not be checked
+    expect_error(go_enrich(input_conti[4,], test="contingency"),
+        "None of the genes entered are present in the SYMBOL column of 'Homo.sapiens'. Check head")
+    expect_error(go_enrich(input_conti[,c(1:3,3)], test="contingency"),
+        "Please provide a data frame with columns ") # again [ character can not be checked
 })
 
