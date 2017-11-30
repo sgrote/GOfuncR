@@ -12,12 +12,12 @@ get_child_nodes(go_ids)
 }
 \arguments{
     \item{go_ids}{
-        a vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
+        a character() vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
     }
 }
 
 \value{
-a dataframe with four columns: parent GO-ID, child GO-ID, child GO-name and distance.
+a data.frame() with four columns: parent GO-ID (character()), child GO-ID (character()), child GO-name (character()) and distance (numeric()).
 }
 \references{
 [1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.

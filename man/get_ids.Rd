@@ -11,13 +11,13 @@ get_ids(go_name)
 }
 \arguments{
     \item{go_name}{
-        (partial) name of a GO-category 
+        character(). (partial) name of a GO-category 
     }
 }
 
 
 \value{
-a data frame with the full names of the GO-categories that contain \code{go_name}; together with the GO-domain ('cellular_component', 'biological_process' or 'molecular_function') and the GO-category IDs.
+a data.frame() with three columns: the full names (character()) of the GO-categories that contain \code{go_name}; together with the GO-domain ('cellular_component', 'biological_process' or 'molecular_function') and the GO-category IDs (character()).
 }
 \references{
 [1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.

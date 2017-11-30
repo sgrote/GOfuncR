@@ -16,18 +16,18 @@ get_anno_genes(go_ids, database = 'Homo.sapiens', genes = NULL)
 
 \arguments{
     \item{go_ids}{
-        vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
+        character() vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
     }
     \item{database}{
-        optional OrganismDb or OrgDb annotation package from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp).
+        optional character() defining an OrganismDb or OrgDb annotation package from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp).
     }
     \item{genes}{
-        optional vector of gene-symbols. If defined, only annotations of those genes are returned.
+        optional character() vector of gene-symbols. If defined, only annotations of those genes are returned.
     }
 }
 
 \value{
-A dataframe with the GO-IDs and the annotated genes. The output is ordered by GO-ID and gene-symbol.\cr 
+A data.frame() with two columns: GO-IDs (character()) and the annotated genes (character()). The output is ordered by GO-ID and gene-symbol.\cr 
 }
 
 \references{

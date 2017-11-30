@@ -12,15 +12,15 @@ get_anno_categories(genes,  database = 'Homo.sapiens')
 }
 \arguments{
     \item{genes}{
-        a vector of gene-symbols, e.g. c('SPAG5', 'BTC').
+        a character() vector of gene-symbols, e.g. c('SPAG5', 'BTC').
     }
     \item{database}{
-        optional OrganismDb or OrgDb annotation package from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp).
+        optional character() defining an OrganismDb or OrgDb annotation package from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp).
     }
 }
 
 \value{
-a dataframe with four columns: gene, GO-ID, GO-name and GO-domain.
+a data.frame() with two columns: gene (character()) and GO-ID (character()).
 }
 \references{
 [1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.

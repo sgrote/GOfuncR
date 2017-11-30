@@ -20,9 +20,9 @@ go_enrich(genes, test = 'hyper', n_randsets = 1000, organismDb = 'Homo.sapiens',
 \arguments{
 
 \item{genes}{
-A dataframe with gene-symbols in the first column and test-dependent additional columns:\cr
-If \code{test='hyper'} (default) a second column with 1 for candidate genes and 0 for background
-genes. If no background genes are defined, all remaining genes from the internal dataset are used as background.\cr
+a data.frame() with gene-symbols (character()) in the first column and test-dependent additional numeric() columns:\cr
+If \code{test='hyper'} (default) a second column with 1 for candidate genes and 0 for background genes.
+If no background genes are defined, all remaining genes from the internal dataset are used as background.\cr
 If \code{test='wilcoxon'} a second column with the score that is associated with each gene.\cr
 If \code{test='binomial'} two additional columns with two gene-associated integers.\cr
 If \code{test='contingency'} four additional columns with four gene-associated integers.\cr
@@ -30,7 +30,7 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 }
 
 \item{test}{
-'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
+character(). 'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
 }
 
 \item{n_randsets}{
@@ -38,7 +38,8 @@ integer defining the number of random sets created to compute the FWER.
 }  
 
 \item{organismDb}{
-annotation package for GO-annotations and gene coordinates. Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
+character(). Annotation package for GO-annotations and gene coordinates.
+Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
 }
 
 \item{gene_len}{
@@ -58,31 +59,32 @@ logical. If TRUE all output to the screen except for warnings and errors is supp
 }
 
 \item{domains}{
-optional vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
+optional character() vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
 }
 
 \item{orgDb}{
-optional string naming an OrgDb annotation package from Bioconductor. If \code{orgDb} is set, \code{organismDb} is not used. OrgDb annotations are available for a wider range of species, e.g. 'org.Pt.eg.db' for chimp and 'org.Gg.eg.db' for chicken. Note that options \code{gene_len} and \code{regions} also need a \code{txDb} for the gene coordinates (which are integrated in OrganismDb).
+optional character() naming an OrgDb annotation package from Bioconductor. If \code{orgDb} is set, \code{organismDb} is not used. OrgDb annotations are available for a wider range of species, e.g. 'org.Pt.eg.db' for chimp and 'org.Gg.eg.db' for chicken. Note that options \code{gene_len} and \code{regions} also need a \code{txDb} for the gene coordinates (which are integrated in OrganismDb).
 }
 
 \item{txDb}{
-optional string naming an TxDb annotation package from Bioconductor (e.g. 'TxDb.Ptroglodytes.UCSC.panTro4.refGene') for the gene coordinates. Only needed when \code{orgDb} is specified, and options \code{gene_len} or \code{regions} are set.
+optional character() naming an TxDb annotation package from Bioconductor (e.g. 'TxDb.Ptroglodytes.UCSC.panTro4.refGene') for the gene coordinates. Only needed when \code{orgDb} is specified, and options \code{gene_len} or \code{regions} are set.
 }
 
 }
 
 \details{
-For details please refer to the package vignette.
+For details please refer to the package's vignette.
 }
 
 \value{
 A list with components
 \item{results}{
-a dataframe with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep', -'FWER_underrep', -'raw_p_underrep', 'ontology' and 'node_id', or the corresponding columns if another test then the hypegeometric test is used. This table contains the combined results for all three ontology domains. Note that GO-categories without any annotations of candidate or background genes are not listed.}
+a data.frame() with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep', -'FWER_underrep', -'raw_p_underrep', 'ontology' and 'node_id', or the corresponding columns if another test then the hypegeometric test is used.
+This table contains the combined results for all three ontology domains. Note that GO-categories without any annotations of candidate or background genes are not listed.}
 \item{genes}{
-the input \code{genes} dataframe, excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}
+the input \code{genes} data.frame(), excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}
 \item{databases}{
-the annotation packages used.}
+a data.frame() with the annotation packages used.}
 }
 
 \references{

@@ -13,10 +13,10 @@ plot_anno_scores(res, go_ids)
 }
 \arguments{
     \item{res}{
-        an object returned from \code{\link{go_enrich}} (list of 3 elements).
+        an object returned from \code{\link{go_enrich}} (list() of 3 elements).
     }
     \item{go_ids}{
-        vector of GO-IDs, e.g. c('GO:0005737','GO:0071495').
+        character() vector of GO-IDs, e.g. c('GO:0005737','GO:0071495').
         This specifies the GO-categories that are plotted.
     }
 }
@@ -34,8 +34,8 @@ For the 2x2 contingency table test pie charts show the proportions of A and B, a
 }
 
 \value{
-For the hypergeometric, binomial and 2x2 contingency table test, a dataframe with the statistics that are used in the plots.\cr
-For the wilcoxon rank-sum test no statistical results are plotted, just the distribution of annotated scores. The returned element in this case is a list with three dataframes: annotations of genes to the GO-categories, annotations of genes to the root nodes and a table which contains for every GO-ID the corresponding root node.
+For the hypergeometric, binomial and 2x2 contingency table test, a data.frame() with the statistics that are used in the plots.\cr
+For the wilcoxon rank-sum test no statistical results are plotted, just the distribution of annotated scores. The returned element in this case is a list() with three data frames: annotations of genes to the GO-categories, annotations of genes to the root nodes and a table which contains for every GO-ID the corresponding root node.
 }
 
 \author{
