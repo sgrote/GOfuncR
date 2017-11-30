@@ -8,9 +8,6 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
 #include "go_groups_binom.h"
 
 #include <Rcpp.h>

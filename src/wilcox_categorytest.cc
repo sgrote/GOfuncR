@@ -8,9 +8,6 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <iostream>
-#include <cstdlib>
-#include <sstream>
 #include "go_groups.h"
 
 #include <Rcpp.h>

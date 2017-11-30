@@ -5,12 +5,9 @@
  */
 
 #include <fstream>
-#include <sstream>
 #include <set>
 #include <vector>
-#include <memory>
 #include <map> 		
-#include <iostream> 
 
 #include "go.h"
 #include "go_graph_hyper.h"

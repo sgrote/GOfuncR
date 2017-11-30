@@ -9,7 +9,6 @@
 #include <sstream>
 #include <set>
 #include <vector>
-#include <memory>
 
 #include "idmap.h"
 #include "transitions.h" 

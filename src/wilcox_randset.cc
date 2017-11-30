@@ -6,10 +6,8 @@
 
 
 #include <fstream>
-#include <sstream>
 #include <set>
 #include <vector>
-#include <memory>
 
 #include "go_graph.h"
 #include "idmap.h"
@@ -17,7 +15,6 @@
 #include "genes.h"
 
 #include <Rcpp.h>
-#include <iostream>
 using namespace Rcpp;
 
 
