@@ -1,4 +1,10 @@
 
+/*
+ * code modified from:
+ * FUNC - Functional Analysis of Gene Expression Data
+ * Copyright (C) 2002  Bjoern Muetzel, Kay Pruefer
+ */
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -94,7 +100,6 @@ void wilcox_category_test(std::string directory, int cut, std::string root, bool
 		delete[] randdata ;
 		num_randdata++ ;
 	}
-	//gos.print_pvals( num_randdata, Rcpp::Rcout ) ;
 	gos.print_pvals( num_randdata, out ) ;
 	
 	// write summary to console
@@ -106,10 +111,6 @@ void wilcox_category_test(std::string directory, int cut, std::string root, bool
 		Rcpp::Rcout << "low ranks\t\t\t\thigh ranks" << endl ;
 		Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
 		Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
-		// Func original:
-		//Rcpp::Rcout << "Randomsets: " << num_randdata << endl ;
-		//Rcpp::Rcout << "less\t\t\t\t\tgreater" << endl ;
-		//Rcpp::Rcout << "# sig. groups dataset" << endl ;
 		for ( int i = 0 ; i < 10 ; ++i ) 
 			Rcpp::Rcout << realdata[i] << "\t" ;
 		Rcpp::Rcout << endl ;

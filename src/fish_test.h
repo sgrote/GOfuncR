@@ -4,7 +4,6 @@
 
 #include <cmath>
 #include <iostream> 
-//#include "Rmath.h"
 #include <Rcpp.h>
 using namespace std ;
 
@@ -119,7 +118,6 @@ double fishers_exact_2t( int a1, int a2, int b1, int b2 ) {
 // See: http://faculty.vassar.edu/lowry/ch8pt2.html
 ///////////////////////////////////////////////////////////////
 
-//#define MATHLIB_STANDALONE
 
 double chi_square_2x2( int a1, int a2, int b1, int b2 ) 
 {

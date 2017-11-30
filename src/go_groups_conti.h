@@ -6,7 +6,6 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-//#include "overall_sign.h"
 #include <set>
 
 
@@ -27,8 +26,7 @@ class go_groups_conti {
 		/**********
 		 * calculates number of significant groups at different cutoffs
 		 * returns array with these numbers of groups
-		 * side effect: 1. saves the p-values to overall_significance
-		 *              2. saves pvalues to data_pvals_{1,2}
+		 * side effect: 1. saves pvalues to data_pvals_{1,2}
 		 ***********/
 		int *calculate_data( string &data, ostream *os=0 ) ;
 
@@ -41,8 +39,7 @@ class go_groups_conti {
 
 		/**********
 		 * prints statistics to os, uses nr_randsets to calculate
-		 * FWER. Runs overall_significance test and FDR estimate
-		 * using osig_1 and osig_2.
+		 * FWER.
 		 ***********/
 		void print_pvals( int nr_randsets, ostream &os ) ;
 	private:
@@ -58,8 +55,6 @@ class go_groups_conti {
 
 		// smallest pvalue of each randomset
 		multiset<double> smallest_rand_p_1, smallest_rand_p_2 ;
-
-		//overall_significance osig_1, osig_2 ;
 
 } ;
 

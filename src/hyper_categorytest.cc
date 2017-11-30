@@ -1,3 +1,8 @@
+/*
+ * code modified from:
+ * FUNC - Functional Analysis of Gene Expression Data
+ * Copyright (C) 2002  Bjoern Muetzel, Kay Pruefer
+ */
 
 #include <vector>
 #include <string>
@@ -93,7 +98,6 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 		delete[] randdata ;
 		num_randdata++ ;
 	}
-	// gos.print_pvals( num_randdata, Rcpp::Rcout ) ;
 	gos.print_pvals( num_randdata, out ) ;
 
 	// write summary to console

@@ -18,10 +18,8 @@ go_groups::go_groups( string &groups, string &sgenes, int co, string root_go )
 	string name ;
 	while ( is >> name ) {
 		names.push_back( name ) ;
-		// check.push_back( groups_to_check[name] ) ;
 		if ( name == root_go ) root_idx = names.size() - 1 ; 
 	}
-	//Rcpp::Rcout << "GOs: " << names.size() << endl ;
 	istringstream is2( sgenes.c_str() ) ;
 	int nrgenes_per_group;
 	while ( is2 >> nrgenes_per_group ) nr_of_genes.push_back( nrgenes_per_group ) ;
@@ -46,7 +44,6 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 
 	data_pvals_l.resize( names.size() ) ;
 	data_pvals_g.resize( names.size() ) ;
-	// NEW
 	ranksums_expected.resize( names.size() ) ;
 	
 
@@ -126,8 +123,6 @@ int* go_groups::calculate_data( string &data, double sum_nties, ostream *os )
 			}
 		}
 	}
-	//less_sig.add_set( pvals_less ) ;
-	//greater_sig.add_set( pvals_greater ) ;
 	return ret ;
 }
 int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os ) 
@@ -171,10 +166,8 @@ int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os )
 				   ) ; 
 		double corr = -0.5 ;
 		prob_less = R::pnorm( (z-corr) / sigma, 0., 1., 1, 0 ) ;
-//		if ( prob_less <= data_pvals_l[i] ) nr_rand_l[i]++ ;
 		corr = 0.5 ;
 		prob_greater = 1. - R::pnorm( (z-corr) / sigma, 0., 1., 1, 0 ) ;
-//		if ( prob_greater <= data_pvals_g[i] ) nr_rand_g[i]++ ;
 
 		pvals_less.insert( prob_less ) ;
 		pvals_greater.insert( prob_greater ) ;
@@ -217,9 +210,7 @@ int* go_groups::calculate_rand( string &data, double sum_nties, ostream *os )
 		}
 	}
 	smallest_rand_p_l.insert( *(pvals_less.begin()) ) ;
-	//less_sig.add_set( pvals_less ) ;
 	smallest_rand_p_g.insert( *(pvals_greater.begin()) ) ;
-	//greater_sig.add_set( pvals_greater ) ;
 	return ret ;
 }
 

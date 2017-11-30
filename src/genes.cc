@@ -1,16 +1,11 @@
 
 #include "genes.h"
-//#include <time.h>
 #include <cstdlib>
 #include <cstdio>
-//#include <cmath>
-//#define MAX_LINE_LENGTH 10000
 #include <Rcpp.h>
 
 genes::genes( go_graph &graph, istream &annotation, istream &data ) 
 {
-//	srand( time(NULL) ) ;
-//	srand( 100 ) ;
 	// annotation = root-file: one line per gene: gene | GO1 GO2 GO3
 	string line ;
 	while ( annotation ) {
@@ -33,7 +28,6 @@ genes::genes( go_graph &graph, istream &annotation, istream &data )
 			}
 		}
 	}
-	//Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
 	
 	multimap<double, gene*> genes_ranked ;
 	// data: two columns: gene | score
@@ -83,7 +77,6 @@ genes::genes( go_graph &graph, istream &annotation, istream &data )
 	// genemap = map<gene-name, gene*>; class gene = (name, set<go_obj*>)
 	for ( map<string,gene*>::const_iterator it = genemap.begin() ; it != genemap.end() ; ++it ) {
 		it->second->write_to_gos( ) ; 
-		// gene.write_to_gos -> go-obj.add_gene(this-gene) -> genes.push_back(gene) => vector<gene*> genes
 	}
 }
 

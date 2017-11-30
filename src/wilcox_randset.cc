@@ -1,7 +1,9 @@
+/*
+ * code modified from:
+ * FUNC - Functional Analysis of Gene Expression Data
+ * Copyright (C) 2002  Bjoern Muetzel, Kay Pruefer
+ */
 
-//#include <time.h>
-//#include <cstdlib>
-//#include <cstdio>
 
 #include <fstream>
 #include <sstream>
@@ -18,7 +20,6 @@
 #include <iostream>
 using namespace Rcpp;
 
-#define MAX_LINE_LENGTH 20000
 
 //[[Rcpp::export]]
 void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::string directory, std::string root, bool silent) 
@@ -83,7 +84,6 @@ void wilcox_randset(std::string nodes_per_gene ,int number_of_randomsets, std::s
 	if ( !silent ){
 		Rcpp::Rcout << "Data and annotation file parsed." << endl ;
 		Rcpp::Rcout << "Number of randomsets: " << number_of_randomsets << "." <<endl;	
-		// steffi:
 		Rcpp::Rcout << "Computing randomsets..." << number_of_randomsets << "." <<endl;
 	}
 	string outfile = directory + "_randset_out";

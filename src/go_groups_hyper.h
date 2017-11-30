@@ -7,7 +7,6 @@
 #include <iostream>
 #include <sstream>
 #include <set>
-//#include "overall_sign.h"
 
 using namespace std ;
 
@@ -24,24 +23,21 @@ class go_groups_hyper {
 		/**********
 		 * calculates number of significant groups at different cutoffs
 		 * returns array with these numbers of groups
-		 * side effect: 1. saves the p-values to overall_significance
-		 *              2. saves pvalues to data_pvals_{l,r}
+		 * side effect: 1. saves pvalues to data_pvals_{l,r}
 		 ***********/
 		int *calculate_data( ostream *os=0 ) ;
 
 		/**********
 		 * equal to calculate_data, except:
 		 *   data is a string with random data from randomset
-		 *   side effect 2:
-		 *              2. saves smallest pvalue over all groups to 
+		 *   side effect: saves smallest pvalue over all groups to 
 		 *					smallest_rand_p_{l,r}
 		 ***********/
 		int *calculate_rand( string &data, ostream *os=0 ) ;
 
 		/**********
 		 * prints statistics to os, uses nr_randsets to calculate
-		 * FWER. Runs overall_significance test and FDR estimate
-		 * using osig_l and osig_r.
+		 * FWER.
 		 ***********/
 		void print_pvals( int nr_randsets, ostream &os ) ;
 	private:
@@ -59,8 +55,6 @@ class go_groups_hyper {
 		// smallest pvalue of each randomset
 		multiset<double> smallest_rand_p_l ;
 		multiset<double> smallest_rand_p_r ;
-
-		//overall_significance osig_l, osig_r ;
 
 		// index of root node
 		int root_idx ;

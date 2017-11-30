@@ -2,7 +2,6 @@
 // draw unique integers [1,total length of genes] and select genes dependent on gene length
 
 #include <set>
-//#include <stdlib.h>     // srand, rand 
 #include <vector>
 #include <map>
 #include <iostream>
@@ -19,7 +18,6 @@ std::set<int> rannum_genelen(int n_candidate, const std::map<std::string,int> &g
 	// draw as many unique numbers as candidate genes
 	while (random_numbers.size() < n_candidate) {	
 		// get random number [1,total length of genes]
-		//long ran = rand() % total_length + 1;	
 		long ran = R::runif(0,1) * (total_length) + 1; 
 		// select gene
 		int k = 0;

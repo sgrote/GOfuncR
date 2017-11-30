@@ -1,7 +1,9 @@
+/*
+ * code modified from:
+ * FUNC - Functional Analysis of Gene Expression Data
+ * Copyright (C) 2002  Bjoern Muetzel, Kay Pruefer
+ */
 
-//#include <time.h>
-//#include <cstdlib>
-//#include <cstdio>
 
 #include <fstream>
 #include <sstream>
@@ -15,7 +17,6 @@
 #include "go_graph_conti.h"
 #include "genes_conti.h"
 
-#define MAX_LINE_LENGTH 20000
 
 #include <Rcpp.h>
 using namespace Rcpp ;
@@ -28,7 +29,6 @@ void conti_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 	/*****************
          * read graph-structure and create graph
 	 *******************/
-	// argv[5] == term.txt from go_date_termdb-tables.tar.gz
 	// read term.txt
 	string term = directory + "_term.txt";
 	std::ifstream terms( term.c_str() ) ;

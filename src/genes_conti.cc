@@ -1,14 +1,11 @@
 
 #include "genes_conti.h"
-//#include <time.h>
 #include <cstdlib>
 #include <cstdio>
-//#define MAX_LINE_LENGTH 10000
 #include <Rcpp.h>
 
 genes_conti::genes_conti( go_graph_conti &graph, istream &annotation, istream &data ) 
 {
-	//srand( time(NULL) ) ;
 	// annotation = gene | GO1 | GO2 | GO3 ...
 	// go through annotation file, and add genes to all annotated GOs and their parents 
 	string line ;
@@ -74,7 +71,6 @@ genes_conti::~genes_conti(  )
 
 class c_prng {
 	public:
-		//int operator()( int n ) { return( rand() % n ); } ;
 		int operator()( int n ) { return( R::runif(0,1) * n ); } ;
 } ;
 

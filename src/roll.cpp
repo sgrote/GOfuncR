@@ -9,8 +9,6 @@
 // case d) there is just one bg-block, candidate region starts at end and ends at beginning (handled like case a) 
 	
 #include <set>
-//#include <stdlib.h>     // srand, rand 
-//#include <time.h>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -42,21 +40,12 @@ std::set<int> rannum_roll(std::vector<bed_str> candidate_bed, std::vector<bed_st
 				candidate_bed[j].cumu_len = chrom_len;
 			} 
 		}
-		//Rcpp::Rcout << std::endl << "Candidate region " << j+1 << " modified: " << std::endl;
-		//Rcpp::Rcout << candidate_bed[j].chrom << " " << candidate_bed[j].start << " " << candidate_bed[j].end  << " " << candidate_bed[j].len << " " << candidate_bed[j].cumu_len << std::endl;
-		//Rcpp::Rcout << std::endl << "Background regions modified:" << std::endl;
-		//for (int i=0; i < background_bed.size(); i++){
-			//Rcpp::Rcout << background_bed[i].chrom << " " << background_bed[i].start << " " << background_bed[i].end  << " " << background_bed[i].len << " " << background_bed[i].cumu_len << std::endl;
-		//}	
 		// find chromosome in mappable regions
 		int k = 0;
 		while (background_bed[k].chrom != candidate_chrom){  
 			 k++;
 		}
 		int chrom_start = k; // is needed below to go back to beginning of chrom when rolling
-		//Rcpp::Rcout << std::endl << "Start of background region for candidate region " << j+1 << ":" << std::endl;
-		//Rcpp::Rcout << background_bed[k].chrom << " " << background_bed[k].start << " " << background_bed[k].end  << " " << background_bed[k].len << " " << background_bed[k].cumu_len << std::endl;
-	
 		// choose random number [1, total length of chrom] 
 		// int runif(0,1)*10 = [0,9]
 		long ran = R::runif(0,1) * candidate_bed[j].cumu_len + 1; 
@@ -72,7 +61,6 @@ std::set<int> rannum_roll(std::vector<bed_str> candidate_bed, std::vector<bed_st
 		std::string ran_chrom = background_bed[k].chrom; 				
 		
 		// let it roll!
-		//Rcpp::Rcout << "Chosen random regions " << j+1 << " of length " << candidate_bed[j].len << ":" << std::endl;
 		long overhang = 0;
 		bool need_more = true;	
 		int used_bg_blocks = 0; //number of background regions used, also 2 if only 1 block is started again
@@ -99,7 +87,6 @@ std::set<int> rannum_roll(std::vector<bed_str> candidate_bed, std::vector<bed_st
 					background_bed[k].len = background_bed[k].end - background_bed[k].start;
 				}
 			}	
-			//Rcpp::Rcout << "need more: " << need_more << ", k: " << k << ", chrom: " << ran_chrom << ", start: " << ran_start << ", end: " << ran_end << ", overhang: " << overhang << ", used bg_blocks: " << used_bg_blocks << std::endl;
 							
 			// go through genes positions and select those that overlap randomly chosen region			
 			for (int g=0; g<genes_pos.size(); g++){
@@ -110,7 +97,6 @@ std::set<int> rannum_roll(std::vector<bed_str> candidate_bed, std::vector<bed_st
 					// add to set of randomly chosen test genes	
 					random_numbers.insert(genename_to_index.find(genes_pos[g].name)->second);  
 					sum_genes ++;
-					//Rcpp::Rcout << genes_pos[g].name << " " << genes_pos[g].chrom << " " << genes_pos[g].start << " " << genes_pos[g].end << " " << genename_to_index.find(genes_pos[g].name)->second << std::endl;
 				}				
 			}
 			if (!need_more) break;				
@@ -138,9 +124,6 @@ std::set<int> rannum_roll(std::vector<bed_str> candidate_bed, std::vector<bed_st
 		}
 					
 	} // end candidate regions	
-	
-	//Rcpp::Rcout << std::endl << "sum of random genes: " << sum_genes << std::endl;
-	//Rcpp::Rcout << "sum of unique random genes: " << random_numbers.size() << std::endl;
 
 	return(random_numbers);		
 }

@@ -3,8 +3,6 @@
 // find genes in these regions and add their index to random set
 
 #include <set>
-//#include <stdlib.h>     // srand, rand 
-//#include <time.h>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -19,7 +17,6 @@ std::set<int> rannum_blocks(std::vector<bed_str> candidate_bed, std::vector<bed_
 	//Rcpp::Rcout << std::endl << "Blocks option:" << std::endl;
 
 	// create randomset  
-	//srand (time(NULL)); // initialize random seed
 	std::vector<bed_str> background; // copy of background_bed to modify
 	std::set<int> random_numbers; // indices of selected genes	
 	int sum_genes = 0;
@@ -40,10 +37,6 @@ std::set<int> rannum_blocks(std::vector<bed_str> candidate_bed, std::vector<bed_
 				total_len += this_len;
 				background[k].cumu_len = total_len;
 			}	
-			//Rcpp::Rcout << std::endl << "Residual background regions for candidate_region " << j+1 << std::endl;
-			//for (int i=0; i < background.size(); i++){
-				//Rcpp::Rcout << background[i].chrom << " " << background[i].start << " " << background[i].end  << " " << background[i].len << " " << background[i].cumu_len << std::endl;
-			//}
 			// candidate region does not fit anymore, try again placing randomly
 			if(total_len == 0){
 				incomplete = true;
@@ -58,7 +51,6 @@ std::set<int> rannum_blocks(std::vector<bed_str> candidate_bed, std::vector<bed_
 				incomplete = false;		
 			}
 			// choose random number [1, total length] 
-			// int runif(0,1)*10 = [0,9]
 			long ran = R::runif(0,1) * (total_len) + 1; 
 			//long ran = rand() % total_len + 1; 
 			long last_cumu = 0;
@@ -72,9 +64,6 @@ std::set<int> rannum_blocks(std::vector<bed_str> candidate_bed, std::vector<bed_
 			long ran_end = ran_start + candidate_bed[j].len;
 			std::string ran_chrom = background[k].chrom; 
 			
-			//Rcpp::Rcout << std::endl << "Choosen random region " << j+1 << ":" << std::endl;
-			//Rcpp::Rcout << ran_chrom << " " << ran_start << " " << ran_end << " " << ran_end-ran_start << std::endl;	
-
 			// go through genes positions and select those that overlap randomly chosen region			
 			for (int g=0; g<genes_pos.size(); g++){
 				if(genes_pos[g].chrom == ran_chrom &&
@@ -85,7 +74,6 @@ std::set<int> rannum_blocks(std::vector<bed_str> candidate_bed, std::vector<bed_
 					// get index for every random gene name and add to random numbers
 					random_numbers.insert(genename_to_index.find(genes_pos[g].name)->second);  
 					sum_genes ++;
-					//Rcpp::Rcout << genes_pos[g].name << " " << genes_pos[g].chrom << " " << genes_pos[g].start << " " << genes_pos[g].end << " " << genename_to_index.find(genes_pos[g].name)->second << std::endl;			
 				}
 			}
 			// update background regions to avoid overlapping random regions

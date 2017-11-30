@@ -1,9 +1,7 @@
 
 #include "genes_binom.h"
-//#include <time.h>
 #include <cstdlib>
 #include <cstdio>
-//#define MAX_LINE_LENGTH 10000
 #include <Rcpp.h>
 
 genes_binom::genes_binom( go_graph_binom &graph, istream &annotation, istream &data ) 
@@ -23,14 +21,12 @@ genes_binom::genes_binom( go_graph_binom &graph, istream &annotation, istream &d
 				graph.get_parents( go_name, &parents ) ;
 			}
 			if ( parents.size() > 0 ) {
-				//Rcpp::Rcout << "gene name: " << gene_name << ", parents.size: " << parents.size() << endl;
 				genemap[gene_name] = new gene_binom( gene_name, parents ) ;
 			} else {
 				Rcpp::Rcerr << gene_name << " not mapped.\n" ;
 			}
 		}
 	}
-	//Rcpp::Rcout << "Annotated " << genemap.size() << " genes." << endl ;
 	
 	while( data ) {
 		getline( data, line ) ;
@@ -70,7 +66,6 @@ genes_binom::~genes_binom(  )
 
 class c_prng {
 	public:
-		//int operator()( int n ) { return( rand() % n ); } ;
 		int operator()( int n ) { return( R::runif(0,1) * n ); } ;
 } ;
 void genes_binom::create_random_set(  ) 

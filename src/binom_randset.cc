@@ -1,7 +1,9 @@
 
-//#include <time.h>
-//#include <cstdlib>
-//#include <cstdio> 
+/*
+ * code modified from:
+ * FUNC - Functional Analysis of Gene Expression Data
+ * Copyright (C) 2002  Bjoern Muetzel, Kay Pruefer
+ */
 
 #include <fstream>
 #include <sstream>
@@ -15,7 +17,6 @@
 #include "go_graph_binom.h"
 #include "genes_binom.h"
 
-#define MAX_LINE_LENGTH 20000
 
 #include <Rcpp.h>
 using namespace Rcpp ;

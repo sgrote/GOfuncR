@@ -4,8 +4,6 @@
 #include "gene.h"
 
 #include <Rcpp.h>
-//using std::cerr;
-//using std::cout;
 
 using std::endl;
 

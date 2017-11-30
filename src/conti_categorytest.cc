@@ -1,3 +1,8 @@
+/*
+ * code modified from:
+ * FUNC - Functional Analysis of Gene Expression Data
+ * Copyright (C) 2002  Bjoern Muetzel, Kay Pruefer
+ */
 
 #include <vector>
 #include <string>
@@ -96,7 +101,7 @@ void conti_category_test(std::string directory, int cutoff, std::string root, bo
 		// number of significant groups for 0.1, 0.05, 0.01, 0.001, 0.0001 for under- and over-rep -> 10 values
 		Rcpp::Rcout << "Real data:" << endl ;
 		Rcpp::Rcout << "No. of significant ontology nodes for" << endl;
-		Rcpp::Rcout << "high_A/B\t\t\t\thigh_C/D" << endl ; //TODO: check if that's true
+		Rcpp::Rcout << "high_A/B\t\t\t\thigh_C/D" << endl ;
 		Rcpp::Rcout << "of candidate genes at p-value thresholds" << endl ;
 		Rcpp::Rcout << "0.1\t0.05\t0.01\t0.001\t0.0001\t0.1\t0.05\t0.01\t0.001\t0.0001" << endl ;
 		for ( int i = 0 ; i < 10 ; ++i ) 

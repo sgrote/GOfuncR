@@ -1,5 +1,4 @@
 
-// verhindert dass go_graph merhmals included wird
 #ifndef GO_GRAPH_H
 #define GO_GRAPH_H
 

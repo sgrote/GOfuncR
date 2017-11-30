@@ -1,6 +1,5 @@
 
 #include "gene_binom.h"
-//#include <time.h>
 #include <cstdlib>
 #include <cstdio>
 

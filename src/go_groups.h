@@ -9,7 +9,6 @@
 #include <sstream>
 
 #include <set>
-//#include "overall_sign.h" 
 
 using namespace std ;
 
@@ -23,8 +22,7 @@ class go_groups {
 		/**********
 		 * calculates number of significant groups at different cutoffs
 		 * returns array with these numbers of groups
-		 * side effect: 1. saves the p-values to overall_significance
-		 *              2. saves pvalues to data_pvals_{l,g}
+		 * side effect: 1. saves pvalues to data_pvals_{l,g}
 		 ***********/
 		int *calculate_data( string &data, double sum_nties, ostream *os=0 ) ;
 
@@ -37,8 +35,7 @@ class go_groups {
 
 		/**********
 		 * prints statistics to os, uses nr_randsets to calculate
-		 * FWER. Runs overall_significance test and FDR estimate
-		 * using less_sig and greater_sig.
+		 * FWER.
 		 ***********/
 		void print_pvals( int nr_randsets, ostream &os ) ;
 	private:
@@ -61,8 +58,6 @@ class go_groups {
 		int root_idx ;
 		int cutoff ;
 		
-		//overall_significance less_sig, greater_sig ;
-	
 } ;
 
 #endif

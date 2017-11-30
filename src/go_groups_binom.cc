@@ -4,8 +4,6 @@
 #include <map> 
 #include <fstream>
 
-//#define MATHLIB_STANDALONE
-//#include "../../include/Rmath.h"
 #include <iomanip>      // std::setprecision
 #include <Rcpp.h>
 
@@ -35,7 +33,6 @@ go_groups_binom::go_groups_binom( string &groups, istream *in, int co, string ro
 		check.push_back( groups_to_check[name] ) ;
 		if ( name == root_go ) root_idx = names.size() - 1 ; 
 	}
-	//Rcpp::Rcout << "GOs: " << names.size() << endl ;
 }
 
 // data = left and right values whitespace separated for each group
@@ -93,13 +90,6 @@ int* go_groups_binom::calculate_data( string &data, ostream *os )
 		pvals_c.insert( pro_c ) ;
 		pvals_h.insert( pro_h ) ;
 
-
-		//if ( os ) {
-			//*os << names[i] << "\t" 
-			   //<< c << "\t"
-			   //<< h << "\t" << endl ;
-		//}
-
 		// count number of nodes with p-value < 0.1, 0.05, ... 
 		if ( pro_c < 0.1 ) {
 			ret[0]++ ;
@@ -132,8 +122,6 @@ int* go_groups_binom::calculate_data( string &data, ostream *os )
 			}
 		}
 	}
-	//c_sig.add_set( pvals_c ) ;
-	//h_sig.add_set( pvals_h ) ;
 	return ret ;
 }
 
@@ -141,7 +129,6 @@ int* go_groups_binom::calculate_data( string &data, ostream *os )
 int* go_groups_binom::calculate_rand( string &data, ostream *os ) 
 {
 	istringstream is( data.c_str() ) ;
-	//int i = -1 ;
 	int *ret = new int[10] ;
 	for ( int i=0 ; i<10 ; ++i ) {
 		ret[i] = 0 ;
@@ -151,7 +138,6 @@ int* go_groups_binom::calculate_rand( string &data, ostream *os )
 	vector<int> chimp_ka ;
 
 	while ( is ) {
-		//i++ ;
 		int c, h ;
 		is >> c ;
 		is >> h ;
@@ -185,13 +171,6 @@ int* go_groups_binom::calculate_rand( string &data, ostream *os )
 		pvals_c.insert( pro_c ) ;
 		pvals_h.insert( pro_h ) ;
 
-		//if ( os ) {
-			//*os << names[i] << "\t" 
-			   //<< c << "\t"
-			   //<< h << "\t"
-			   //<< pro_c << "\t"
-			   //<< pro_h << endl ;
-		//}
 		// ret array contains number of significant GOs per p-cutoff
 		if ( pro_c < 0.1 ) {
 			ret[0]++ ;
@@ -229,8 +208,6 @@ int* go_groups_binom::calculate_rand( string &data, ostream *os )
 	smallest_rand_p_c.insert( *(pvals_c.begin()) ) ;
 	smallest_rand_p_h.insert( *(pvals_h.begin()) ) ;
 
-	//c_sig.add_set( pvals_c ) ;
-	//h_sig.add_set( pvals_h ) ;
 	return ret ;
 }
 
@@ -256,10 +233,6 @@ void go_groups_binom::print_pvals( int nr_randsets, ostream &os ) {
 				<< static_cast<double>(n_c)/ static_cast<double>(nr_randsets) << "\t"  //FWER high A
 				<< static_cast<double>(n_h)/ static_cast<double>(nr_randsets) << "\t"  //FWER high B
 				// TODO: hier noch was einfuegen so wie expected vs. real?
-				//<< (*fdr_q_c)[data_pvals_c[i]] << "\t" 
-				//<< (*fdr_q_h)[data_pvals_h[i]] << endl ;
-				// << (*fdr_q_c)[c_sig.index_for_pval(data_pvals_c[i])] << "\t" 
-				// << (*fdr_q_h)[h_sig.index_for_pval(data_pvals_h[i])] 
 				<< endl ;
 		}
 	} 
