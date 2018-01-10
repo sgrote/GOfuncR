@@ -375,7 +375,7 @@ top_gos_hyper_bg
 plot_stats = plot_anno_scores(res_hyper_bg, top_gos_hyper_bg)
 plot_stats
 ```
-Note that `go_enrich` reports the hypergeometric test for over- and under-representation of candidate genes which correspond to the one-sided Fisher's exact tests. Also keep in mind that the p-values from this table are not corrected for multiple testing.  
+Note that `go_enrich` reports the hypergeometric tests for over- and under-representation of candidate genes which correspond to the one-sided Fisher's exact tests. Also keep in mind that the p-values from this table are not corrected for multiple testing.  
 
 For the **Wilcoxon rank-sum test** violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes. Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes. The Wilcoxon rank-sum test reported in the `go_enrich` result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
 
@@ -387,7 +387,7 @@ top_gos_willi
 plot_anno_scores(res_willi, top_gos_willi)
 ```
 
-For the **binomial test** pie charts show the amounts of A and B counts associated with each GO-category and root node, (A in the colour of the corresponding root node). The top-panel shows point estimates and the 95%-CI of p(A) in the nodes, as well as horizontal lines that correspond to p(A) in the root nodes. The p-value in the returned object is based on the null hypothesis that p(A) in a node equals p(A) in the corresponding root node. Note that `go_enrich` reports that value for one-sided binomial tests.
+For the **binomial test** pie charts show the amounts of *A* and *B* counts associated with each GO-category and root node, (*A* in the colour of the corresponding root node). The top-panel shows point estimates and the 95%-CI of *p(A)* in the nodes, as well as horizontal lines that correspond to *p(A)* in the root nodes. The p-value in the returned object is based on the null hypothesis that *p(A)* in a node equals *p(A)* in the corresponding root node. Note that `go_enrich` reports that value for one-sided binomial tests.
 
 ```{r}
 ## counts used for the binomial test
@@ -398,7 +398,7 @@ plot_anno_scores(res_binom, top_gos_binom)
 ```
 Note that domain `cellular_component` is missing in that plot because it was excluded from the GO-enrichment analysis in the first place (`res_binom` was created using the `domains` option of `go_enrich`).  
 
-For the **2x2 contingency table test** pie charts show the proportions of A and B, as well as C and D counts associated with a GO-category. Root nodes are not shown, because this test is independent of the root category. The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing A/B and C/D inside one node. Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of Fisher's exact test.
+For the **2x2 contingency table test** pie charts show the proportions of *A* and *B*, as well as *C* and *D* counts associated with a GO-category. Root nodes are not shown, because this test is independent of the root category. The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing *A/B* and *C/D* inside one node. Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of Fisher's exact test.
 
 ```{r}
 ## counts used for the 2x2 contingency table test
@@ -462,7 +462,7 @@ cbind(anno_genes, get_names(anno_genes$go_id)[,2:3])
 ## find all mouse-gene annotations to two GO-categories
 ## ('Mus.musculus' has to be installed) 
 gos = c('GO:0072205', 'GO:0000109')
-head(get_anno_genes(go_ids=gos, database='Mus.musculus'))
+get_anno_genes(go_ids=gos, database='Mus.musculus')
 ```
 
 <a name='get_anno_c'></a> 
