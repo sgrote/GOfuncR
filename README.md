@@ -6,6 +6,15 @@ GO-annotations and gene-coordinates are obtained from _OrganismDb_ packages ([_H
 
 
 #### Installation
+
+##### from bioconductor
+
+_GOfuncR_ is currently available only from the ['devel' version of Bioconductor](https://bioconductor.org/packages/3.7/bioc/html/GOfuncR.html). 
+It will be in the stable 'release' version when Bionductor 3.8 is released.
+
+
+##### from GitHub
+
 Vignette (tutorial) generation needs _pandoc_ installed.
 There may also be other dependencies that need to be installed manually.
 
@@ -22,7 +31,7 @@ biocLite(c("BiocStyle","Homo.sapiens"))
 ## install GOfuncR from the console
 git clone https://github.com/sgrote/GOfuncR
 R CMD build GOfuncR
-R CMD INSTALL GOfuncR_0.99.8.tar.gz
+R CMD INSTALL GOfuncR_0.99.11.tar.gz
 ```
 
 
@@ -32,7 +41,7 @@ R CMD INSTALL GOfuncR_0.99.8.tar.gz
 ## install GOfuncR from the console
 git clone https://github.com/sgrote/GOfuncR
 R CMD build --no-build-vignettes GOfuncR
-R CMD INSTALL GOfuncR_0.99.8.tar.gz
+R CMD INSTALL GOfuncR_0.99.11.tar.gz
 ```
 
 or
