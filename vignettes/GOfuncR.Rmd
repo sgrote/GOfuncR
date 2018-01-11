@@ -24,12 +24,9 @@ set.seed(123)
 ```
 
 # Overview
-`r Biocpkg('GOfuncR')` performs a gene ontology enrichment analysis based on the ontology enrichment software FUNC [1,2].
-It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked, (ii) a binomial test that can be used when genes are associated with two counts, e.g. amino acid changes since a common ancestor in two different species, and (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species.  
-To correct for multiple testing and interdependency of the tests, family-wise error rates (FWER) are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below).
-`r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
-GO-annotations and gene-coordinates are obtained from *OrganismDb* packages (`r Biocpkg('Homo.sapiens')` by default) or *OrgDb* and *TxDb* packages.
-The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 12-Oct-2017), is integrated in the package.    
+`r Biocpkg('GOfuncR')` performs a gene ontology enrichment analysis based on the ontology enrichment software FUNC [1,2]. It provides the standard candidate vs. background enrichment analysis using the hypergeometric test, as well as three additional tests: (i) the Wilcoxon rank-sum test that is used when genes are ranked, (ii) a binomial test that can be used when genes are associated with two counts, e.g. amino acid changes since a common ancestor in two different species, and (iii) a Chi-square or Fisher's exact test that is used in cases when genes are associated with four counts, e.g. non-synonymous or synonymous variants that are fixed between or variable within species.  
+To correct for multiple testing and interdependency of the tests, family-wise error rates (FWER) are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below). `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
+GO-annotations and gene-coordinates are obtained from *OrganismDb* packages (`r Biocpkg('Homo.sapiens')` by default) or *OrgDb* and *TxDb* packages. The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 12-Oct-2017), is integrated in the package.    
 
 
 ## Functions included in `GOfuncR`
@@ -70,9 +67,7 @@ parameter | default | description
 # Examples   
 
 ## Install annotation package
-`GOfuncR` uses external packages to obtain the GO-annotations and gene-coordinates.
-In the examples we will use the default `r Biocpkg('Homo.sapiens')` package.
-See [below](#other_db) for examples how to use other packages.
+`GOfuncR` uses external packages to obtain the GO-annotations and gene-coordinates. In the examples we will use the default `r Biocpkg('Homo.sapiens')` package. See [below](#other_db) for examples how to use other packages.
 
 ```{r, eval=FALSE}
 ## install annotation package 'Homo.sapiens' from bioconductor
@@ -85,9 +80,7 @@ The hypergeometric test evaluates the over- or under-representation of a set of 
 The input for the hypergeometric test is a dataframe with two columns: (1) a column with gene-symbols and (2) a binary column with `1` for a candidate gene and `0` for a background gene.
 
 ### Hypergeometric test using the default background gene set
-The declaration of background genes is optional.
-If only candidate genes are defined, then all remaining genes from the annotation package are used as default background.
-In this example GO-enrichment of 13 human genes will be tested:
+The declaration of background genes is optional. If only candidate genes are defined, then all remaining genes from the annotation package are used as default background. In this example GO-enrichment of 13 human genes will be tested:
 
 ```{r} 
 ## load GOfuncR package
@@ -165,8 +158,7 @@ If the chance of a gene to be discovered as a candidate gene is higher for longe
 res_hyper_len = go_enrich(input_hyper, gene_len=TRUE)
 ```  
 
-Note that the default annotation package `r Biocpkg('Homo.sapiens')` uses the *hg19* gene-coordinates.
-See [below](#other_db) for examples how to use other packages.
+Note that the default annotation package `r Biocpkg('Homo.sapiens')` uses the *hg19* gene-coordinates. See [below](#other_db) for examples how to use other packages.
 
 ### Hypergeometric test with genomic regions as input
 
@@ -234,8 +226,7 @@ head(res_willi[[1]])
 Note that when p-values are used as scores, often one would want to look for enrichment of low ranks, i.e. low p-values (or alternatively use (1 - p-value) as score and check for enrichment of high ranks).
 
 ## Test for enrichment using the binomial test
-When genes are associated with two counts *A* and *B*, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in the root node.
-To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
+When genes are associated with two counts *A* and *B*, e.g. amino-acid changes since a common ancestor in two species, a binomial test can be used to identify GO-categories with an enrichment of genes with a high fraction of one of the counts compared to the fraction in the root node. To perform the binomial test the input dataframe needs a column with the gene symbols and two additional columns with the corresponding counts:
 
 ```{r}
 ## create a toy example dataset with two counts per gene
@@ -252,8 +243,7 @@ input_binom = data.frame(gene_ids=c(high_A_genes, low_A_genes), A_counts,
 head(input_binom)
 ```
 
-In this example we also use the `domains` option to reduce the analysis to `molecular_function` and `cellular_component`.
-Also the `silent` option is used, which suppresses all output that would be written to the screen (except for warnings and errors):
+In this example we also use the `domains` option to reduce the analysis to `molecular_function` and `cellular_component`. Also the `silent` option is used, which suppresses all output that would be written to the screen (except for warnings and errors):
 
 ```{r}
 ## run binomial test, excluding the 'biological_process' domain,
@@ -264,8 +254,7 @@ head(res_binom[[1]])
 ```
 
 ## Test for enrichment using the 2x2 contingency table test
-When genes are associated with four counts (*A*-*D*), e.g. non-synonymous or synonymous variants that are fixed between or variable within species, like for a McDonald-Kreitman test [3], the 2x2 contingency table test can be used.
-It can identify GO-categories which have a high ratio of *A/B* compared to *C/D*, which in this example would correspond to a high ratio of *non-synonymous substitutions / synonymous substitutions* compared to *non-synonymous variable / synonymous variable*:
+When genes are associated with four counts (*A*-*D*), e.g. non-synonymous or synonymous variants that are fixed between or variable within species, like for a McDonald-Kreitman test [3], the 2x2 contingency table test can be used. It can identify GO-categories which have a high ratio of *A/B* compared to *C/D*, which in this example would correspond to a high ratio of *non-synonymous substitutions / synonymous substitutions* compared to *non-synonymous variable / synonymous variable*:
 
 ```{r}
 ## create a toy example with four counts per gene
@@ -313,8 +302,7 @@ annotation package | information used in `GOfuncR`
 [*OrgDb*](http://www.bioconductor.org/packages/release/BiocViews.html#___OrgDb) | GO-annotations
 [*TxDb*](http://www.bioconductor.org/packages/release/BiocViews.html#___TxDb) | gene-coordinates
 
-The default annotation package used by `GOfuncR` is bioconductor's *OrganismDb* package `r Biocpkg('Homo.sapiens')`, which contains GO-annotations as well as gene-coordinates.
-There are currently also *OrganismDb* packages available for mouse (`r Biocpkg('Mus.musculus')`) and rat (`r Biocpkg('Rattus.norvegicus')`).  
+The default annotation package used by `GOfuncR` is bioconductor's *OrganismDb* package `r Biocpkg('Homo.sapiens')`, which contains GO-annotations as well as gene-coordinates. There are currently also *OrganismDb* packages available for mouse (`r Biocpkg('Mus.musculus')`) and rat (`r Biocpkg('Rattus.norvegicus')`).  
 After installing those packages they can be used in `go_enrich`:
 
 ```{r, eval=FALSE}
@@ -328,9 +316,7 @@ res_hyper_mouse = go_enrich(input_hyper_mouse, organismDb='Mus.musculus')
 
 ```
 
-Besides *OrganismDb* packages also *OrgDb* packages can be used to get GO-annotations.
-These packages have the advantage that they are available for a broader range of species (e.g. `r Biocpkg('org.Pt.eg.db')` for chimp or `r Biocpkg('org.Gg.eg.db')` for chicken).
-*OrgDb* packages are specified by the `orgDb` parameter of `go_enrich`:
+Besides *OrganismDb* packages also *OrgDb* packages can be used to get GO-annotations. These packages have the advantage that they are available for a broader range of species (e.g. `r Biocpkg('org.Pt.eg.db')` for chimp or `r Biocpkg('org.Gg.eg.db')` for chicken). *OrgDb* packages are specified by the `orgDb` parameter of `go_enrich`:
 
 ```{r, eval=FALSE}
 ## perform enrichment analysis for chimp genes 
@@ -369,13 +355,9 @@ res_region_hg38 = go_enrich(input_regions, regions=TRUE,
 <a name='plot_anno'></a>
 
 ## Plot distribution of gene-associated variables from an enrichment analysis
-The function `plot_anno_scores` can be used to get a quick visual overview of the gene-associated variables in GO-categories, that were used in an enrichment analysis.
-`plot_anno_scores` takes a result from `go_enrich` as input together with a vector of GO-IDs.
-It then plots the combined scores of all input genes for the `go_enrich` analysis in each of the defined GO-categories.
-The type of the plot depends on the test that was used in `go_enrich`. 
+The function `plot_anno_scores` can be used to get a quick visual overview of the gene-associated variables in GO-categories, that were used in an enrichment analysis. `plot_anno_scores` takes a result from `go_enrich` as input together with a vector of GO-IDs. It then plots the combined scores of all input genes for the `go_enrich` analysis in each of the defined GO-categories. The type of the plot depends on the test that was used in `go_enrich`. 
 
-For the **hypergeometric test** pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node).
-The top panel shows the odds-ratio and 95%-CI from Fisher's exact test (two-sided) comparing the GO-categories with their root nodes.
+For the **hypergeometric test** pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node). The top panel shows the odds-ratio and 95%-CI from Fisher's exact test (two-sided) comparing the GO-categories with their root nodes.
 ```{r}
 ## hypergeometric test
 top_gos_hyper = res_hyper[[1]][1:5, 'node_id']
@@ -393,12 +375,9 @@ top_gos_hyper_bg
 plot_stats = plot_anno_scores(res_hyper_bg, top_gos_hyper_bg)
 plot_stats
 ```
-Note that `go_enrich` reports the hypergeometric test for over- and under-representation of candidate genes which correspond to the one-sided Fisher's exact tests.
-Also keep in mind that the p-values from this table are not corrected for multiple testing.  
+Note that `go_enrich` reports the hypergeometric tests for over- and under-representation of candidate genes which correspond to the one-sided Fisher's exact tests. Also keep in mind that the p-values from this table are not corrected for multiple testing.  
 
-For the **Wilcoxon rank-sum test** violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes.
-Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes.
-The Wilcoxon rank-sum test reported in the `go_enrich` result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
+For the **Wilcoxon rank-sum test** violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes. Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes. The Wilcoxon rank-sum test reported in the `go_enrich` result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
 
 ```{r}
 ## scores used for wilcoxon rank-sum test
@@ -408,10 +387,7 @@ top_gos_willi
 plot_anno_scores(res_willi, top_gos_willi)
 ```
 
-For the **binomial test** pie charts show the amounts of A and B counts associated with each GO-category and root node, (A in the colour of the corresponding root node).
-The top-panel shows point estimates and the 95%-CI of p(A) in the nodes, as well as horizontal lines that correspond to p(A) in the root nodes.
-The p-value in the returned object is based on the null hypothesis that p(A) in a node equals p(A) in the corresponding root node.
-Note that `go_enrich` reports that value for one-sided binomial tests.
+For the **binomial test** pie charts show the amounts of *A* and *B* counts associated with each GO-category and root node, (*A* in the colour of the corresponding root node). The top-panel shows point estimates and the 95%-CI of *p(A)* in the nodes, as well as horizontal lines that correspond to *p(A)* in the root nodes. The p-value in the returned object is based on the null hypothesis that *p(A)* in a node equals *p(A)* in the corresponding root node. Note that `go_enrich` reports that value for one-sided binomial tests.
 
 ```{r}
 ## counts used for the binomial test
@@ -422,10 +398,7 @@ plot_anno_scores(res_binom, top_gos_binom)
 ```
 Note that domain `cellular_component` is missing in that plot because it was excluded from the GO-enrichment analysis in the first place (`res_binom` was created using the `domains` option of `go_enrich`).  
 
-For the **2x2 contingency table test** pie charts show the proportions of A and B, as well as C and D counts associated with a GO-category.
-Root nodes are not shown, because this test is independent of the root category.
-The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing A/B and C/D inside one node.
-Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of Fisher's exact test.
+For the **2x2 contingency table test** pie charts show the proportions of *A* and *B*, as well as *C* and *D* counts associated with a GO-category. Root nodes are not shown, because this test is independent of the root category. The top panel shows the odds ratio and 95%-CI from Fisher's exact test (two-sided) comparing *A/B* and *C/D* inside one node. Note that in `go_enrich`, if all four values are >=10, a chi-square test is performed instead of Fisher's exact test.
 
 ```{r}
 ## counts used for the 2x2 contingency table test
@@ -438,8 +411,7 @@ plot_anno_scores(res_conti, top_gos_conti)
 <a name='graph'></a>
 
 ## Explore the GO-graph
-The functions `get_parent_nodes` and `get_child_nodes` can be used to explore the ontology-graph.
-They list all higher-level GO-categories and sub-GO-categories of input nodes, respectively, together with the distance between them:
+The functions `get_parent_nodes` and `get_child_nodes` can be used to explore the ontology-graph. They list all higher-level GO-categories and sub-GO-categories of input nodes, respectively, together with the distance between them:
 
 ```{r}
 ## get the parent nodes (higher level GO-categories) of two GO-IDs
@@ -470,8 +442,7 @@ More sophisticated searches, e.g. with regular expressions, could be performed o
 
 ## Retrieve associations between genes and GO-categories
 `GOfuncR` also offers the functions `get_anno_genes` and `get_anno_categories` to get annotated genes given input GO-categories, and annotated GO-categories given input genes, respectively.  
-`get_anno_genes` takes a vector of GO-IDs as input, and returns all genes that are annotated to those categories (using the default annotation package `r Biocpkg('Homo.sapiens')`).
-The optional arguments `database` and `genes` can be used to define a [different annotation package](#other_db) and the set of genes which is searched for annotations, respectively.  
+`get_anno_genes` takes a vector of GO-IDs as input, and returns all genes that are annotated to those categories (using the default annotation package `r Biocpkg('Homo.sapiens')`). The optional arguments `database` and `genes` can be used to define a [different annotation package](#other_db) and the set of genes which is searched for annotations, respectively.  
 This function implicitly includes annotations to child nodes.
 
 ```{r}
@@ -491,7 +462,7 @@ cbind(anno_genes, get_names(anno_genes$go_id)[,2:3])
 ## find all mouse-gene annotations to two GO-categories
 ## ('Mus.musculus' has to be installed) 
 gos = c('GO:0072205', 'GO:0000109')
-head(get_anno_genes(go_ids=gos, database='Mus.musculus'))
+get_anno_genes(go_ids=gos, database='Mus.musculus')
 ```
 
 <a name='get_anno_c'></a> 
@@ -509,8 +480,7 @@ head(anno)
 anno_mus = get_anno_categories(c('Mus81', 'Papola'), database='Mus.musculus')
 ```
 
-This function only returns direct annotations.
-To get also the parent nodes of the GO-categories a gene is annotated to, the function `get_parent_nodes` can be used:
+This function only returns direct annotations. To get also the parent nodes of the GO-categories a gene is annotated to, the function `get_parent_nodes` can be used:
 ```{r}
 # get all direct annotations of NXPH4
 direct_anno = get_anno_categories('NXPH4')
@@ -531,8 +501,7 @@ head(full_anno)
 
 ![FWER calculation](./Skizze_Fig1.png 'hypergeometric test and FWER')
 
-The FWER for the other tests is computed in the same way: the gene-associated variables (scores or counts) are permuted while the annotations of genes to GO-categories stay fixed.
-Then the statistical tests are evaluated again for every GO-category.
+The FWER for the other tests is computed in the same way: the gene-associated variables (scores or counts) are permuted while the annotations of genes to GO-categories stay fixed. Then the statistical tests are evaluated again for every GO-category.
 
 <a name='block_scheme'></a>
 
