@@ -7,7 +7,7 @@ GO-annotations and gene-coordinates are obtained from _OrganismDb_ packages ([_H
 
 #### Installation
 
-##### from bioconductor
+##### from Bioconductor
 
 _GOfuncR_ is currently available only from the ['devel' version of Bioconductor](https://bioconductor.org/packages/3.7/bioc/html/GOfuncR.html). 
 It will be in the stable 'release' version when Bionductor 3.8 is released.
@@ -15,7 +15,7 @@ It will be in the stable 'release' version when Bionductor 3.8 is released.
 
 ##### from GitHub
 
-Vignette (tutorial) generation needs _pandoc_ installed.
+Optional vignette (tutorial) generation needs _pandoc_ installed. 
 There may also be other dependencies that need to be installed manually.
 
 + Installation with vignette
@@ -37,6 +37,8 @@ R CMD INSTALL GOfuncR_0.99.11.tar.gz
 
 + Installation without vignette
 
+The vignette can also be found [here](https://bioconductor.org/packages/3.7/bioc/vignettes/GOfuncR/inst/doc/GOfuncR.html) and does not need to be installed.
+
 ```bash
 ## install GOfuncR from the console
 git clone https://github.com/sgrote/GOfuncR
@@ -54,11 +56,15 @@ install_github("sgrote/GOfuncR")
 ```
 
 #### Usage  
-Once installed with vignette, the tutorial can be opened in R:
+
+See the [vignette](https://bioconductor.org/packages/3.7/bioc/vignettes/GOfuncR/inst/doc/GOfuncR.html) on Bioconductor for an introduction.
+
+If _GOfuncR_ was installed with vignette, the vignette can also be opened in R:
 ```r
 ## open tutorial in R
 browseVignettes("GOfuncR")
 ```
+
 Also see the man-pages for single functions, e.g.
 ```r
 library(GOfuncR)
