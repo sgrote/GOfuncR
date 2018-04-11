@@ -29,7 +29,7 @@ It provides the standard candidate vs. background enrichment analysis using the 
 To correct for multiple testing and interdependency of the tests, family-wise error rates (FWER) are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below).
 `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
 GO-annotations and gene-coordinates are obtained from *OrganismDb* packages (`r Biocpkg('Homo.sapiens')` by default) or *OrgDb* and *TxDb* packages.
-The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 12-Oct-2017), is integrated in the package.    
+The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 10-Apr-2018), is integrated in the package.    
 
 
 ## Functions included in `GOfuncR`
