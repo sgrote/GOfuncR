@@ -31,10 +31,10 @@ biocLite(c("BiocStyle","Homo.sapiens"))
 ```
 
 ```bash
-## install GOfuncR from the console
+## install GOfuncR from the command line
 git clone https://github.com/sgrote/GOfuncR
 R CMD build GOfuncR
-R CMD INSTALL GOfuncR_0.99.12.tar.gz
+R CMD INSTALL GOfuncR_0.99.13.tar.gz
 ```
 
 
@@ -43,10 +43,10 @@ R CMD INSTALL GOfuncR_0.99.12.tar.gz
 The vignette can also be found [here](https://bioconductor.org/packages/3.7/bioc/vignettes/GOfuncR/inst/doc/GOfuncR.html) and does not need to be installed.
 
 ```bash
-## install GOfuncR from the console
+## install GOfuncR from the command line
 git clone https://github.com/sgrote/GOfuncR
 R CMD build --no-build-vignettes GOfuncR
-R CMD INSTALL GOfuncR_0.99.12.tar.gz
+R CMD INSTALL GOfuncR_0.99.13.tar.gz
 ```
 
 or
