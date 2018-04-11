@@ -7,8 +7,9 @@ Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
 Description: GOfuncR performs a gene ontology enrichment analysis based on
     the ontology enrichment software FUNC. GO-annotations are obtained 
-    from OrganismDb or OrgDb packages ('Homo.sapiens' by default). 
-    It provides the standard candidate vs. background enrichment analysis 
+    from OrganismDb or OrgDb packages ('Homo.sapiens' by default);
+    the GO-graph is included in the package and updated regularly (10-Apr-2018).
+    GOfuncR provides the standard candidate vs. background enrichment analysis
     using the hypergeometric test, as well as three additional tests: 
     (i) the Wilcoxon rank-sum test that is used when genes are ranked, 
     (ii) a binomial test that is used when genes are associated with two counts and 
