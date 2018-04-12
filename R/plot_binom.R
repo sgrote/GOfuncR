@@ -40,7 +40,7 @@ plot_binomial = function(aggrego, root_aggrego){
     for(i in seq_len(nrow(binom))){
         a = binom[i,2]
         b = binom[i,3]
-        add.pie(z=c(b,a), x=i, y=0.6, radius=log(a+b+1)*radi_units, labels="", col=c("#737373", binom[i,"root_col"]))
+        add.pie(z=c(a,b), x=i, y=0.6, radius=log(a+b+1)*radi_units, labels="", col=c(binom[i,"root_col"],"#737373"))
     }
     text(x=1:nrow(binom), y=0.08, labels=paste(binom[,2], rowSums(binom[,2:3]),sep=" / "), col=binom$root_col, xpd=TRUE, cex=0.9)
     axis(1, at=1:nrow(binom), labels=FALSE, cex.axis=0.9)
@@ -53,7 +53,7 @@ plot_binomial = function(aggrego, root_aggrego){
     for(i in seq_len(nrow(root_aggrego))){
         a = root_aggrego[i,2]
         b = root_aggrego[i,3]
-        add.pie(z=c(b,a), x=1, y=i, radius=log(b+a+1)*radi_units, labels="", col=c("#737373",root_aggrego[i,"root_col"]))
+        add.pie(z=c(a,b), x=1, y=i, radius=log(b+a+1)*radi_units, labels="", col=c(root_aggrego[i,"root_col"],"#737373"))
     }
     text(x=1, y=(0.4 + 1:nrow(root_aggrego)), labels=root_aggrego$root_name, col=root_aggrego$root_col, cex=0.9)
     text(x=1, y=(-0.4 + 1:nrow(root_aggrego)), labels=paste(root_aggrego[,2],rowSums(root_aggrego[,2:3]), sep=" / "), cex=0.9, col=root_aggrego$root_col)

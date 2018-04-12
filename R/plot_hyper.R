@@ -23,7 +23,6 @@ plot_hyper = function(aggrego, root_aggrego){
     }
 
     ### plot the odds-ratios, with CI
-    # TODO influenced by setting par(oma) before function call?
     op = par(no.readonly = TRUE) 
     # 3 panels
     layout(matrix(c(1,2,3,3),ncol=2), widths=c(4,1),heights=c(3,2))
@@ -47,7 +46,7 @@ plot_hyper = function(aggrego, root_aggrego){
     for(i in seq_len(nrow(fish_odds))){
         w = fish_odds[i,2]
         b = fish_odds[i,3]
-        add.pie(z=c(b,w), x=i, y=0.6, radius=log(b+w+1)*radi_units, labels="", col=c("#737373",fish_odds[i,"root_col"]))
+        add.pie(z=c(w,b), x=i, y=0.6, radius=log(b+w+1)*radi_units, labels="", col=c(fish_odds[i,"root_col"],"#737373"))
     }
     text(x=1:nrow(fish_odds), y=0.08, labels=paste(fish_odds[,2],rowSums(fish_odds[,2:3]),sep=" / "),col= fish_odds$root_col, xpd=TRUE, cex=0.9)
     axis(1, at=1:nrow(fish_odds), labels=FALSE, cex.axis=0.8)
@@ -60,7 +59,7 @@ plot_hyper = function(aggrego, root_aggrego){
     for(i in seq_len(nrow(root_aggrego))){
         w = root_aggrego[i,2]
         b = root_aggrego[i,3]
-        add.pie(z=c(b,w), x=1, y=i, radius=log(b+w+1)*radi_units, labels="", col=c("#737373",root_aggrego[i,"root_col"]))
+        add.pie(z=c(w,b), x=1, y=i, radius=log(b+w+1)*radi_units, labels="", col=c(root_aggrego[i,"root_col"],"#737373"))
     }
     text(x=1, y=(0.4 + 1:nrow(root_aggrego)), labels=root_aggrego$root_name, col=root_aggrego$root_col, cex=0.9)
     text(x=1, y=(-0.4 + 1:nrow(root_aggrego)), labels=paste(root_aggrego[,2],rowSums(root_aggrego[,2:3]), sep=" / "), cex=0.9, col=root_aggrego$root_col)
