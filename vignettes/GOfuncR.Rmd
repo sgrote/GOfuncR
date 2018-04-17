@@ -541,7 +541,7 @@ Then the statistical tests are evaluated again for every GO-category.
 
 ## Schematic 2: `circ_chrom` option for genomic regions input
 
-![genomic regions](./Skizze_Fig2.png 'options for genomic regions input')
+![options for genomic regions input](./Skizze_Fig2.png 'options for genomic regions input')
 
 To use genomic regions as input, the first column of the `genes` input dataframe has to be of the form `chr:start-stop` and `regions=TRUE` has to be set.
 The option `circ_chrom` defines how candidate regions are randomly moved inside the background regions for computing the FWER.
