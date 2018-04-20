@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // binom_category_test
 void binom_category_test(std::string directory, int cutoff, std::string root, bool silent);
-RcppExport SEXP GOfuncR_binom_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+RcppExport SEXP _GOfuncR_binom_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
@@ -19,22 +19,25 @@ BEGIN_RCPP
 END_RCPP
 }
 // binom_randset
-void binom_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, bool silent);
-RcppExport SEXP GOfuncR_binom_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP silentSEXP) {
+void binom_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string term, std::string termtoterm, std::string graph_path, std::string root, bool silent);
+RcppExport SEXP _GOfuncR_binom_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP termSEXP, SEXP termtotermSEXP, SEXP graph_pathSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type nodes_per_gene(nodes_per_geneSEXP);
     Rcpp::traits::input_parameter< int >::type number_of_randomsets(number_of_randomsetsSEXP);
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
+    Rcpp::traits::input_parameter< std::string >::type term(termSEXP);
+    Rcpp::traits::input_parameter< std::string >::type termtoterm(termtotermSEXP);
+    Rcpp::traits::input_parameter< std::string >::type graph_path(graph_pathSEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    binom_randset(nodes_per_gene, number_of_randomsets, directory, root, silent);
+    binom_randset(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent);
     return R_NilValue;
 END_RCPP
 }
 // conti_category_test
 void conti_category_test(std::string directory, int cutoff, std::string root, bool silent);
-RcppExport SEXP GOfuncR_conti_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+RcppExport SEXP _GOfuncR_conti_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
@@ -46,22 +49,25 @@ BEGIN_RCPP
 END_RCPP
 }
 // conti_randset
-void conti_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, bool silent);
-RcppExport SEXP GOfuncR_conti_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP silentSEXP) {
+void conti_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string term, std::string termtoterm, std::string graph_path, std::string root, bool silent);
+RcppExport SEXP _GOfuncR_conti_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP termSEXP, SEXP termtotermSEXP, SEXP graph_pathSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type nodes_per_gene(nodes_per_geneSEXP);
     Rcpp::traits::input_parameter< int >::type number_of_randomsets(number_of_randomsetsSEXP);
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
+    Rcpp::traits::input_parameter< std::string >::type term(termSEXP);
+    Rcpp::traits::input_parameter< std::string >::type termtoterm(termtotermSEXP);
+    Rcpp::traits::input_parameter< std::string >::type graph_path(graph_pathSEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    conti_randset(nodes_per_gene, number_of_randomsets, directory, root, silent);
+    conti_randset(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent);
     return R_NilValue;
 END_RCPP
 }
 // hyper_category_test
 void hyper_category_test(std::string directory, int cutoff, std::string root, bool silent);
-RcppExport SEXP GOfuncR_hyper_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+RcppExport SEXP _GOfuncR_hyper_category_test(SEXP directorySEXP, SEXP cutoffSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
@@ -73,23 +79,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // hyper_randset
-void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent);
-RcppExport SEXP GOfuncR_hyper_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP modSEXP, SEXP silentSEXP) {
+void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string term, std::string termtoterm, std::string graph_path, std::string root, std::string mod, bool silent);
+RcppExport SEXP _GOfuncR_hyper_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP termSEXP, SEXP termtotermSEXP, SEXP graph_pathSEXP, SEXP rootSEXP, SEXP modSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type nodes_per_gene(nodes_per_geneSEXP);
     Rcpp::traits::input_parameter< int >::type number_of_randomsets(number_of_randomsetsSEXP);
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
+    Rcpp::traits::input_parameter< std::string >::type term(termSEXP);
+    Rcpp::traits::input_parameter< std::string >::type termtoterm(termtotermSEXP);
+    Rcpp::traits::input_parameter< std::string >::type graph_path(graph_pathSEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< std::string >::type mod(modSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    hyper_randset(nodes_per_gene, number_of_randomsets, directory, root, mod, silent);
+    hyper_randset(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, mod, silent);
     return R_NilValue;
 END_RCPP
 }
 // unlock_environment
 bool unlock_environment(Environment env);
-RcppExport SEXP GOfuncR_unlock_environment(SEXP envSEXP) {
+RcppExport SEXP _GOfuncR_unlock_environment(SEXP envSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -100,7 +109,7 @@ END_RCPP
 }
 // wilcox_category_test
 void wilcox_category_test(std::string directory, int cut, std::string root, bool silent);
-RcppExport SEXP GOfuncR_wilcox_category_test(SEXP directorySEXP, SEXP cutSEXP, SEXP rootSEXP, SEXP silentSEXP) {
+RcppExport SEXP _GOfuncR_wilcox_category_test(SEXP directorySEXP, SEXP cutSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
@@ -112,16 +121,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // wilcox_randset
-void wilcox_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, bool silent);
-RcppExport SEXP GOfuncR_wilcox_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP rootSEXP, SEXP silentSEXP) {
+void wilcox_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string term, std::string termtoterm, std::string graph_path, std::string root, bool silent);
+RcppExport SEXP _GOfuncR_wilcox_randset(SEXP nodes_per_geneSEXP, SEXP number_of_randomsetsSEXP, SEXP directorySEXP, SEXP termSEXP, SEXP termtotermSEXP, SEXP graph_pathSEXP, SEXP rootSEXP, SEXP silentSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type nodes_per_gene(nodes_per_geneSEXP);
     Rcpp::traits::input_parameter< int >::type number_of_randomsets(number_of_randomsetsSEXP);
     Rcpp::traits::input_parameter< std::string >::type directory(directorySEXP);
+    Rcpp::traits::input_parameter< std::string >::type term(termSEXP);
+    Rcpp::traits::input_parameter< std::string >::type termtoterm(termtotermSEXP);
+    Rcpp::traits::input_parameter< std::string >::type graph_path(graph_pathSEXP);
     Rcpp::traits::input_parameter< std::string >::type root(rootSEXP);
     Rcpp::traits::input_parameter< bool >::type silent(silentSEXP);
-    wilcox_randset(nodes_per_gene, number_of_randomsets, directory, root, silent);
+    wilcox_randset(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent);
     return R_NilValue;
 END_RCPP
 }

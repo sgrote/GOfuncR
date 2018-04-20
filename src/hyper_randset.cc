@@ -28,12 +28,11 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string root, std::string mod, bool silent){
+void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::string directory, std::string term, std::string termtoterm, std::string graph_path, std::string root, std::string mod, bool silent){
 	
 // 1) Build GO-Graph using different files from go_date_termdb-tables.tar.gz
 	
 	// read term.txt
-	string term = directory + "_term.txt";
 	std::ifstream terms( term.c_str() ) ;
 	if ( ! terms ) {
 		Rcpp::stop("Cannot open term.txt.\n"); 
@@ -44,7 +43,6 @@ void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::st
 		Rcpp::Rcout << "Read " << id_to_go.size() << " terms." << endl ;
 	}
 	// read graph_path.txt
-	string graph_path = directory + "_graph_path.txt";
 	std::ifstream transition_graph( graph_path.c_str() ) ;
 	if ( ! transition_graph ) {
 		Rcpp::stop("Cannot open graph_path.txt.\n");
@@ -57,7 +55,6 @@ void hyper_randset(std::string nodes_per_gene, int number_of_randomsets, std::st
 		Rcpp::Rcout << "Found " << trans.size() << " nodes." << endl ;
 	}
 	// read term2term.txt
-	string termtoterm = directory + "_term2term.txt";
 	std::ifstream term2term( termtoterm.c_str() ) ;
 	if ( ! term2term ) {
 		Rcpp::stop("Cannot open term2term.txt.\n");

@@ -8,26 +8,26 @@
 */
 
 /* .Call calls */
-extern SEXP GOfuncR_binom_category_test(SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_binom_randset(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_conti_category_test(SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_conti_randset(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_hyper_category_test(SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_hyper_randset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_unlock_environment(SEXP);
-extern SEXP GOfuncR_wilcox_category_test(SEXP, SEXP, SEXP, SEXP);
-extern SEXP GOfuncR_wilcox_randset(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_binom_category_test(SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_binom_randset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_conti_category_test(SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_conti_randset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_hyper_category_test(SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_hyper_randset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_unlock_environment(SEXP);
+extern SEXP _GOfuncR_wilcox_category_test(SEXP, SEXP, SEXP, SEXP);
+extern SEXP _GOfuncR_wilcox_randset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"GOfuncR_binom_category_test",  (DL_FUNC) &GOfuncR_binom_category_test,  4},
-    {"GOfuncR_binom_randset",        (DL_FUNC) &GOfuncR_binom_randset,        5},
-    {"GOfuncR_conti_category_test",  (DL_FUNC) &GOfuncR_conti_category_test,  4},
-    {"GOfuncR_conti_randset",        (DL_FUNC) &GOfuncR_conti_randset,        5},
-    {"GOfuncR_hyper_category_test",  (DL_FUNC) &GOfuncR_hyper_category_test,  4},
-    {"GOfuncR_hyper_randset",        (DL_FUNC) &GOfuncR_hyper_randset,        6},
-    {"GOfuncR_unlock_environment",   (DL_FUNC) &GOfuncR_unlock_environment,   1},
-    {"GOfuncR_wilcox_category_test", (DL_FUNC) &GOfuncR_wilcox_category_test, 4},
-    {"GOfuncR_wilcox_randset",       (DL_FUNC) &GOfuncR_wilcox_randset,       5},
+    {"_GOfuncR_binom_category_test",  (DL_FUNC) &_GOfuncR_binom_category_test,  4},
+    {"_GOfuncR_binom_randset",        (DL_FUNC) &_GOfuncR_binom_randset,        8},
+    {"_GOfuncR_conti_category_test",  (DL_FUNC) &_GOfuncR_conti_category_test,  4},
+    {"_GOfuncR_conti_randset",        (DL_FUNC) &_GOfuncR_conti_randset,        8},
+    {"_GOfuncR_hyper_category_test",  (DL_FUNC) &_GOfuncR_hyper_category_test,  4},
+    {"_GOfuncR_hyper_randset",        (DL_FUNC) &_GOfuncR_hyper_randset,        9},
+    {"_GOfuncR_unlock_environment",   (DL_FUNC) &_GOfuncR_unlock_environment,   1},
+    {"_GOfuncR_wilcox_category_test", (DL_FUNC) &_GOfuncR_wilcox_category_test, 4},
+    {"_GOfuncR_wilcox_randset",       (DL_FUNC) &_GOfuncR_wilcox_randset,       8},
     {NULL, NULL, 0}
 };
 

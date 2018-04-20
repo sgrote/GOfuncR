@@ -2,7 +2,7 @@
 # run "FUNC" with integrated GO-graph and GO-annotations from OrganismDb or OrgDb packages
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL)
+go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL, godir=NULL)
 {
     
     #####   1. Check arguments and define parameters
@@ -80,9 +80,10 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     if (!is.logical(circ_chrom)){
         stop("Please set circ_chrom to TRUE or FALSE.")
     }
+    
     root_nodes = c("molecular_function","biological_process","cellular_component")
     if (!is.null(domains)){
-        if (!all(domains %in% root_nodes)){
+        if (!(all(domains %in% root_nodes)) && is.null(godir)){
             stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
         }
         root_nodes = domains
@@ -194,23 +195,28 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
             stop("Less than 2 genes have annotated GO-categories.")
         }
     }
-    # write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
-    if (!silent) message("Write temporary files...")
-    write.table(term,file=paste(directory, "_term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-    write.table(term2term,file=paste(directory, "_term2term.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-    write.table(graph_path,file=paste(directory, "_graph_path.txt",sep=""),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+   
+    # unless custom GO defined, write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
+    if (is.null(godir)){
+        if (!silent) message("Write temporary files...")
+        go_paths = paste0(directory, c("_term.txt", "_term2term.txt", "_graph_path.txt"))
+        write.table(term, go_paths[1], col.names=FALSE, row.names=FALSE, quote=FALSE,sep="\t")
+        write.table(term2term, go_paths[2], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+        write.table(graph_path, go_paths[3], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+    } else {
+        go_paths = paste0(godir, c("/term.txt", "/term2term.txt", "/graph_path.txt"))
+        term = read.table(go_paths[1], sep="\t", quote="", comment.char="", as.is=TRUE)
+    }
+
+    # check that all root nodes in term
+    root_node_ids = term[match(root_nodes, term[,2]),4]
+    if (!(is.null(godir)) && any(is.na(root_node_ids))){
+       stop("Not all domains present in term.txt \n If the custom ontology has other domains than 'molecular_function', 'biological_process' and 'cellular_component', they have to be defined in the 'domains' parameter.")
+    }
 
 
     #####   3. Loop over GO root-nodes and run FUNC
 
-    root_node_ids = term[match(root_nodes, term[,2]),4]
-
-    ## check that all root nodes in term (for custom ontology) 
-    # TODO: activate for custom onto
-#   if (length(root_node_ids) != length(root_nodes)){
-#       stop("Not all root_nodes present in term.txt")
-#   }
-    
     out = list()
 
     for (r in seq_along(root_nodes)){
@@ -221,7 +227,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         # subset GO-annotations to nodes that belong to current root node (col 3 in term.txt is root-node)
         gene_go_root = go_anno[term[match(go_anno[,2],term[,4]),3]==root_node,]
         
-        # NEW: skip root-node if no annotations of input genes (at least two for wilcoxon) 
+        # skip root-node if no annotations of input genes (at least two for wilcoxon) 
         if (nrow(gene_go_root) == 0 || (test == "wilcoxon" && nrow(gene_go_root) < 2)){
             warning("No GO-annotations for root node '", root_node,"'.")
             message("\nSkipping root node '", root_node,"'.\n")
@@ -268,26 +274,24 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         
         if (!silent) message("Run Func...\n")
         if (test == "hyper"){
-            # randomset
             if (regions & circ_chrom){
-                hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "roll" , silent)
+                hyper_randset(paste0(directory,"_",root_id), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, "roll" , silent)
             } else if (regions){
-                hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "block", silent)
+                hyper_randset(paste0(directory,"_",root_id), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, "block", silent)
             } else if (gene_len){
-                hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "gene_len", silent)
+                hyper_randset(paste0(directory,"_",root_id), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, "gene_len", silent)
             } else {
-                hyper_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, "classic", silent)
+                hyper_randset(paste0(directory,"_",root_id), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, "classic", silent)
             }
-            # category test
             hyper_category_test(directory, 1, root_id, silent)
         } else if (test == "wilcoxon"){
-            wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
+            wilcox_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, silent)
             wilcox_category_test(directory, 1, root_id, silent)
         } else if (test == "binomial"){
-            binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
+            binom_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, silent)
             binom_category_test(directory, 1, root_id, silent)          
         } else if (test == "contingency"){
-            conti_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, root_id, silent)
+            conti_randset(paste(directory,"_",root_id,sep=""), n_randsets, directory, go_paths[1], go_paths[2], go_paths[3], root_id, silent)
             conti_category_test(directory, 1, root_id, silent)
         }
         
@@ -304,11 +308,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     namen = term[match(out[,1],term[,4]),2:3]
     out = data.frame(namen[,2],out[,1], namen[,1], out[,2:ncol(out)])
     out[,1:3] = apply(out[,1:3], 2, as.character)
-    # NEW: switch columns for binomial test high B - then high A to be more consistent
+    # switch columns for binomial test high B - then high A to be more consistent
     if (test == "binomial"){
         out[,4:7] = out[,c(5,4,7,6)]
     }
-    # NEW: also sort on FWER_underrep and raw_p_underrep and GO-ID (ties in tail) 
+    # also sort on FWER_underrep and raw_p_underrep and GO-ID (ties in tail) 
     out = out[order(out[,7], out[,5], -out[,6], -out[,4], out[,1], out[,2]),] 
     rownames(out) = 1:nrow(out)
 

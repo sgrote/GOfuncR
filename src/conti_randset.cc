@@ -21,7 +21,7 @@
 using namespace Rcpp ;
 
 //[[Rcpp::export]]
-void conti_randset(std::string nodes_per_gene ,int number_of_randomsets, std::string directory, std::string root, bool silent)
+void conti_randset(std::string nodes_per_gene ,int number_of_randomsets, std::string directory, std::string term, std::string termtoterm, std::string graph_path, std::string root, bool silent)
 
 {
 	
@@ -29,7 +29,6 @@ void conti_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
          * read graph-structure and create graph
 	 *******************/
 	// read term.txt
-	string term = directory + "_term.txt";
 	std::ifstream terms( term.c_str() ) ;
 	if ( ! terms ) {
 		Rcpp::stop("Cannot open term.txt.\n"); 
@@ -40,7 +39,6 @@ void conti_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 		Rcpp::Rcout << "Read " << id_to_go.size() << " terms." << endl ;
 	}
 	// read graph_path
-	string graph_path = directory + "_graph_path.txt";
 	std::ifstream transition_graph( graph_path.c_str() ) ;
 	if ( ! transition_graph ) {
 		Rcpp::stop("Cannot open graph_path.txt.\n"); 
@@ -53,7 +51,6 @@ void conti_randset(std::string nodes_per_gene ,int number_of_randomsets, std::st
 		Rcpp::Rcout << "Found " << trans.size() << " nodes." << endl ;
 	}
 	// read term2term
-	string termtoterm = directory + "_term2term.txt";
 	std::ifstream term2term( termtoterm.c_str() ) ;
 	if ( ! term2term ) {
 		Rcpp::stop("Cannot open term2term.txt.\n"); 

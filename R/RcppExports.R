@@ -2,38 +2,38 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 binom_category_test <- function(directory, cutoff, root, silent) {
-    invisible(.Call('GOfuncR_binom_category_test', PACKAGE = 'GOfuncR', directory, cutoff, root, silent))
+    invisible(.Call(`_GOfuncR_binom_category_test`, directory, cutoff, root, silent))
 }
 
-binom_randset <- function(nodes_per_gene, number_of_randomsets, directory, root, silent) {
-    invisible(.Call('GOfuncR_binom_randset', PACKAGE = 'GOfuncR', nodes_per_gene, number_of_randomsets, directory, root, silent))
+binom_randset <- function(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent) {
+    invisible(.Call(`_GOfuncR_binom_randset`, nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent))
 }
 
 conti_category_test <- function(directory, cutoff, root, silent) {
-    invisible(.Call('GOfuncR_conti_category_test', PACKAGE = 'GOfuncR', directory, cutoff, root, silent))
+    invisible(.Call(`_GOfuncR_conti_category_test`, directory, cutoff, root, silent))
 }
 
-conti_randset <- function(nodes_per_gene, number_of_randomsets, directory, root, silent) {
-    invisible(.Call('GOfuncR_conti_randset', PACKAGE = 'GOfuncR', nodes_per_gene, number_of_randomsets, directory, root, silent))
+conti_randset <- function(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent) {
+    invisible(.Call(`_GOfuncR_conti_randset`, nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent))
 }
 
 hyper_category_test <- function(directory, cutoff, root, silent) {
-    invisible(.Call('GOfuncR_hyper_category_test', PACKAGE = 'GOfuncR', directory, cutoff, root, silent))
+    invisible(.Call(`_GOfuncR_hyper_category_test`, directory, cutoff, root, silent))
 }
 
-hyper_randset <- function(nodes_per_gene, number_of_randomsets, directory, root, mod, silent) {
-    invisible(.Call('GOfuncR_hyper_randset', PACKAGE = 'GOfuncR', nodes_per_gene, number_of_randomsets, directory, root, mod, silent))
+hyper_randset <- function(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, mod, silent) {
+    invisible(.Call(`_GOfuncR_hyper_randset`, nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, mod, silent))
 }
 
 unlock_environment <- function(env) {
-    .Call('GOfuncR_unlock_environment', PACKAGE = 'GOfuncR', env)
+    .Call(`_GOfuncR_unlock_environment`, env)
 }
 
 wilcox_category_test <- function(directory, cut, root, silent) {
-    invisible(.Call('GOfuncR_wilcox_category_test', PACKAGE = 'GOfuncR', directory, cut, root, silent))
+    invisible(.Call(`_GOfuncR_wilcox_category_test`, directory, cut, root, silent))
 }
 
-wilcox_randset <- function(nodes_per_gene, number_of_randomsets, directory, root, silent) {
-    invisible(.Call('GOfuncR_wilcox_randset', PACKAGE = 'GOfuncR', nodes_per_gene, number_of_randomsets, directory, root, silent))
+wilcox_randset <- function(nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent) {
+    invisible(.Call(`_GOfuncR_wilcox_randset`, nodes_per_gene, number_of_randomsets, directory, term, termtoterm, graph_path, root, silent))
 }
 
