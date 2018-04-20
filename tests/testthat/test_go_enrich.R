@@ -17,16 +17,13 @@ bg_gene_ids = c('FGR', 'NPHP1', 'DRD2', 'ABCC10', 'PTBP2', 'JPH4', 'SMARCC2', 'F
     'CYP1A2', 'ACSS1', 'CDHR1', 'SLC25A36', 'LEPR', 'PRPS2', 'TNFAIP3', 'NKX3-1', 'LPAR2', 'PGAM2')
 is_candidate = c(rep(1,length(candi_gene_ids)), rep(0,length(bg_gene_ids)))
 input_hyper_bg = data.frame(gene_ids = c(candi_gene_ids, bg_gene_ids), is_candidate)
+res_hyper_bg = go_enrich(input_hyper_bg, n_randsets=20, silent=TRUE)
 
 test_that("hyper_defined_bg works fine",{
-	expect_warning((res_hyper_bg = go_enrich(input_hyper_bg, n_randsets=20, silent=TRUE)),
-	    "No GO-annotation for genes: QUATSCH.\n  These genes were not included in the analysis.")
 	expect_true("GO:0005634" %in% res_hyper_bg[[1]][1:100,2]) # should be high independent of rannum/versions
 	expect_true(res_hyper_bg[[1]][1,"FWER_underrep"] > 0.9)
 	expect_true(res_hyper_bg[[1]][1,"raw_p_overrep"] < 0.5)
 	expect_true(setequal(root_names, unique(res_hyper_bg[[1]][,1])))
-	expect_true(sum(res_hyper_bg[[2]][,2]) == 13)
-	expect_true(nrow(res_hyper_bg[[2]]) == 32)
 	expect_true(setequal(res_hyper_bg[[2]][,2], c(0, 1)))
 	expect_true(nrow(res_hyper_bg[[3]]) == 1)
 	expect_equivalent(res_hyper_bg[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
@@ -34,16 +31,13 @@ test_that("hyper_defined_bg works fine",{
 
 # gene-len
 set.seed(123)
+res_hyper_len = go_enrich(input_hyper_bg, gene_len=TRUE, n_randsets=50, silent=TRUE)
 
 test_that("hyper_gene_len works fine",{
-	expect_warning((res_hyper_len = go_enrich(input_hyper_bg, gene_len=TRUE, n_randsets=50, silent=TRUE)),
-	    "No GO-annotation for genes: QUATSCH.\n  These genes were not included in the analysis.")
 	expect_true("GO:0005634" %in% res_hyper_len[[1]][1:100,2]) # should be high independent of rannum/versions
 	expect_true(res_hyper_len[[1]][1,"FWER_underrep"] > 0.9)
 	expect_true(res_hyper_len[[1]][1,"FWER_overrep"] < 1)
 	expect_true(setequal(root_names, unique(res_hyper_len[[1]][,1])))
-	expect_true(sum(res_hyper_len[[2]][,2]) == 13)
-	expect_true(nrow(res_hyper_len[[2]]) == 32)
 	expect_true(setequal(res_hyper_len[[2]][,2], c(0, 1)))
 	expect_equivalent(res_hyper_len[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 	expect_equivalent(res_hyper_len[[3]][2,1:2], c("gene_coordinates","Homo.sapiens"))
@@ -91,17 +85,15 @@ high_score_genes = c('GCK', 'CALB1', 'PAX2', 'GYS1','SLC2A8', 'UGP2', 'BTBD3', '
 low_score_genes = c('CACNG2', 'ANO1', 'ZWINT', 'ENGASE', 'HK2', 'QUATSCH', 'PYGL', 'GYG1')
 gene_scores = c(runif(length(high_score_genes), 0.5, 1), runif(length(low_score_genes), 0, 0.5))
 input_willi = data.frame(gene_ids = c(high_score_genes, low_score_genes), gene_scores)
+res_willi = go_enrich(input_willi, test='wilcoxon', n_randsets=20, silent=TRUE)
 
 test_that("wilcox works fine",{
-	expect_warning((res_willi = go_enrich(input_willi, test='wilcoxon', n_randsets=20, silent=TRUE)),
-	    "No GO-annotation for genes: QUATSCH.\n  These genes were not included in the analysis.")
 	expect_true("GO:0098793" %in% res_willi[[1]][1:100,2]) # should be high independent of rannum/versions
 	expect_true(res_willi[[1]][1,"FWER_low_rank"] == 1)
 	expect_true(res_willi[[1]][1,"FWER_high_rank"] < 0.5)
 	expect_true(res_willi[[1]][1,"raw_p_high_rank"] < 0.05)
 	expect_true(setequal(root_names, unique(res_willi[[1]][,1])))
 	expect_true(all(res_willi[[2]][,2] %in% gene_scores)) # only score for QUATSCH is missing 
-	expect_true(nrow(res_willi[[2]]) == 17)
 	expect_true(nrow(res_willi[[3]]) == 1)
 	expect_equivalent(res_willi[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 })
@@ -114,10 +106,9 @@ low_A_genes = c('CACNG2', 'AGTR1', 'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'P
 A_counts = c(sample(20:30, length(high_A_genes)), sample(5:15, length(low_A_genes)))
 B_counts = c(sample(5:15, length(high_A_genes)), sample(20:30, length(low_A_genes)))
 input_binom = data.frame(gene_ids=c(high_A_genes, low_A_genes), A_counts, B_counts)
+res_binom = go_enrich(input_binom, test='binomial', n_randsets=20, silent=TRUE)
 
 test_that("binom works fine",{
-	expect_warning((res_binom = go_enrich(input_binom, test='binomial', n_randsets=20, silent=TRUE)),
-	    "No GO-annotation for genes: QUATSCH.\n  These genes were not included in the analysis.")
 	expect_true("GO:0005536" %in% res_binom[[1]][1:100,2]) # should be high independent of rannum/versions
 	expect_true(res_binom[[1]][1,"FWER_high_B"] == 1)
 	expect_true(res_binom[[1]][1,"FWER_high_A"] < 0.3)
@@ -125,7 +116,6 @@ test_that("binom works fine",{
 	expect_true(setequal(root_names, unique(res_binom[[1]][,1])))
 	expect_true(all(res_binom[[2]][,2] %in% A_counts)) 
 	expect_true(all(res_binom[[2]][,3] %in% B_counts)) 
-	expect_true(nrow(res_binom[[2]]) == 17) # only score for QUATSCH is missing 
 	expect_true(nrow(res_binom[[3]]) == 1)
 	expect_equivalent(res_binom[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 })
@@ -140,10 +130,9 @@ vari_non_syn = c(sample(0:5, length(high_substi_genes), replace=TRUE), sample(0:
 vari_syn = sample(5:15, length(c(high_substi_genes, low_substi_genes)), replace=TRUE)
 input_conti = data.frame(gene_ids=c(high_substi_genes, low_substi_genes),
     subs_non_syn, subs_syn, vari_non_syn, vari_syn)
+res_conti = go_enrich(input_conti, test='contingency', n_randsets=20, silent=TRUE)
 
 test_that("conti works fine",{
-	expect_warning((res_conti = go_enrich(input_conti, test='contingency', n_randsets=20, silent=TRUE)),
-	    "No GO-annotation for genes: QUATSCH.\n  These genes were not included in the analysis.")
 	expect_true("GO:0005829" %in% res_conti[[1]][1:100,2]) # should be high independent of rannum/versions
 	expect_true(res_conti[[1]][1,"FWER_high_CD"] == 1)
 	expect_true(res_conti[[1]][1,"FWER_high_AB"] < 0.7)
@@ -153,7 +142,6 @@ test_that("conti works fine",{
 	expect_true(all(res_conti[[2]][,3] %in% subs_syn)) 
 	expect_true(all(res_conti[[2]][,4] %in% vari_non_syn)) 
 	expect_true(all(res_conti[[2]][,5] %in% vari_syn)) 
-	expect_true(nrow(res_conti[[2]]) == 18) # only score for QUATSCH is missing 
 	expect_true(nrow(res_conti[[3]]) == 1)
 	expect_equivalent(res_conti[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 })
