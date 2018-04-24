@@ -140,9 +140,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     ### get GO-annotations
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
-        go_anno = get_anno_categories(database=anno_db, annotations=annotations, termdf=term, silent=silent)
+        go_anno = get_anno_categories(database=anno_db, annotations=annotations, term_df=term, silent=silent)
     } else {
-        go_anno = get_anno_categories(genes[,1], database=anno_db, annotations=annotations, termdf=term, silent=silent)
+        go_anno = get_anno_categories(genes[,1], database=anno_db, annotations=annotations, term_df=term, silent=silent)
     }
     # subset genes to annotated genes (also reduced to internal ontology)
     if (!silent) message("Remove invalid genes...")

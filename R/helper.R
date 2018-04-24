@@ -1,4 +1,5 @@
 
+
 # input: some arguments provided to go_enrich
 # output: database data.frame with type, db, version for GO-graph, GO-annotations, and gene-coords
 eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, gene_len){
@@ -50,6 +51,47 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
     return(databases)
 }
 
+# input: some arguments provided e.g. to get_anno_genes, get_child_nodes, get_parent_nodes
+# output: term and graph_path, potentially user-defined
+eval_onto_input = function(term_df=NULL, graph_path_df=NULL, godir=NULL){
+    # ontology
+    if ((is.null(term_df)) && !(is.null(graph_path_df))){
+        stop("Please also provide 'term_df' (when 'graph_path_df' is specified also 'term_df' is needed)")
+    }
+    if (!(is.null(term_df))){
+        # A) term and graph_path provided directly
+        if (is.null(graph_path_df)){
+            stop("Please also provide 'graph_path_df' (when 'term_df' is specified also 'graph_path_df' is needed)")
+        }
+        if(!(is.null(godir))){
+            stop("Please provide either 'term_df' and 'graph_path_df' or 'godir'")
+        }
+        term = term_df
+        graph_path = graph_path_df
+    } else if (!(is.null(godir))){
+        # B) custom ontology directory
+        term = read.table(paste0(godir, "/term.txt"), sep="\t", quote="", comment.char="", as.is=TRUE)
+        graph_path = read.table(paste0(godir, "/graph_path.txt"),
+            sep="\t", quote="", comment.char="", as.is=TRUE)
+    } # else C) use integrated term and graph_path
+    
+    return(list(term, graph_path))
+}
+
+# input: some arguments provided e.g. to get_anno_categories, get_names
+# output: term, potentially user-defined
+eval_term = function(term_df, godir){
+    if (!(is.null(term_df)) && !(is.null(godir))){
+        stop("Please provide either 'term_df' or 'godir'")
+    }
+    if (!(is.null(term_df))){
+        term = term_df
+    } else if (!(is.null(godir))){
+        term = read.table(paste0(godir, "/term.txt"), sep="\t", quote="", comment.char="", as.is=TRUE)
+    } # else term is taken from sysdata
+    
+    return(term)
+}
 
 # load database
 load_db = function(db, silent=FALSE){

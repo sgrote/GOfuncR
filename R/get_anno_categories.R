@@ -8,11 +8,8 @@
 # output: gene, go_id
 
 
-get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL, termdf=NULL, godir=NULL, silent=FALSE){
+get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL, term_df=NULL, godir=NULL, silent=FALSE){
     
-    if (!(is.null(termdf)) && !(is.null(godir))){
-        stop("Please provide either 'termdf' or 'godir'")
-    }
     if (!missing(genes)){
         genes = as.character(genes)
     }
@@ -21,8 +18,7 @@ get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL,
     
     if (is.null(annotations)){
         
-        ## A) annotation package 
-        
+        ## A) annotation package
         load_db(database, silent)
         # if genes are not provided use all from database (useful for default background in hypergeometric test)
         if (missing(genes)){
@@ -58,11 +54,8 @@ get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL,
         message("Remove annotated categories not present in GO-graph...")
     }      
     
-    if (!(is.null(termdf))){
-        term = termdf
-    } else if (!(is.null(godir))){
-        term = read.table(paste0(godir, "/term.txt"), sep="\t", quote="", comment.char="", as.is=TRUE)
-    } # else term is taken from sysdata
+    # check if term is user-defined or get the integrated version
+    term = eval_term(term_df, godir)
     
     # remove obsolete terms
     term = term[term[,5]==0,]
@@ -76,10 +69,7 @@ get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL,
     colnames(out) = c("gene", "go_id")
     out = unique(out)
 
-    # add category name 
-    # TODO: don't add name here but show get_names example in vignette and man
-#    out = cbind(out, get_names(out$go_id)[,c("go_name","root_node")])
-#    # sort
+    # sort
     out = out[order(out$gene, out$go_id),]
     rownames(out) = 1:nrow(out)
 

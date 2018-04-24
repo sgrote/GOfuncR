@@ -3,13 +3,13 @@
 # take table with sums of scores per node from plot_anno_scores
 # create output with list of 3 tables(node-anno, root-anno, node->root-mapping)
 
-plot_wilcox = function(anno_scores, root_anno_scores, root_info){
+plot_wilcox = function(anno_scores, root_anno_scores, root_info, term_df){
     
     colnames(anno_scores)[3] = "score"
     colnames(root_anno_scores)[3] = "score"
     
     # go_id -> root table
-    root_names = get_names(anno_scores[,1])[,3] # get names
+    root_names = get_names(anno_scores[,1], term_df)[,3] # get names
     node_to_root = data.frame(go_id=anno_scores[,1], root_id=root_info[match(root_names, root_info[,3]), 1])
 
     # layout
@@ -18,7 +18,7 @@ plot_wilcox = function(anno_scores, root_anno_scores, root_info){
 #   ylim = range(c(anno_scores$score, root_anno_scores$score)/ mean(root_cols$median)) # TODO: proper range if normalized
 #   yrange = ylim[2] - ylim[1]
 #   ylim[2] = ylim[2] + 0.3*yrange
-    op = par(no.readonly = TRUE) 
+    op = par(no.readonly = TRUE)
     # plot GO-categories
     par(mar=c(6.5,4,4,2), bty="l") #, bty="n") # mar default=c(5, 4, 4, 2)
     violine(anno_scores, root_info, node_to_root, ylim)

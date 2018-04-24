@@ -212,8 +212,8 @@ Note that the default annotation package `r Biocpkg('Homo.sapiens')` uses the *h
 See [below](#other_db) for examples how to use other packages.
 
 
-## Test for enrichment of high or low scored genes using the Wilcoxon rank-sum test
-When genes are not divided into candidate and background genes, but are ranked by some kind of score, e.g. a p-value for differential expression, a Wilcoxon rank-sum test can be performed to find GO-categories where genes with high or low scores are over-represented.
+## Test for enrichment of high scored genes using the Wilcoxon rank-sum test
+When genes are not divided into candidate and background genes, but are ranked by some kind of score, e.g. a p-value for differential expression, a Wilcoxon rank-sum test can be performed to find GO-categories where genes with high (or low) scores are over-represented.
 This example uses genes ranked by random scores:
 
 ```{r}
@@ -471,7 +471,7 @@ top_gos_binom = res_binom[[1]][1:5, 'node_id']
 top_gos_binom
 plot_anno_scores(res_binom, top_gos_binom)
 ```
-Note that domain `cellular_component` is missing in that plot because it was excluded from the GO-enrichment analysis in the first place (`res_binom` was created using the `domains` option of `go_enrich`).  
+Note that domain `biological_process` is missing in that plot because it was excluded from the GO-enrichment analysis in the first place (`res_binom` was created using the `domains` option of `go_enrich`).  
 
 For the **2x2 contingency table test** pie charts show the proportions of *A* and *B*, as well as *C* and *D* counts associated with a GO-category.
 Root nodes are not shown, because this test is independent of the root category.

@@ -7,14 +7,28 @@ Get the ID of a GO-category given its name
 Returns GO-categories given (part of) their name. Matching is not case-sensitive.
 }
 \usage{
-get_ids(go_name)
+    get_ids(go_name, term_df = NULL, godir = NULL)
 }
 \arguments{
     \item{go_name}{
         character(). (partial) name of a GO-category 
     }
+    \item{term_df}{
+        optional data.frame() with at an ontology 'term' table.
+        Alternative to the default integrated GO-graph or \code{godir}.
+    }
+    \item{godir}{
+        optional directory (string) that contains 'term.txt' table.
+        Alternative to the default integrated GO-graph or \code{term_df}.
+    }
 }
 
+\details{
+    For details on how to use a custom ontology with
+    \code{term_df} or \code{godir} please refer to the package's vignette.
+    The advantage of \code{term_df} over \code{godir} is that the latter
+    reads the file 'term.txt' from disk and therefore takes longer.
+}
 
 \value{
 a data.frame() with three columns: the full names (character()) of the GO-categories that contain \code{go_name}; together with the GO-domain ('cellular_component', 'biological_process' or 'molecular_function') and the GO-category IDs (character()).

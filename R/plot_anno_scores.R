@@ -3,7 +3,7 @@
 # (fwer_threshold is not supported anymore, to not discriminate high_A or high_B in binomial, contingency)
 
 
-plot_anno_scores = function(res, go_ids){
+plot_anno_scores = function(res, go_ids, annotations=NULL){
     
 
     ### check input
@@ -31,10 +31,28 @@ plot_anno_scores = function(res, go_ids){
     } else {
         stop("Identification of test failed.")
     }
-    # default root-ids for stable colors (TODO:remove default if onto is input); not needed for conti...
-    def_root_ids = c("GO:0003674","GO:0005575","GO:0008150")
+    
+    # infer ontology
+    onto = res[[3]][res[[3]][,1] == "go_graph", ]
+    if (onto[1,2] == "custom"){
+        godir = onto[1,3]
+        term = read.table(paste0(godir,"/term.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
+        graph_path = read.table(paste0(godir,"/graph_path.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
+        root_names = rev(sort(unique(res[[1]][,1])))
+    } else {
+        # use fixed root names for stable colors (if some root node is skipped in go_enrich)
+        root_names = c("molecular_function","cellular_component","biological_process")
+    }
+    
+    # colors and IDs for root nodes
+    root_names_id = term[match(root_names, term[,2]) ,]
     pie_cols = c("#F15A60","#7BC36A","#599BD3","#F9A75B","#9E67AB","#CE7058","#D77FB4")
-    root_cols = data.frame(root=def_root_ids, col=pie_cols[1:length(def_root_ids)], stringsAsFactors=FALSE)
+    root_cols = data.frame(root=root_names_id[,4], col=pie_cols[1:nrow(root_names_id)], stringsAsFactors=FALSE)
+    
+    # reduce to used domains
+    # (to not plot root-node for unused domain, still have before for stable colors)
+    root_names_id = root_names_id[root_names_id[,2] %in% res[[1]][,1], ]
+    root_ids = root_names_id[,4]
     
     # just in case
     go_ids = as.character(go_ids)
@@ -47,9 +65,8 @@ plot_anno_scores = function(res, go_ids){
     } else {
         genes = in_genes[,1]
     }
-    
     ### get annotation for nodes
-    anno = get_anno_genes(go_ids, database=res[[3]][1,2], genes=genes)
+    anno = get_anno_genes(go_ids, database=res[[3]][1,2], genes, annotations, term, graph_path)
     if (is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
     # add scores to nodes
     anno_scores = cbind(anno, in_genes[match(anno[,2], in_genes[,1]), 2:ncol(in_genes)])
@@ -71,15 +88,12 @@ plot_anno_scores = function(res, go_ids){
     ### get annotation for root nodes   (conti independent of root nodes)
     if (test != "contingency"){
         
-        # get IDs for root_nodes
-        root_names = unique(res[[1]][,1])
-        root_names = term[match(root_names, term[,2]) ,]
-        root_ids = root_names[,4]
-    
         # get annotation for root nodes
-        root_anno = get_anno_genes(root_ids, database=res[[3]][1,2], genes=genes)
+        root_anno = get_anno_genes(root_ids, database=res[[3]][1,2], genes, annotations, term, graph_path)
         # add scores to root
         root_anno_scores = cbind(root_anno, in_genes[match(root_anno[,2], in_genes[,1]), 2:ncol(in_genes)])
+        # order alphabetically (which is rev(order(IDs)) for default GO)
+        root_anno_scores = root_anno_scores[rev(order(root_anno_scores[,1])), ]
 
         # aggregate scores in root nodes
         if (test != "wilcoxon"){
@@ -93,16 +107,16 @@ plot_anno_scores = function(res, go_ids){
                 root_anno_scores = aggregate(root_anno_scores[,3:ncol(root_anno_scores)], list(go_id=root_anno_scores[,1]), sum)
             }
             # add colors and root_node_name
-            root_anno_scores$root_name = get_names(root_anno_scores[,1])[,2]
+            root_anno_scores$root_name = get_names(root_anno_scores[,1], term)[,2]
             root_anno_scores$root_col = root_cols[match(root_anno_scores[,1], root_cols[,1]), 2]
             # merge nodes with root node info
-            matched_root_name = get_names(anno_scores[,1])[,3] # get names
-            anno_scores$root_id = root_names[match(matched_root_name, root_names[,2]), 4]
+            matched_root_name = get_names(anno_scores[,1], term)[,3] # get names
+            anno_scores$root_id = root_names_id[match(matched_root_name, root_names_id[,2]), 4]
             anno_scores = cbind(anno_scores, root_anno_scores[match(anno_scores$root_id, root_anno_scores[,1]), 2:ncol(root_anno_scores)])
         } else { 
             # for wilcox leave unaggregated version but create table with median, name, col
             root_info = aggregate(root_anno_scores[,3], list(go_id=root_anno_scores[,1]), median)
-            root_info$root_name = get_names(root_info[,1])[,2]
+            root_info$root_name = get_names(root_info[,1], term)[,2]
             root_info$root_col = root_cols[match(root_info[,1], root_cols[,1]), 2]
         }
     }
@@ -119,7 +133,7 @@ plot_anno_scores = function(res, go_ids){
     } else if (test == "contingency"){
         stats = plot_conti(anno_scores)
     } else if (test == "wilcoxon"){
-        stats = plot_wilcox(anno_scores, root_anno_scores, root_info)
+        stats = plot_wilcox(anno_scores, root_anno_scores, root_info, term)
     }
     
     return(invisible(stats))

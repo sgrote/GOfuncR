@@ -9,7 +9,7 @@ Uses the result of a GO-enrichment analysis performed with \code{\link{go_enrich
 }
 
 \usage{
-plot_anno_scores(res, go_ids)
+plot_anno_scores(res, go_ids, annotations = NULL)
 }
 \arguments{
     \item{res}{
@@ -18,6 +18,10 @@ plot_anno_scores(res, go_ids)
     \item{go_ids}{
         character() vector of GO-IDs, e.g. c('GO:0005737','GO:0071495').
         This specifies the GO-categories that are plotted.
+    }
+    \item{annotations}{
+        optional data.frame() for custom annotations, with two columns: (1) gene-symbols and (2) GO-categories.
+        This is needed if \code{\link{go_enrich}} was run with custom `annotations` to generate `res`
     }
 }
 

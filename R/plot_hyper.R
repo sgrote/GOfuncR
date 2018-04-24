@@ -66,8 +66,6 @@ plot_hyper = function(aggrego, root_aggrego){
     
     par(op)
     
-#    #TODO: also return p? add significance asterix for fisher-test? - but does not account for multiple testing, # rather FWER-over and under?
-    # TODO: add go_name and root_name? (although this is easy with get_names)
     out = fish_odds[,-c(7,8)]
     return(invisible(out))
 }

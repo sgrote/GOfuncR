@@ -1,7 +1,11 @@
 
 ## return the IDs and names of GO-categories that match ONE name
 
-get_ids = function(go_name){
+get_ids = function(go_name, term_df=NULL, godir=NULL){
+    
+    # check if term is user-defined or get the integrated version
+    term = eval_term(term_df, godir)
+    
     if(length(go_name)!=1){
         stop("Please use a single GO-category name.")
     }

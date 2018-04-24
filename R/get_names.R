@@ -1,7 +1,11 @@
 
 ## return the names of GOs, toghether with root node in a dataframe
 
-get_names=function(go_ids){
+get_names=function(go_ids, term_df=NULL, godir=NULL){
+    
+    # check if term is user-defined or get the integrated version
+    term = eval_term(term_df, godir)
+    
     # remove obsolete terms
     term = term[term[,5]==0,]
     # find names for GOs

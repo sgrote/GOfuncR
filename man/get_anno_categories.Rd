@@ -7,9 +7,12 @@ Get all associated ontology categories for the input genes
 Returns all associated GO-categories given a vector of gene-symbols, e.g. c('SPAG5', 'BTC'). 
 Besides the default 'Homo.sapiens', also other OrganismDb or OrgDb packages from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp), can be used.
 It also possible to directly provide a dataframe with annotations, which is then searched for the input genes and filtered for GO-categories that are present in the ontology.
+By default the package's integrated ontology is used, but a custom ontology can be defined, too.
+
 }
 \usage{
-get_anno_categories(genes,  database = 'Homo.sapiens', annotations = NULL, termdf = NULL, godir = NULL, silent = FALSE)
+get_anno_categories(genes,  database = 'Homo.sapiens', annotations = NULL,
+    term_df = NULL, godir = NULL, silent = FALSE)
 }
 \arguments{
     \item{genes}{
@@ -22,19 +25,25 @@ get_anno_categories(genes,  database = 'Homo.sapiens', annotations = NULL, termd
         optional data.frame() with two columns: gene-symbols and GO-categories.
         Alternative to 'database'.
     }
-    \item{termdf}{
+    \item{term_df}{
         optional data.frame() with at an ontology 'term' table.
         Alternative to the default integrated GO-graph or \code{godir}.
     }
     \item{godir}{
         optional directory (string) that contains 'term.txt' table.
-        Alternative to the default integrated GO-graph or \code{termdf}.
+        Alternative to the default integrated GO-graph or \code{term_df}.
     }
     \item{silent}{
         logical. If TRUE all output to the screen except for warnings and errors is suppressed.
     }
 }
 
+\details{
+    For details on how to use a custom ontology with
+    \code{term_df} or \code{godir} please refer to the package's vignette.
+    The advantage of \code{term_df} over \code{godir} is that the latter
+    reads the file 'term.txt' from disk and therefore takes longer.
+}
 
 \value{
 a data.frame() with two columns: gene (character()) and GO-ID (character()).

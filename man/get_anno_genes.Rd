@@ -7,11 +7,15 @@ Get genes that are annotated to GO-categories
 Given a vector of GO-IDs, e.g. c('GO:0072025','GO:0072221') the function returns all genes that are annotated to these GO-categories.
 This includes genes that are annotated to any of the child nodes of a GO-category.
 Besides the default 'Homo.sapiens', also other OrganismDb or OrgDb packages from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp), can be used.
-It is also possible to only consider a user-defined set of genes.
+It is also possible to directly provide a dataframe with annotations, which is then searched for the input GO-categories and their child nodes.
+By default the package's integrated GO-graph is used to find child nodes,
+but a custom ontology can be defined, too.
+
 }
 
 \usage{
-get_anno_genes(go_ids, database = 'Homo.sapiens', genes = NULL)
+get_anno_genes(go_ids, database = 'Homo.sapiens', genes = NULL, annotations = NULL,
+    term_df = NULL, graph_path_df = NULL, godir = NULL)
 }
 
 \arguments{
@@ -24,6 +28,34 @@ get_anno_genes(go_ids, database = 'Homo.sapiens', genes = NULL)
     \item{genes}{
         optional character() vector of gene-symbols. If defined, only annotations of those genes are returned.
     }
+    \item{annotations}{
+        optional data.frame() with two columns: gene-symbols and GO-categories.
+        Alternative to 'database'.
+    }
+    \item{term_df}{
+        optional data.frame() with at an ontology 'term' table.
+        Alternative to the default integrated GO-graph or \code{godir}.
+        Also needs \code{graph_path_df}.
+    }
+    \item{graph_path_df}{
+        optional data.frame() with at an ontology 'graph_path' table.
+        Alternative to the default integrated GO-graph or \code{godir}.
+        Also needs \code{term_df}.
+    }
+    \item{godir}{
+        optional directory (string) that contains 'term.txt'
+        and 'graph_path.txt' table.
+        Alternative to the default integrated GO-graph
+        or \code{term_df} + \code{graph_path_df}.
+    }
+}
+
+\details{
+    For details on how to use a custom ontology with
+    \code{term_df} + \code{graph_path_df} or \code{godir} please refer to the 
+    package's vignette. The advantage of \code{term_df} + \code{graph_path_df}
+    over \code{godir} is that the latter reads the files 'term.txt' and
+    'graph_path.txt' from disk and therefore takes longer.
 }
 
 \value{
