@@ -2,7 +2,7 @@
 ---
 title: "GOfuncR: Gene Ontology Enrichment Using FUNC"
 author: "Steffi Grote"
-date: "April 17, 2018"
+date: "April 24, 2018"
 output:
     BiocStyle::html_document:
     toc: true
@@ -64,8 +64,10 @@ parameter | default | description
 `circ_chrom` | FALSE |  use background on circularized chromosome (only for `test='hyper'` and `regions=TRUE`)
 `silent` | FALSE | suppress output to screen
 `domains` | NULL | optional vector of GO-domains (if NULL all 3 domains are analyzed)
-`orgDb`| NULL | *OrgDb* package for GO-annotations (overrides `organismDb`)
-`txDb`| NULL | *TxDb* package for gene-coordinates (overrides `organismDb`)
+`orgDb`| NULL | optional *OrgDb* package for GO-annotations (overrides `organismDb`)
+`txDb`| NULL | optional *TxDb* package for gene-coordinates (overrides `organismDb`)
+`annotations`| NULL | optional dataframe with GO-annoations (overrides `organismDb` and `orgDb`)
+`godir`| NULL | optional directory with ontology graph tables to use instead of the integrated GO-graph 
 
 
 # Examples of GO-enrichment analyses for human genes   
@@ -73,7 +75,7 @@ parameter | default | description
 ## Install annotation package
 `GOfuncR` uses external packages to obtain the GO-annotations and gene-coordinates.
 In the examples we will use the default `r Biocpkg('Homo.sapiens')` package.
-See [below](#other_db) for examples how to use other packages.
+See below for examples how to use [other packages](#other_db) or provide [custom annoations](#cu_anno).
 
 ```{r, eval=FALSE}
 ## install annotation package 'Homo.sapiens' from bioconductor
@@ -370,9 +372,12 @@ res_region_hg38 = go_enrich(input_regions, regions=TRUE,
 
 Note that using *TxDb* packages always requires defining an *OrgDb* package for the annotations. 
 
+
+<a name='cu_anno'></a>
+
 ## Custom annotations
 
-Besides using bioconductor's annotation packages for the mapping of genes to GO-categories, it is also possible to provide the annotations directly as a dataframe wit two columns: (1) genes and (2) GO-IDs.
+Besides using bioconductor's annotation packages for the mapping of genes to GO-categories, it is also possible to provide the annotations directly as a dataframe with two columns: (1) genes and (2) GO-IDs (parameter `annotations`).
 
 ```{r,echo=FALSE}
 custom_anno = get_anno_categories(input_hyper_bg[,1])
@@ -385,10 +390,6 @@ rownames(custom_anno) = 1:nrow(custom_anno)
 head(custom_anno)
 ```
 ```{r,eval=FALSE} 
-## prepare some candidate genes input
-gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1',
-    'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-input_hyper = data.frame(gene_ids, is_candidate=1)
 ## run enrichment with custom annotations
 res_hyper_anno = go_enrich(input_hyper, annotations=custom_anno)
 
@@ -401,10 +402,10 @@ A default GO-graph (obtained from [geneontology](http://archive.geneontology.org
 However, also a custom GO-graph, e.g. a specific version or a different ontology can be provided. `go_enrich` needs a directory which contains three tab-separated files in the GO MySQL Database Schema:
 [term.txt](http://www.geneontology.org/page/go-mysql-database-schema#go-graph.table.term),
 [term2term.txt](http://www.geneontology.org/page/go-mysql-database-schema#go-graph.table.term2term) and
-[graph_path.txt](http://www.geneontology.org/GO.database.schema.shtml#go-optimisations.table.graph-path).  
-Specific versions of the GO-graph can be downloaded from [http://archive.geneontology.org/termdb/].
+[graph_path.txt](http://www.geneontology.org/GO.database.schema.shtml#go-optimisations.table.graph-path). The full path to this directory needs to be defined in the parameter `godir`.  
+Specific versions of the GO-graph can be downloaded from http://archive.geneontology.org/termdb/.
 For example, to use the GO-graph from 2018-03-30, download and unpack the files from 
-[http://archive.geneontology.org/termdb/2018-03-30/go_daily-termdb-tables.tar.gz].
+http://archive.geneontology.org/termdb/2018-03-30/go_daily-termdb-tables.tar.gz.
 Assume the files were saved in `/home/user/go_graphs/2018-03-30/`. This directory now contains the needed files `term.txt`, `term2term.txt` and `graph_path.txt` and can be used in `go_enrich`:
 
 ```{r,eval=FALSE} 
@@ -603,9 +604,9 @@ sessionInfo()
 
 # References
 
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25-29. [doi:10.1038/75556]
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25-29. doi:10.1038/75556
 
 [2] Pruefer, K. et al. (2007). FUNC: A package for detecting significant associations between gene
-sets and ontological annotations, BMC Bioinformatics 8: 41. [doi:10.1186/1471-2105-8-41]
+sets and ontological annotations, BMC Bioinformatics 8: 41. doi:10.1186/1471-2105-8-41
 
-[3] McDonald, J. H. Kreitman, M. (1991). Adaptive protein evolution at the Adh locus in Drosophila, Nature 351: 652-654. [doi:10.1038/351652a0]
+[3] McDonald, J. H. Kreitman, M. (1991). Adaptive protein evolution at the Adh locus in Drosophila, Nature 351: 652-654. doi:10.1038/351652a0
