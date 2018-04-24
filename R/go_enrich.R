@@ -2,7 +2,7 @@
 # run "FUNC" with integrated GO-graph and GO-annotations from OrganismDb or OrgDb packages
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL, godir=NULL)
+go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL, annotations=NULL, godir=NULL)
 {
     
     #####   1. Check arguments and define parameters
@@ -98,37 +98,37 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         stop("Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
     }
     
-    # if orgDb is defined use that one instead of default organismDb
-    if (!is.null(orgDb)){
-        anno_db = orgDb
-    } else {
-        anno_db = organismDb
-    }
-    databases = data.frame(type="go_annotations", db=anno_db, version=packageVersion(anno_db), stringsAsFactors=FALSE)
-    # check if blocks or gene-len; warn that if orgDb is defined, also TxDb has to be defined
-    if (regions || gene_len){
-        if (!is.null(orgDb) & is.null(txDb)){
-            stop("Please provide a 'txDb' object from bioconductor (if 'orgDb' is defined for GO-annotations, then 'txDb' is used for gene-coordinates).")
-        }
-        if (!is.null(txDb)){
-            coord_db = txDb
-        } else {
-            coord_db = organismDb
-        }
-        databases = rbind(databases, list("gene_coordinates", coord_db, packageVersion(coord_db)))
-    } else {
-        coord_db = NULL
-    }   
-
     
-    
+    # GO-graph
     # Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
     directory = tempfile()
-#   dir.create("tempdir"); directory = paste("./tempdir/tempfile",Sys.info()["nodename"],sep="_")
-
-
-
-    #####   2. Prepare for FUNC 
+    # unless custom GO defined, write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
+    if (is.null(godir)){
+        if (!silent) message("Write temporary files...")
+        go_paths = paste0(directory, c("_term.txt", "_term2term.txt", "_graph_path.txt"))
+        write.table(term, go_paths[1], col.names=FALSE, row.names=FALSE, quote=FALSE,sep="\t")
+        write.table(term2term, go_paths[2], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+        write.table(graph_path, go_paths[3], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+    } else {
+        go_paths = paste0(godir, c("/term.txt", "/term2term.txt", "/graph_path.txt"))
+        term = read.table(go_paths[1], sep="\t", quote="", comment.char="", as.is=TRUE)
+    }
+    # check that all root nodes in term
+    root_node_ids = term[match(root_nodes, term[,2]),4]
+    if (!(is.null(godir)) && any(is.na(root_node_ids))){
+        stop("Not all domains present in term.txt \n If the custom ontology has other domains than 'molecular_function', 'biological_process' and 'cellular_component', they have to be defined in the 'domains' parameter.")
+    }
+    
+    
+    # get table of go-graph, anno_db, coord_db, and versions ("custom" for local files)
+    databases = eval_db_input(organismDb, godir, orgDb, annotations, txDb, regions, gene_len)
+    
+    
+    
+    #####   2. Prepare for FUNC
+    
+    anno_db = databases[databases[,1] == "go_annotations", 2]
+    coord_db = databases[databases[,1] == "gene_coordinates", 2] # might be NA
 
     # convert genomic regions to single genes (also check them and write to file for C++)
     if (regions){
@@ -138,12 +138,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         gene_coords = block_info[[2]]
     }
     ### get GO-annotations
-    if (!silent) message("get GOs for genes using database '", anno_db,"'...")
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
-        go_anno = suppressMessages(get_anno_categories(database=anno_db)) # suppress get-GOs-message
+        go_anno = get_anno_categories(database=anno_db, annotations=annotations, termdf=term, silent=silent)
     } else {
-        go_anno = suppressMessages(get_anno_categories(genes[,1], anno_db))
+        go_anno = get_anno_categories(genes[,1], database=anno_db, annotations=annotations, termdf=term, silent=silent)
     }
     # subset genes to annotated genes (also reduced to internal ontology)
     if (!silent) message("Remove invalid genes...")
@@ -195,30 +194,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
             stop("Less than 2 genes have annotated GO-categories.")
         }
     }
-   
-    # unless custom GO defined, write ontolgy-graph tables to tmp-directory (included in sysdata.rda)
-    if (is.null(godir)){
-        if (!silent) message("Write temporary files...")
-        go_paths = paste0(directory, c("_term.txt", "_term2term.txt", "_graph_path.txt"))
-        write.table(term, go_paths[1], col.names=FALSE, row.names=FALSE, quote=FALSE,sep="\t")
-        write.table(term2term, go_paths[2], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-        write.table(graph_path, go_paths[3], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-    } else {
-        go_paths = paste0(godir, c("/term.txt", "/term2term.txt", "/graph_path.txt"))
-        term = read.table(go_paths[1], sep="\t", quote="", comment.char="", as.is=TRUE)
-    }
-
-    # check that all root nodes in term
-    root_node_ids = term[match(root_nodes, term[,2]),4]
-    if (!(is.null(godir)) && any(is.na(root_node_ids))){
-       stop("Not all domains present in term.txt \n If the custom ontology has other domains than 'molecular_function', 'biological_process' and 'cellular_component', they have to be defined in the 'domains' parameter.")
-    }
-
-
+    
+    
     #####   3. Loop over GO root-nodes and run FUNC
-
+    
     out = list()
-
+    
     for (r in seq_along(root_nodes)){
         root_node = root_nodes[r]
         root_id = root_node_ids[r]

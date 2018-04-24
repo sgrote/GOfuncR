@@ -1,4 +1,56 @@
 
+# input: some arguments provided to go_enrich
+# output: database data.frame with type, db, version for GO-graph, GO-annotations, and gene-coords
+eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, gene_len){
+    
+    # annotation, coord databases/files
+    # TODO: allow custom gene-length file
+    if (regions || gene_len){
+        if (!is.null(txDb) && is.null(orgDb)){
+            stop("Please provide an 'orgDb' package for annotations and/or Entrez-ID to gene-symbol conversion. go_enrich() uses either 'OrganismDb' or 'orgDb' + 'txDb'.")
+        }
+        if (!is.null(orgDb) && is.null(txDb)){
+            stop("Please provide a 'txDb' object from bioconductor (if 'orgDb' is defined for GO-annotations, then 'txDb' is used for gene-coordinates).")
+        }
+    }
+
+    # if orgDb/annotations is defined use that one instead of default organismDb
+    if (!is.null(annotations)){
+        anno_db = "custom"
+        version = "custom"
+    } else if (!is.null(orgDb)){
+        anno_db = orgDb
+        version = as.character(packageVersion(anno_db))
+    } else {
+        anno_db = organismDb
+        version = as.character(packageVersion(anno_db))
+    }
+    databases = data.frame(type="go_annotations", db=anno_db, version=version, stringsAsFactors=FALSE)
+    
+    # check if blocks or gene-len
+    if (regions || gene_len){
+        if (!is.null(txDb)){
+            coord_db = txDb
+        } else {
+            coord_db = organismDb
+        }
+        version = as.character(packageVersion(coord_db))
+        databases = rbind(databases, list("gene_coordinates", coord_db, version))
+    } else {
+        coord_db = NULL
+    }
+
+    # GO-graph
+    if (is.null(godir)){
+        databases = rbind(databases, list("go_graph", "integrated", "10-Apr-2018"))
+    } else {
+        databases = rbind(databases, list("go_graph", "custom", godir))
+    }
+
+    return(databases)
+}
+
+
 # load database
 load_db = function(db, silent=FALSE){
     if (!silent){

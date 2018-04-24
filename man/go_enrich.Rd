@@ -14,7 +14,8 @@ The enrichment analysis is then performed for all genes located in or overlappin
 
 \usage{
 go_enrich(genes, test = 'hyper', n_randsets = 1000, organismDb = 'Homo.sapiens', gene_len = FALSE,
-    regions = FALSE, circ_chrom = FALSE, silent = FALSE, domains = NULL, orgDb = NULL, txDb = NULL)
+    regions = FALSE, circ_chrom = FALSE, silent = FALSE, domains = NULL, orgDb = NULL,
+    txDb = NULL, annotations = NULL,  godir = NULL)
 }
 
 \arguments{
@@ -30,45 +31,61 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 }
 
 \item{test}{
-character(). 'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
+    character(). 'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
 }
 
 \item{n_randsets}{
-integer defining the number of random sets created to compute the FWER.
+    integer defining the number of random sets created to compute the FWER.
 }  
 
 \item{organismDb}{
-character(). Annotation package for GO-annotations and gene coordinates.
-Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
+    character(). Annotation package for GO-annotations and gene coordinates.
+    Besides the default 'Homo.sapiens' also 'Mus.musculus' and 'Rattus.norvegicus' are currently available on Bioconductor.
 }
 
 \item{gene_len}{
-logical. If \code{test='hyper'} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. 
+    logical. If \code{test='hyper'} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. 
 }
 
 \item{regions}{
-logical. When TRUE chromosomal regions are analysed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
+    logical. When TRUE chromosomal regions are analysed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
 }
 
 \item{circ_chrom}{
-logical. When \code{genes} defines chromosomal regions, \code{circ_chrom=TRUE} uses background regions from the same chromosome and allows randomly chosen blocks to overlap multiple background regions. Only if \code{test='hyper'}.
+    logical. When \code{genes} defines chromosomal regions, \code{circ_chrom=TRUE} uses background regions from the same chromosome and allows randomly chosen blocks to overlap multiple background regions. Only if \code{test='hyper'}.
 }
 
 \item{silent}{
-logical. If TRUE all output to the screen except for warnings and errors is suppressed.
+    logical. If TRUE all output to the screen except for warnings and errors is suppressed.
 }
 
 \item{domains}{
-optional character() vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
+    optional character() vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
 }
 
 \item{orgDb}{
-optional character() naming an OrgDb annotation package from Bioconductor. If \code{orgDb} is set, \code{organismDb} is not used. OrgDb annotations are available for a wider range of species, e.g. 'org.Pt.eg.db' for chimp and 'org.Gg.eg.db' for chicken. Note that options \code{gene_len} and \code{regions} also need a \code{txDb} for the gene coordinates (which are integrated in OrganismDb).
+    optional character() naming an OrgDb annotation package from Bioconductor. If \code{orgDb} is set, \code{organismDb} is not used. OrgDb annotations are available for a wider range of species, e.g. 'org.Pt.eg.db' for chimp and 'org.Gg.eg.db' for chicken. Note that options \code{gene_len} and \code{regions} also need a \code{txDb} for the gene coordinates (which are integrated in OrganismDb).
 }
 
 \item{txDb}{
-optional character() naming an TxDb annotation package from Bioconductor (e.g. 'TxDb.Ptroglodytes.UCSC.panTro4.refGene') for the gene coordinates. Only needed when \code{orgDb} is specified, and options \code{gene_len} or \code{regions} are set.
+    optional character() naming an TxDb annotation package from Bioconductor (e.g. 'TxDb.Ptroglodytes.UCSC.panTro4.refGene') for the gene coordinates.
+    Only needed when \code{orgDb} is specified, and options \code{gene_len} or \code{regions} are set.
+    Note that \code{orgDb} is needed whenever \code{txDb} is defined, even when custom \code{annotations} are provided, because the \code{orgDb} package is used for Entrez-ID to gene-symbol conversions.
 }
+
+\item{annotations}{
+    optional data.frame() for custom annotations, with two columns: (1) gene-symbols and (2) GO-categories.
+    Note that options \code{gene_len} and \code{regions} also need an \code{organismDb} or \code{txDb} + \code{orgDb}.
+    
+}
+
+\item{godir}{
+    optional directory (string) that contains a custom GO-graph
+    (files 'term.txt', 'term2term.txt' and 'graph_path.txt')
+    Alternative to the default integrated GO-graph.
+    For details please refer to the package's vignette.
+}
+
 
 }
 
@@ -84,7 +101,7 @@ This table contains the combined results for all three ontology domains. Note th
 \item{genes}{
 the input \code{genes} data.frame(), excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}
 \item{databases}{
-a data.frame() with the annotation packages used.}
+a data.frame() with the used annotation packages and GO-graph.}
 }
 
 \references{

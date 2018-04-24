@@ -25,8 +25,9 @@ test_that("hyper_defined_bg works fine",{
 	expect_true(res_hyper_bg[[1]][1,"raw_p_overrep"] < 0.5)
 	expect_true(setequal(root_names, unique(res_hyper_bg[[1]][,1])))
 	expect_true(setequal(res_hyper_bg[[2]][,2], c(0, 1)))
-	expect_true(nrow(res_hyper_bg[[3]]) == 1)
+	expect_true(nrow(res_hyper_bg[[3]]) == 2)
 	expect_equivalent(res_hyper_bg[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
+	expect_equivalent(res_hyper_bg[[3]][2,1:2], c("go_graph","integrated"))
 })
 
 # gene-len
@@ -60,6 +61,8 @@ test_that("hyper_regions works fine",{
 	expect_true(setequal(res_region[[2]][,2], c(0, 1)))
 	expect_equivalent(res_region[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 	expect_equivalent(res_region[[3]][2,1:2], c("gene_coordinates","Homo.sapiens"))
+	expect_equivalent(res_region[[3]][3,1:2], c("go_graph","integrated"))
+
 })
 
 
@@ -77,6 +80,7 @@ test_that("hyper_regions_circ works fine",{
 	expect_true(setequal(res_circ[[2]][,2], c(0, 1)))
 	expect_equivalent(res_circ[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 	expect_equivalent(res_circ[[3]][2,1:2], c("gene_coordinates","Homo.sapiens"))
+	expect_equivalent(res_circ[[3]][3,1:2], c("go_graph","integrated"))
 })
 
 ## willi
@@ -94,7 +98,7 @@ test_that("wilcox works fine",{
 	expect_true(res_willi[[1]][1,"raw_p_high_rank"] < 0.05)
 	expect_true(setequal(root_names, unique(res_willi[[1]][,1])))
 	expect_true(all(res_willi[[2]][,2] %in% gene_scores)) # only score for QUATSCH is missing 
-	expect_true(nrow(res_willi[[3]]) == 1)
+	expect_true(nrow(res_willi[[3]]) == 2)
 	expect_equivalent(res_willi[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 })
 
@@ -116,7 +120,7 @@ test_that("binom works fine",{
 	expect_true(setequal(root_names, unique(res_binom[[1]][,1])))
 	expect_true(all(res_binom[[2]][,2] %in% A_counts)) 
 	expect_true(all(res_binom[[2]][,3] %in% B_counts)) 
-	expect_true(nrow(res_binom[[3]]) == 1)
+	expect_true(nrow(res_binom[[3]]) == 2)
 	expect_equivalent(res_binom[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
 })
 
@@ -142,6 +146,8 @@ test_that("conti works fine",{
 	expect_true(all(res_conti[[2]][,3] %in% subs_syn)) 
 	expect_true(all(res_conti[[2]][,4] %in% vari_non_syn)) 
 	expect_true(all(res_conti[[2]][,5] %in% vari_syn)) 
-	expect_true(nrow(res_conti[[3]]) == 1)
+	expect_true(nrow(res_conti[[3]]) == 2)
 	expect_equivalent(res_conti[[3]][1,1:2], c("go_annotations","Homo.sapiens"))
+	expect_equivalent(res_conti[[3]][2,1:2], c("go_graph","integrated"))
+
 })

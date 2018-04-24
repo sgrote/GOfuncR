@@ -68,7 +68,7 @@ parameter | default | description
 `txDb`| NULL | *TxDb* package for gene-coordinates (overrides `organismDb`)
 
 
-# Examples   
+# Examples of GO-enrichment analyses for human genes   
 
 ## Install annotation package
 `GOfuncR` uses external packages to obtain the GO-annotations and gene-coordinates.
@@ -96,8 +96,7 @@ library(GOfuncR)
 ## create input dataframe with candidate genes
 gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1',
     'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
-is_candidate = rep(1, length(gene_ids))
-input_hyper = data.frame(gene_ids, is_candidate)
+input_hyper = data.frame(gene_ids, is_candidate=1)
 input_hyper
 ```
 
@@ -106,7 +105,7 @@ This dataframe is the only mandatory input for `go_enrich`, however to lower com
 ```{r, results='hide'} 
 ## run enrichment analysis (n_randets=100 lowers compuation time
 ## compared to default 1000)
-res_hyper = go_enrich(input_hyper, n_randset=100) 
+res_hyper = go_enrich(input_hyper, n_randset=100)
 ```
 
 The output of `go_enrich` is a list of 3 elements: 
@@ -120,12 +119,12 @@ head(stats)
 ## top GO-categories per domain
 by(stats, stats$ontology, head, n=3)
 ```
-The second element is a dataframe with all valid input genes and the third element states the reference genome for the annotations:
+The second element is a dataframe with all valid input genes, and the third element states the reference genome for the annotations and the version of the GO-graph:
 
 ```{r}
 ## all valid input genes
 head(res_hyper[[2]])
-## annotation package used (default='Homo.sapiens')
+## annotation package used (default='Homo.sapiens') and GO-graph version
 res_hyper[[3]]
 ```
 
@@ -304,9 +303,12 @@ head(res_conti[[1]])
 Depending on the counts for each GO-category a Chi-square or Fisher's exact test is performed.
 Note that this is the only test that is not dependent on the distribution of the gene-associated variables in the root nodes.
 
+
+# Enrichment analyses with different annotations or ontologies
+
 <a name='other_db'></a>
 
-## Test for enrichment using other annotation packages
+## Other annotation packages
 
 Annotation package types suggested for `GOfuncR`:
 
@@ -318,15 +320,14 @@ annotation package | information used in `GOfuncR`
 
 The default annotation package used by `GOfuncR` is bioconductor's *OrganismDb* package `r Biocpkg('Homo.sapiens')`, which contains GO-annotations as well as gene-coordinates.
 There are currently also *OrganismDb* packages available for mouse (`r Biocpkg('Mus.musculus')`) and rat (`r Biocpkg('Rattus.norvegicus')`).  
-After installing those packages they can be used in `go_enrich`:
+After installation those packages can be used in `go_enrich`:
 
 ```{r, eval=FALSE}
 ## perform enrichment analysis for mouse genes
 ## ('Mus.musculus' has to be installed)
 mouse_gene_ids = c('Gck', 'Gys1', 'Hk2', 'Pygl', 'Slc2a8', 'Ugp2', 'Zwint',
     'Engase')
-is_candidate = rep(1, length(mouse_gene_ids))
-input_hyper_mouse = data.frame(mouse_gene_ids, is_candidate)
+input_hyper_mouse = data.frame(mouse_gene_ids, is_candidate=1)
 res_hyper_mouse = go_enrich(input_hyper_mouse, organismDb='Mus.musculus')
 
 ```
@@ -340,8 +341,7 @@ These packages have the advantage that they are available for a broader range of
 ## ('org.Pt.eg.db' has to be installed)
 chimp_gene_ids = c('SIAH1', 'MIIP', 'ELP3', 'CFB', 'ADARB1', 'TRNT1',
     'DEFB124', 'OR1A1', 'TYR', 'HOXA7')
-is_candidate = rep(1, length(chimp_gene_ids))
-input_hyper_chimp = data.frame(chimp_gene_ids, is_candidate)
+input_hyper_chimp = data.frame(chimp_gene_ids, is_candidate=1)
 res_hyper_chimp = go_enrich(input_hyper_chimp, orgDb='org.Pt.eg.db')
 
 ```
@@ -357,17 +357,64 @@ res_hyper_chimp_genelen = go_enrich(input_hyper_chimp, gene_len=TRUE,
 
 ```
 
-It is also possible to use a *TxDb* package for the gene-coordinates in combination with an *OrganismDb* package for the GO-annotations.
-For example, instead of the default *hg19*, we could use the *hg38* gene-coordinates from `r Biocpkg('TxDb.Hsapiens.UCSC.hg38.knownGene')` for an enrichment analysis of genomic regions, and still use the GO-annotations from the default `r Biocpkg('Homo.sapiens')` package:
+*OrgDb* + *TxDb* packages can also be useful even if there is an *OrganismDb* package available, for example to use a different reference genome. Here we use the *hg38* gene-coordinates from `r Biocpkg('TxDb.Hsapiens.UCSC.hg38.knownGene')` instead of the default *hg19* from the *OrganismDb* package `r Biocpkg('Homo.sapiens')`.
+
 
 ```{r,eval=FALSE} 
 ## run GO-enrichment analysis for genes in the candidate region
 ## using hg38 gene-coordinates
-## ('TxDb.Hsapiens.UCSC.hg38.knownGene' has to be installed)
+## (needs 'org.Hs.eg.db' and 'TxDb.Hsapiens.UCSC.hg38.knownGene' installed)
 res_region_hg38 = go_enrich(input_regions, regions=TRUE,
-    txDb='TxDb.Hsapiens.UCSC.hg38.knownGene')
+    orgDb='org.Hs.eg.db', txDb='TxDb.Hsapiens.UCSC.hg38.knownGene')
 ```
 
+Note that using *TxDb* packages always requires defining an *OrgDb* package for the annotations. 
+
+## Custom annotations
+
+Besides using bioconductor's annotation packages for the mapping of genes to GO-categories, it is also possible to provide the annotations directly as a dataframe wit two columns: (1) genes and (2) GO-IDs.
+
+```{r,echo=FALSE}
+custom_anno = get_anno_categories(input_hyper_bg[,1])
+# to have several genes in head
+custom_anno = custom_anno[6:nrow(custom_anno),]
+rownames(custom_anno) = 1:nrow(custom_anno)
+```
+```{r}
+## example for a dataframe with custom annotations
+head(custom_anno)
+```
+```{r,eval=FALSE} 
+## prepare some candidate genes input
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1',
+    'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+input_hyper = data.frame(gene_ids, is_candidate=1)
+## run enrichment with custom annotations
+res_hyper_anno = go_enrich(input_hyper, annotations=custom_anno)
+
+```
+
+
+## Custom GO-graph
+
+A default GO-graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 2018-04-10), is integrated in the package.
+However, also a custom GO-graph, e.g. a specific version or a different ontology can be provided. `go_enrich` needs a directory which contains three tab-separated files in the GO MySQL Database Schema:
+[term.txt](http://www.geneontology.org/page/go-mysql-database-schema#go-graph.table.term),
+[term2term.txt](http://www.geneontology.org/page/go-mysql-database-schema#go-graph.table.term2term) and
+[graph_path.txt](http://www.geneontology.org/GO.database.schema.shtml#go-optimisations.table.graph-path).  
+Specific versions of the GO-graph can be downloaded from [http://archive.geneontology.org/termdb/].
+For example, to use the GO-graph from 2018-03-30, download and unpack the files from 
+[http://archive.geneontology.org/termdb/2018-03-30/go_daily-termdb-tables.tar.gz].
+Assume the files were saved in `/home/user/go_graphs/2018-03-30/`. This directory now contains the needed files `term.txt`, `term2term.txt` and `graph_path.txt` and can be used in `go_enrich`:
+
+```{r,eval=FALSE} 
+## run enrichment with custom GO-graph
+go_path = '/home/user/go_graphs/2018-03-30/'
+res_hyper = go_enrich(input_hyper, godir=go_path)
+
+```
+
+# Additional functionalities
 
 <a name='plot_anno'></a>
 
