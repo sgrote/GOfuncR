@@ -80,14 +80,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     if (!is.logical(circ_chrom)){
         stop("Please set circ_chrom to TRUE or FALSE.")
     }
-    
-    root_nodes = c("molecular_function","biological_process","cellular_component")
-    if (!is.null(domains)){
-        if (!(all(domains %in% root_nodes)) && is.null(godir)){
-            stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
-        }
-        root_nodes = domains
-    }
     if (gene_len & !(test == "hyper")){
         stop("Argument 'gene_len = TRUE' can only be used with 'test = 'hyper''.")
     }
@@ -113,17 +105,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         go_paths = paste0(godir, c("/term.txt", "/term2term.txt", "/graph_path.txt"))
         term = read.table(go_paths[1], sep="\t", quote="", comment.char="", as.is=TRUE)
     }
-    # check that all root nodes in term
-    root_node_ids = term[match(root_nodes, term[,2]),4]
-    if (!(is.null(godir)) && any(is.na(root_node_ids))){
-        stop("Not all domains present in term.txt \n If the custom ontology has other domains than 'molecular_function', 'biological_process' and 'cellular_component', they have to be defined in the 'domains' parameter.")
-    }
-    
     
     # get table of go-graph, anno_db, coord_db, and versions ("custom" for local files)
     databases = eval_db_input(organismDb, godir, orgDb, annotations, txDb, regions, gene_len)
     
-    
+
     
     #####   2. Prepare for FUNC
     
@@ -144,6 +130,26 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     } else {
         go_anno = get_anno_categories(genes[,1], database=anno_db, annotations=annotations, term_df=term, silent=silent)
     }
+    
+    ### get root-nodes from annotations + term 
+    # (custom ontology with different root_nodes does not need to be defined in 'domains')
+    root_nodes = sort(unique(term[term[,4] %in% go_anno[,2],3]))
+    # remove empty root node (very few cases)
+    root_nodes = root_nodes[root_nodes != ""]
+    if (!silent) message("Found root_nodes: ", paste(root_nodes, collapse=", "))
+    if (!is.null(domains)){
+        if (!(all(domains %in% root_nodes))){
+            stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
+        }
+        root_nodes = domains
+    }
+    
+    # check that all root nodes in term
+    root_node_ids = term[match(root_nodes, term[,2]),4]
+    if (!(is.null(godir)) && any(is.na(root_node_ids))){
+        stop("Not all domains present in term.txt \n If the custom ontology has other domains than 'molecular_function', 'biological_process' and 'cellular_component', they have to be defined in the 'domains' parameter.")
+    }
+    
     # subset genes to annotated genes (also reduced to internal ontology)
     if (!silent) message("Remove invalid genes...")
     gene_values = genes[genes[,1] %in% go_anno[,1],] # restrict
