@@ -5,7 +5,7 @@ Plot distribution of scores of genes annotated to GO-categories
 }
 \description{
 Uses the result of a GO-enrichment analysis performed with \code{\link{go_enrich}} and a vector of GO-IDs and plots for each of these GO-IDs the scores of the annotated genes. This refers to the scores that were provided as user-input in the \code{\link{go_enrich}} analysis.\cr
-\code{plot_anno_scores} works with all four tests implemented in \code{\link{go_enrich}} (hypergeometric, wilcoxon rank-sum, binomial and 2x2 contingency table test), with test-specific output (see details).
+\code{plot_anno_scores} works with all four tests implemented in \code{\link{go_enrich}} (hypergeometric, Wilcoxon rank-sum, binomial and 2x2 contingency table test), with test-specific output (see details).
 }
 
 \usage{
@@ -20,8 +20,10 @@ plot_anno_scores(res, go_ids, annotations = NULL)
         This specifies the GO-categories that are plotted.
     }
     \item{annotations}{
-        optional data.frame() for custom annotations, with two columns: (1) gene-symbols and (2) GO-categories.
-        This is needed if \code{\link{go_enrich}} was run with custom `annotations` to generate `res`
+        optional data.frame() for custom annotations, with two character() columns:
+        (1) gene-symbols and (2) GO-categories.
+        This is needed if \code{\link{go_enrich}} was run with
+        custom \code{annotations} to generate \code{res}, too.
     }
 }
 
@@ -30,7 +32,7 @@ The plot depends on the statistical test that was specified in the \code{\link{g
 
 For the hypergeometric test pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node). The top panel shows the odds-ratio and 95\%-CI from fisher's exact test (two-sided) comparing the GO-categories with their root nodes. Note that \code{\link{go_enrich}} reports the the hypergeometric test for over- and under-representation of candidate genes wich correspond to the one-sided fisher's exact tests.
 
-For the wilcoxon rank-sum test violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes. Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes. The wilcoxon rank-sum test reported in the \code{\link{go_enrich}} result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
+For the Wilcoxon rank-sum test violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes. Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes. The Wilcoxon rank-sum test reported in the \code{\link{go_enrich}} result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
 
 For the binomial test pie charts show the amounts of A and B counts associated with each GO-category and root node, (A in the colour of the corresponding root node). The top-panel shows point estimates and the 95\%-CI of p(A) in the nodes, as well as horizontal lines that correspond to p(A) in the root nodes. The p-value in the returned object is based on the null hypothesis that p(A) in a node equals p(A) in the corresponding root node. Note that \code{\link{go_enrich}} reports that value for one-sided binomial tests.
 
@@ -39,7 +41,7 @@ For the 2x2 contingency table test pie charts show the proportions of A and B, a
 
 \value{
 For the hypergeometric, binomial and 2x2 contingency table test, a data.frame() with the statistics that are used in the plots.\cr
-For the wilcoxon rank-sum test no statistical results are plotted, just the distribution of annotated scores. The returned element in this case is a list() with three data frames: annotations of genes to the GO-categories, annotations of genes to the root nodes and a table which contains for every GO-ID the corresponding root node.
+For the Wilcoxon rank-sum test no statistical results are plotted, just the distribution of annotated scores. The returned element in this case is a list() with three data frames: annotations of genes to the GO-categories, annotations of genes to the root nodes and a table which contains for every GO-ID the corresponding root node.
 }
 
 \author{
@@ -54,7 +56,7 @@ Steffi Grote
 }
 
 \examples{ 
-#### see the package vignette for more examples
+#### see the package's vignette for more examples
 
 #### Note that argument 'n_randsets' is reduced 
 #### to lower computational time in the example.

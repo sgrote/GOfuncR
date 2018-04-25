@@ -14,11 +14,12 @@ Returns GO-categories given (part of) their name. Matching is not case-sensitive
         character(). (partial) name of a GO-category 
     }
     \item{term_df}{
-        optional data.frame() with at an ontology 'term' table.
+        optional data.frame() with an ontology 'term' table.
         Alternative to the default integrated GO-graph or \code{godir}.
     }
     \item{godir}{
-        optional directory (string) that contains 'term.txt' table.
+        optional character() specifying a directory that
+        contains the ontology table 'term.txt'.
         Alternative to the default integrated GO-graph or \code{term_df}.
     }
 }
@@ -59,7 +60,7 @@ get_ids('gabaergic')
 ## get GO-IDs of categories that contain 'blood-brain barrier' in their names
 get_ids('blood-brain barrier')
 
-## get all valid GO categories
+## get all valid GO-categories
 all_nodes = get_ids('')
 head(all_nodes)
 }

@@ -4,12 +4,9 @@
 Test gene sets for enrichment in GO-categories
 }
 \description{
-Tests all GO-categories from the three domains 'biological process', 'cellular component' and 'molecular function' for enrichment of user defined gene sets [1]. Human GO-annotations are used by default (from OrganismDb package 'Homo.sapiens'), but also other OrganismDb or OrgDb packages can be used. \cr
-The statistical analysis is based on the ontology enrichment software FUNC [2].
-\code{go_enrich} offers four different statistical tests: (1) the hypergeometric test for a candidate and a background gene set; (2) the wilcoxon rank-sum test for genes that are ranked by scores (e.g. p-value for differential expression); (3) the binomial test for genes that have two associated counts (e.g. amino-acid changes on the human and the chimp lineage); and (4) a 2x2-contingency table test for genes that have four associated counts (e.g. for a McDonald-Kreitman test).\cr
-To account for multiple testing family-wise error rates are computed using randomsets.
-Besides naming candidate genes explicitly, for the hypergeometric test it is also possible to provide entire genomic regions as input.
-The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes.
+Tests GO-categories for enrichment of user defined gene sets, using either the hypergeometric (default), 
+Wilcoxon rank-sum, binomial or 2x2 contingency table test.
+
 }
 
 \usage{
@@ -22,20 +19,22 @@ go_enrich(genes, test = 'hyper', n_randsets = 1000, organismDb = 'Homo.sapiens',
 
 \item{genes}{
 a data.frame() with gene-symbols (character()) in the first column and test-dependent additional numeric() columns:\cr
-If \code{test='hyper'} (default) a second column with 1 for candidate genes and 0 for background genes.
-If no background genes are defined, all remaining genes from the internal dataset are used as background.\cr
+If \code{test='hyper'} (default) a second column with 1 for candidate genes and 0 for background genes. 
+If no background genes are defined, all remaining genes from the internal dataset are used as background.
+All candidate genes are implicitly part of the background gene set.\cr
 If \code{test='wilcoxon'} a second column with the score that is associated with each gene.\cr
 If \code{test='binomial'} two additional columns with two gene-associated integers.\cr
 If \code{test='contingency'} four additional columns with four gene-associated integers.\cr
-For \code{test='hyper'} with \code{regions=TRUE} the first column describes chromosomal regions ('chr:start-stop', e.g. '9:0-39200000').
+For \code{test='hyper'} with \code{regions=TRUE} the first column describes chromosomal regions ('chr:start-stop', e.g. '9:0-39200000').\cr
+Note that each gene has to be unique in the data.frame; e.g. for \code{test='wilcoxon'} a gene cannot have two different scores assigned.
 }
 
 \item{test}{
-    character(). 'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
+    character(). 'hyper' (default) for the hypergeometric test, 'wilcoxon' for the Wilcoxon rank-sum test, 'binomial' for the binomial test and 'contingency' for the 2x2-contingency table test (fisher's exact test or chi-square).
 }
 
 \item{n_randsets}{
-    integer defining the number of random sets created to compute the FWER.
+    integer defining the number of random sets for computing the FWER.
 }  
 
 \item{organismDb}{
@@ -44,11 +43,11 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 }
 
 \item{gene_len}{
-    logical. If \code{test='hyper'} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. 
+    logical. If \code{TRUE} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. If \code{FALSE} genes are chosen randomly with equal probability each. Only for \code{test='hyper'}.
 }
 
 \item{regions}{
-    logical. When TRUE chromosomal regions are analysed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
+    logical. If \code{TRUE} chromosomal regions are analysed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
 }
 
 \item{circ_chrom}{
@@ -56,11 +55,13 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 }
 
 \item{silent}{
-    logical. If TRUE all output to the screen except for warnings and errors is suppressed.
+    logical. If \code{TRUE} all output to the screen except for warnings and errors is suppressed.
 }
 
 \item{domains}{
-    optional character() vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'. If defined, the analysis will be reduced to those domains which saves time.
+    optional character() vector containing one or more of the three GO-domains 'cellular_component', 'biological_process' and 'molecular_function'.
+    If defined, the analysis will be reduced to those domains which saves time.\ cr
+    If a custom ontology is specified in \code{godir} it might have a different domains.
 }
 
 \item{orgDb}{
@@ -74,15 +75,16 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 }
 
 \item{annotations}{
-    optional data.frame() for custom annotations, with two columns: (1) gene-symbols and (2) GO-categories.
+    optional data.frame() for custom annotations, with two character() columns:
+    (1) gene-symbols and (2) GO-categories.
     Note that options \code{gene_len} and \code{regions} also need an \code{organismDb} or \code{txDb} + \code{orgDb}.
     
 }
 
 \item{godir}{
-    optional directory (string) that contains a custom GO-graph
-    (files 'term.txt', 'term2term.txt' and 'graph_path.txt')
-    Alternative to the default integrated GO-graph.
+    optional character() specifying a directory () that contains a custom GO-graph
+    (files 'term.txt', 'term2term.txt' and 'graph_path.txt').
+    Alternative to the default integrated GO-graph.\cr
     For details please refer to the package's vignette.
 }
 
@@ -90,7 +92,19 @@ For \code{test='hyper'} with \code{regions=TRUE} the first column describes chro
 }
 
 \details{
-For details please refer to the package's vignette.
+Please also refer to the package's vignette.\cr
+GO-annotations are taken from a Bioconductor annotation package (OrganismDb package 'Homo.sapiens' by default), but also other 'OrganismDb' or 'OrgDb' packages can be used. It is also possible to provide custom annotations as a data.frame().
+
+The ontology graph is integrated, but a custom version can de defined as well with parameter 'godir'.
+As long as the ontology tables are in the right format (see link to description in vignette),
+any ontology can be used in GOfuncR, it is not restricted to the gene ontology. 
+
+The statistical analysis is based on the ontology enrichment software FUNC [2].
+\code{go_enrich} offers four different statistical tests: (1) the hypergeometric test for a candidate and a background gene set; (2) the Wilcoxon rank-sum test for genes that are ranked by scores (e.g. p-value for differential expression); (3) the binomial test for genes that have two associated counts (e.g. amino-acid changes on the human and the chimp lineage); and (4) a 2x2-contingency table test for genes that have four associated counts (e.g. for a McDonald-Kreitman test).
+
+To account for multiple testing family-wise error rates are computed using randomsets.
+Besides naming candidate genes explicitly, for the hypergeometric test it is also possible to provide entire genomic regions as input.
+The enrichment analysis is then performed for all genes located in or overlapping these regions and the multiple testing correction accounts for the spatial clustering of genes.
 }
 
 \value{

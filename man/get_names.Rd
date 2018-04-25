@@ -16,11 +16,12 @@ get_names(go_ids, term_df = NULL, godir = NULL)
         a character() vector of GO-IDs, e.g. c('GO:0051082', 'GO:0042254').
     }
     \item{term_df}{
-        optional data.frame() with at an ontology 'term' table.
+        optional data.frame() with an ontology 'term' table.
         Alternative to the default integrated GO-graph or \code{godir}.
     }
     \item{godir}{
-        optional directory (string) that contains 'term.txt' table.
+        optional character() specifying a directory that
+        contains the ontology table 'term.txt'.
         Alternative to the default integrated GO-graph or \code{term_df}.
     }
 }

@@ -29,7 +29,8 @@ It provides the standard candidate vs. background enrichment analysis using the 
 To correct for multiple testing and interdependency of the tests, family-wise error rates (FWER) are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below).
 `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
 GO-annotations and gene-coordinates are obtained from *OrganismDb* packages (`r Biocpkg('Homo.sapiens')` by default) or *OrgDb* and *TxDb* packages.
-The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 10-Apr-2018), is integrated in the package.    
+The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 10-Apr-2018), is integrated in the package.
+From version 0.99.14 on it is also possible to provide custom annotations and ontologies.  
 
 ![input data and test selection](Input_data_test_selection.png 'overview tests')
 
@@ -38,7 +39,7 @@ The gene ontology graph (obtained from [geneontology](http://archive.geneontolog
 function | description
 -------- | -----------------------------------------------------
 [go_enrich](#go_enrich) | core function for performing enrichment analyses given a candidate gene set
-[plot_anno_genes](#plot_anno) | plots distribution of scores of genes annotated to GO-categories
+[plot_anno_scores](#plot_anno) | plots distribution of scores of genes annotated to GO-categories
 [get_parent_nodes](#graph) | returns all parent-nodes of input GO-categories
 [get_child_nodes](#graph) | returns all child-nodes of input GO-categories
 [get_names](#get_names) | returns the full names of input GO-categories
@@ -57,7 +58,7 @@ parameter | default | description
 ------------- |:-------------:| -----------------------------------------------------------------------|
 `genes` | - |  a dataframe with gene-symbols or genomic regions and gene-associated variables
 `test` | 'hyper' | statistical test to use ('hyper', 'wilcoxon', 'binomial' or 'contingency')
-`n_randsets` | 1000 | number of randomsets to compute the family-wise error rate
+`n_randsets` | 1000 | number of randomsets for computing the family-wise error rate
 `organismDb`| 'Homo.sapiens' | *OrganismDb* package for GO-annotations and gene coordinates
 `gene_len` | FALSE | correct for gene length (only for `test='hyper'`)
 `regions` | FALSE | chromosomal regions as input instead of independent genes (only for `test='hyper'`)
@@ -75,7 +76,7 @@ parameter | default | description
 ## Install annotation package
 `GOfuncR` uses external packages to obtain the GO-annotations and gene-coordinates.
 In the examples we will use the default `r Biocpkg('Homo.sapiens')` package.
-See below for examples how to use [other packages](#other_db) or provide [custom annoations](#cu_anno).
+See below for examples [how to use other packages](#other_db) or [how to provide custom annoations](#cu_anno).
 
 ```{r, eval=FALSE}
 ## install annotation package 'Homo.sapiens' from bioconductor
@@ -174,6 +175,7 @@ See [below](#other_db) for examples how to use other packages.
 
 Instead of defining candidate and background genes explicitly in the input dataframe, it is also possible to define entire chromosomal regions as candidate and background regions.
 The GO-enrichment is then tested for all genes located in, or overlapping the candidate regions on the plus or the minus strand.
+
 In comparison to defining candidate and background genes explicitly, this option has the advantage that the FWER accounts for spatial clustering of genes.
 For the random permutations used to compute the FWER, blocks as long as candidate regions are chosen from the merged candidate and background regions and genes contained in these blocks are considered candidate genes.
 The option `circ_chrom` defines whether random candidate blocks are chosen from the same chromosome or not ([Schematic 2](#block_scheme)).
@@ -423,7 +425,8 @@ res_hyper = go_enrich(input_hyper, godir=go_path)
 The function `plot_anno_scores` can be used to get a quick visual overview of the gene-associated variables in GO-categories, that were used in an enrichment analysis.
 `plot_anno_scores` takes a result from `go_enrich` as input together with a vector of GO-IDs.
 It then plots the combined scores of all input genes for the `go_enrich` analysis in each of the defined GO-categories.
-The type of the plot depends on the test that was used in `go_enrich`. 
+The type of the plot depends on the test that was used in `go_enrich`.
+Note that if custom `annotations` were used in `go_enrich`, then they also have to be provided to `plot_anno_scores` (whereas ontology and annotation databases are inferred from the input and loaded in `plot_anno_scores`).
 
 For the **hypergeometric test** pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node).
 The top panel shows the odds-ratio and 95%-CI from Fisher's exact test (two-sided) comparing the GO-categories with their root nodes.
@@ -517,6 +520,8 @@ head(bbb)
 Note that this is just a `grep(..., ignore.case=TRUE)` on the node names of the ontology.
 More sophisticated searches, e.g. with regular expressions, could be performed on the table returned by `get_ids('')` which lists all non-obsolete GO-categories.
 
+Like for `go_enrich` also custom ontologies can be used (see the help pages of the functions).
+
 <a name='get_anno_g'></a>
 
 ## Retrieve associations between genes and GO-categories
@@ -572,6 +577,8 @@ parent_ids = unique(get_parent_nodes(direct_anno$go_id)[,2])
 full_anno = get_names(parent_ids)
 head(full_anno)
 ```
+
+Like for `go_enrich` also custom annotations and ontologies can be used (see the help pages of the functions).
 
 
 # Schematics
