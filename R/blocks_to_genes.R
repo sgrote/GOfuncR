@@ -7,7 +7,10 @@
     # gene_coords chr, start, end, gene for all genes (test+bg)
 # side-effect: write regions to file for FUNC
 
-blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="Homo.sapiens", circ_chrom=FALSE, silent=FALSE){
+# if coord_db = TxDb, then orgDb is used as entrez_db to convert TxDb-entrez-id to gene-symbols
+# eval_db_input checks that TxDb and OrgDb depend on each other
+
+blocks_to_genes = function(directory, genes, coord_db="Homo.sapiens", entrez_db=NA, circ_chrom=FALSE, silent=FALSE){
 
     # check regions are valid, remove unused chroms for circ_chrom,
     # get two bed-dataframes back (candidate and background)
@@ -19,12 +22,14 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     bg_regions = regions[[2]]
     
     # load databases and check if OrganismDb or OrgDb/TxDb
-    load_db(anno_db, silent)
-    if (coord_db == anno_db){
+    load_db(coord_db, silent)
+    if (is.na(entrez_db)){
+        # OrganismDb
         gene_identifier = "SYMBOL"
     } else {
+        # orgDb (entrez_db) + TxDb (coord_db)
         gene_identifier = "GENEID"
-        load_db(coord_db, silent)
+        load_db(entrez_db, silent)
     }
     
     if (!silent){
@@ -41,8 +46,8 @@ blocks_to_genes = function(directory, genes, anno_db="Homo.sapiens", coord_db="H
     bg_genes = get_genes_from_regions(all_genes, bg_range)
     # convert EntrezID from TxDb to symbol using orgDb
     if (gene_identifier == "GENEID"){
-        test_genes[,4] = entrez_to_symbol(test_genes[,4], get(anno_db))[,2]
-        bg_genes[,4] = entrez_to_symbol(bg_genes[,4], get(anno_db))[,2]
+        test_genes[,4] = entrez_to_symbol(test_genes[,4], get(entrez_db))[,2]
+        bg_genes[,4] = entrez_to_symbol(bg_genes[,4], get(entrez_db))[,2]
         test_genes = test_genes[!is.na(test_genes[,4]),]
         bg_genes = bg_genes[!is.na(test_genes[,4]),]
     }

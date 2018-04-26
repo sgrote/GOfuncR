@@ -4,8 +4,8 @@
 # output: database data.frame with type, db, version for GO-graph, GO-annotations, and gene-coords
 eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, gene_len){
     
+    # TODO: allow custom gene-length file, allows any weight for random-sets
     # annotation, coord databases/files
-    # TODO: allow custom gene-length file
     if (regions || gene_len){
         if (!is.null(txDb) && is.null(orgDb)){
             stop("Please provide an 'orgDb' package for annotations and/or Entrez-ID to gene-symbol conversion. go_enrich() uses either 'OrganismDb' or 'orgDb' + 'txDb'.")
@@ -15,33 +15,47 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
         }
     }
 
+    # 1) annoatations 
     # if orgDb/annotations is defined use that one instead of default organismDb
     if (!is.null(annotations)){
         anno_db = "custom"
-        version = "custom"
+        a_version = "custom"
     } else if (!is.null(orgDb)){
         anno_db = orgDb
-        version = as.character(packageVersion(anno_db))
+        a_version = as.character(packageVersion(anno_db))
     } else {
         anno_db = organismDb
-        version = as.character(packageVersion(anno_db))
+        a_version = as.character(packageVersion(anno_db))
     }
-    databases = data.frame(type="go_annotations", db=anno_db, version=version, stringsAsFactors=FALSE)
+    databases = data.frame(type="go_annotations", db=anno_db, version=a_version, stringsAsFactors=FALSE)
     
-    # check if blocks or gene-len
+    # 2) coordinates
+    # only if blocks or gene-len
     if (regions || gene_len){
         if (!is.null(txDb)){
             coord_db = txDb
         } else {
             coord_db = organismDb
         }
-        version = as.character(packageVersion(coord_db))
-        databases = rbind(databases, list("gene_coordinates", coord_db, version))
+        c_version = as.character(packageVersion(coord_db))
     } else {
-        coord_db = NULL
+        coord_db = NA
+        c_version = NA
     }
+    databases = rbind(databases, list("gene_coordinates", coord_db, c_version))
 
-    # GO-graph
+    # 3) symbol to entrez conversion
+    # only if coords are needed and TxDb is used
+    if (!(is.na(coord_db)) &&  !(is.null(txDb))){
+        entrez_db = orgDb
+        e_version = as.character(packageVersion(orgDb))
+    } else {
+        entrez_db = NA
+        e_version = NA
+    }
+    databases = rbind(databases, list("symbol_to_entrez", entrez_db, e_version))
+    
+    # 4) GO-graph
     if (is.null(godir)){
         databases = rbind(databases, list("go_graph", "integrated", "10-Apr-2018"))
     } else {
@@ -50,6 +64,7 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
 
     return(databases)
 }
+
 
 # input: some arguments provided e.g. to get_anno_genes, get_child_nodes, get_parent_nodes
 # output: term and graph_path, potentially user-defined
@@ -136,21 +151,23 @@ combine_tx = function(coords){
 }
 
 # get chr, start, stop, symbol for all genes in coord_db
-get_all_coords = function(coord_db="Homo.sapiens", anno_db="Homo.sapiens", silent=FALSE){
+# txDb only has only entrez, not gene-symbol, need orgDb for conversion
+# eval_db_input checks that TxDb and OrgDb depend on each other
+get_all_coords = function(coord_db="Homo.sapiens", entrez_db=NA, silent=FALSE){
     load_db(coord_db, silent)
     if (!silent){
         message("find gene coordinates using database '", coord_db,"'...")
     }   
-    if (coord_db == anno_db){
+    if (is.na(entrez_db)){
         # OrganismDb
         symbols = keys(get(coord_db), keytype="SYMBOL")
         coords = suppressMessages(select(get(coord_db), keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL"))
     } else {
         # OrgDb/TxDb (combine possible different Entrez per Symbol)
-        load_db(anno_db, silent)
+        load_db(entrez_db, silent)
         entrez = keys(get(coord_db), keytype="GENEID")
         coords = suppressMessages(select(get(coord_db), keys=entrez, columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
-        coords[,1] = entrez_to_symbol(coords[,1], get(anno_db))[,2]
+        coords[,1] = entrez_to_symbol(coords[,1], get(entrez_db))[,2]
         colnames(coords)[1] = "SYMBOL"
     }
     # remove invalid chroms like "chr6_qbl_hap6"
@@ -164,15 +181,20 @@ get_all_coords = function(coord_db="Homo.sapiens", anno_db="Homo.sapiens", silen
 }
 
 # get chr, start, stop, symbol for input symbols
-get_gene_coords = function(symbols, coord_db="Homo.sapiens", anno_db="Homo.sapiens", silent=FALSE){
+# txDb only has only entrez, not gene-symbol, need orgDb for conversion
+# eval_db_input checks that TxDb and OrgDb depend on each other
+get_gene_coords = function(symbols, coord_db="Homo.sapiens", entrez_db=NA, silent=FALSE){
     load_db(coord_db, silent)
-    if (coord_db == anno_db){
+    if (!silent){
+        message("find gene coordinates using database '", coord_db,"'...")
+    }
+    if (is.na(entrez_db)){
         # OrganismDb
         coords = suppressMessages(select(get(coord_db), keys=symbols, columns=c("TXCHROM", "TXSTART", "TXEND", "SYMBOL"), keytype="SYMBOL"))
     } else {
         # OrgDb/TxDb (combine possible different Entrez per Symbol)
-        load_db(anno_db, silent)
-        entrez = suppressMessages(select(get(anno_db), keys=symbols, columns=c("ENTREZID", "SYMBOL"), keytype="SYMBOL"))
+        load_db(entrez_db, silent)
+        entrez = suppressMessages(select(get(entrez_db), keys=symbols, columns=c("ENTREZID", "SYMBOL"), keytype="SYMBOL"))
         en_coords = suppressMessages(select(get(coord_db), keys=entrez[,2], columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
         coords = merge(entrez, en_coords, by.x="ENTREZID", by.y="GENEID")[,2:5]
     }

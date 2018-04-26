@@ -90,6 +90,17 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         stop("Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
     }
     
+    # evaluate database + go + opt combinations and get table including versions
+    databases = eval_db_input(organismDb, godir, orgDb, annotations, txDb, regions, gene_len)
+    anno_db = databases[databases[,1] == "go_annotations", 2]
+    coord_db = databases[databases[,1] == "gene_coordinates", 2] # might be NA
+    entrez_db = databases[databases[,1] == "symbol_to_entrez", 2] # might be NA
+    # remove NA-entries for output
+    databases = databases[!(is.na(databases[,2])),]
+    row.names(databases) = 1:nrow(databases)
+    
+    
+    #####   2. Prepare for FUNC
     
     # GO-graph
     # Create tempfile prefix (in contrast to tempdir() alone, this allows parallel processing)
@@ -106,23 +117,14 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         term = read.table(go_paths[1], sep="\t", quote="", comment.char="", as.is=TRUE)
     }
     
-    # get table of go-graph, anno_db, coord_db, and versions ("custom" for local files)
-    databases = eval_db_input(organismDb, godir, orgDb, annotations, txDb, regions, gene_len)
-    
-
-    
-    #####   2. Prepare for FUNC
-    
-    anno_db = databases[databases[,1] == "go_annotations", 2]
-    coord_db = databases[databases[,1] == "gene_coordinates", 2] # might be NA
-
     # convert genomic regions to single genes (also check them and write to file for C++)
     if (regions){
         if (!silent) message("get genes from regions...")
-        block_info = blocks_to_genes(directory, genes, anno_db, coord_db, circ_chrom, silent)
+        block_info = blocks_to_genes(directory, genes, coord_db, entrez_db, circ_chrom, silent)
         genes = block_info[[1]]
         gene_coords = block_info[[2]]
     }
+    
     ### get GO-annotations
     # if test=hyper and default background get annotations for all genes in database
     if (test=="hyper" && all(genes[,2]==1)){
@@ -142,8 +144,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
             stop("'domains' must be in the set of '", paste(root_nodes, collapse=", "),"'.")
         }
         root_nodes = domains
-    }
-    
+    }    
     # check that all root nodes in term
     root_node_ids = term[match(root_nodes, term[,2]),4]
     if (!(is.null(godir)) && any(is.na(root_node_ids))){
@@ -167,9 +168,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     if (gene_len){
         # load gene coordinates
         if (test=="hyper" && all(genes[,2]==1)){
-            gene_coords = suppressWarnings(get_all_coords(coord_db, anno_db, silent))
+            gene_coords = suppressWarnings(get_all_coords(coord_db, entrez_db, silent))
         } else {
-            gene_coords = suppressWarnings(get_gene_coords(genes[,1], coord_db, anno_db, silent))
+            gene_coords = suppressWarnings(get_gene_coords(genes[,1], coord_db, entrez_db, silent))
         }
     }
     # subset to genes that have coordinates and warn about the rest
