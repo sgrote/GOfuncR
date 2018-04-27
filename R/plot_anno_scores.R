@@ -66,7 +66,11 @@ plot_anno_scores = function(res, go_ids, annotations=NULL){
         genes = in_genes[,1]
     }
     ### get annotation for nodes
-    anno = get_anno_genes(go_ids, database=res[[3]][1,2], genes, annotations, term, graph_path)
+    anno_db = res[[3]][1,2]
+    if (anno_db == "custom" && is.null(annotations)){
+        stop("Apparently go_enrich was run with custom annotations. Please provide those custom annotations to plot_anno_scores, too. See ?plot_anno_scores")
+    }
+    anno = get_anno_genes(go_ids, database=anno_db, genes, annotations, term, graph_path)
     if (is.null(anno)) return(invisible(anno)) # no annotations - warning from get_anno_genes
     # add scores to nodes
     anno_scores = cbind(anno, in_genes[match(anno[,2], in_genes[,1]), 2:ncol(in_genes)])
