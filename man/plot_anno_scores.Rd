@@ -30,7 +30,9 @@ plot_anno_scores(res, go_ids, annotations = NULL)
 \details{
 The plot depends on the statistical test that was specified in the \code{\link{go_enrich}} call.
 
-For the hypergeometric test pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node). The top panel shows the odds-ratio and 95\%-CI from fisher's exact test (two-sided) comparing the GO-categories with their root nodes. Note that \code{\link{go_enrich}} reports the the hypergeometric test for over- and under-representation of candidate genes wich correspond to the one-sided fisher's exact tests.
+For the hypergeometric test pie charts show the amounts of candidate and background genes that are annotated to the GO-categories and the root nodes (candidate genes in the colour of the corresponding root node).
+The top panel shows the odds-ratio and 95\%-CI from fisher's exact test (two-sided) comparing the GO-categories with their root nodes.
+Note that \code{\link{go_enrich}} reports the the hypergeometric tests for over- and under-representation of candidate genes which correspond to the one-sided fisher's exact tests.
 
 For the Wilcoxon rank-sum test violin plots show the distribution of the scores of genes that are annotated to each GO-category and the root nodes. Horizontal lines in the left panel indicate the median of the scores that are annotated to the root nodes. The Wilcoxon rank-sum test reported in the \code{\link{go_enrich}} result compares the scores annotated to a GO-category with the scores annotated to the corresponding root node.
 

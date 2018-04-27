@@ -47,7 +47,7 @@ Note that each gene has to be unique in the data.frame; e.g. for \code{test='wil
 }
 
 \item{regions}{
-    logical. If \code{TRUE} chromosomal regions are analysed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
+    logical. If \code{TRUE} chromosomal regions are analyzed, and genes are automatically extracted from the regions defined in \code{genes[,1]} as e.g. '9:0-39200000'. Note that this option requires the input of background regions.
 }
 
 \item{circ_chrom}{
@@ -95,7 +95,7 @@ Note that each gene has to be unique in the data.frame; e.g. for \code{test='wil
 Please also refer to the package's vignette.\cr
 GO-annotations are taken from a Bioconductor annotation package (OrganismDb package 'Homo.sapiens' by default), but also other 'OrganismDb' or 'OrgDb' packages can be used. It is also possible to provide custom annotations as a data.frame().
 
-The ontology graph is integrated, but a custom version can de defined as well with parameter 'godir'.
+The ontology graph is integrated, but a custom version can be defined as well with parameter 'godir'.
 As long as the ontology tables are in the right format (see link to description in vignette),
 any ontology can be used in GOfuncR, it is not restricted to the gene ontology. 
 
@@ -110,7 +110,7 @@ The enrichment analysis is then performed for all genes located in or overlappin
 \value{
 A list with components
 \item{results}{
-a data.frame() with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep', -'FWER_underrep', -'raw_p_underrep', 'ontology' and 'node_id', or the corresponding columns if another test then the hypegeometric test is used.
+a data.frame() with the FWERs from the enrichment analyses per ontology category, ordered by 'FWER_overrep', 'raw_p_overrep', -'FWER_underrep', -'raw_p_underrep', 'ontology' and 'node_id', or the corresponding columns if another test then the hypergeometric test is used.
 This table contains the combined results for all three ontology domains. Note that GO-categories without any annotations of candidate or background genes are not listed.}
 \item{genes}{
 the input \code{genes} data.frame(), excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}

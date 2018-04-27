@@ -37,7 +37,7 @@ get_anno_categories(genes,  database = 'Homo.sapiens', annotations = NULL,
 
 \details{
     Besides the default 'Homo.sapiens', also other OrganismDb or OrgDb packages from Bioconductor, like 'Mus.musculus' (mouse) or 'org.Pt.eg.db' (chimp), can be used.
-    It also possible to directly provide a dataframe with annotations, which is then searched for the input genes and filtered for GO-categories that are present in the ontology.
+    It is also possible to directly provide a dataframe with annotations, which is then searched for the input genes and filtered for GO-categories that are present in the ontology.
     
     By default the package's integrated ontology is used, but a custom ontology can be defined, too.
     For details on how to use a custom ontology with

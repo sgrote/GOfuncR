@@ -67,7 +67,7 @@ parameter | default | description
 `domains` | NULL | optional vector of GO-domains (if NULL all 3 domains are analyzed)
 `orgDb`| NULL | optional *OrgDb* package for GO-annotations (overrides `organismDb`)
 `txDb`| NULL | optional *TxDb* package for gene-coordinates (overrides `organismDb`)
-`annotations`| NULL | optional dataframe with GO-annoations (overrides `organismDb` and `orgDb`)
+`annotations`| NULL | optional dataframe with GO-annotations (overrides `organismDb` and `orgDb`)
 `godir`| NULL | optional directory with ontology graph tables to use instead of the integrated GO-graph 
 
 
@@ -76,7 +76,7 @@ parameter | default | description
 ## Install annotation package
 `GOfuncR` uses external packages to obtain the GO-annotations and gene-coordinates.
 In the examples we will use the default `r Biocpkg('Homo.sapiens')` package.
-See below for examples [how to use other packages](#other_db) or [how to provide custom annoations](#cu_anno).
+See below for examples [how to use other packages](#other_db) or [how to provide custom annotations](#cu_anno).
 
 ```{r, eval=FALSE}
 ## install annotation package 'Homo.sapiens' from bioconductor
