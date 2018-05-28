@@ -6,9 +6,7 @@ gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1', '
     'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2', 'QUATSCH')
 is_candidate = rep(1, length(gene_ids))
 input_hyper = data.frame(gene_ids, is_candidate, stringsAsFactors=FALSE)
-# multi-assign
-input_multi = rbind(input_hyper, input_hyper[1:2,])
-input_multi[1:2,2] = 0
+
 # not 0/1
 input_non_bin = input_hyper 
 input_non_bin[3,2] = 2
@@ -22,8 +20,6 @@ test_that("general genes input gets checked",{
         "Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
     expect_error(go_enrich(input_hyper, test="invalid_test"),
         "Not a valid test. Please use 'hyper', 'wilcoxon', 'binomial' or 'contingency'.")
-    expect_error(go_enrich(input_multi),
-        "Genes with multiple assignment in input: APOL4, NCAPG")
     expect_error(go_enrich(input_non_bin),
         "Please provide only 1/0-values in 2nd column of 'genes'-input for hypergeometric test.")
 })
@@ -95,13 +91,15 @@ low_score_genes = c('CACNG2')
 gene_scores = 1:3
 input_willi = data.frame(gene_ids = c(high_score_genes, low_score_genes), gene_scores)
 input_extra_col = cbind(input_willi, input_willi[,2])
+input_willi_multi = rbind(input_willi, list("GCK",2))
 
 test_that("willi genes input gets checked",{
     expect_error(go_enrich(input_willi[1:2,], test="wilcoxon"),
         "Less than 2 genes have annotated GO-categories.")
     expect_error(go_enrich(input_extra_col, test="wilcoxon"),
         "Please provide a data frame with 2 columns.") # again [ character can not be checked
-
+    expect_error(go_enrich(input_willi_multi, test="wilcoxon"),
+        "Genes with multiple assignment in input: GCK")
 })
 
 # binomial
