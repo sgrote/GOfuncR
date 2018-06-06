@@ -2,7 +2,7 @@
 # run "FUNC" with integrated GO-graph and GO-annotations from OrganismDb or OrgDb packages
 # wilcoxon rank test, hypergeometric test, binomial test, 2x2-contingency-test
 
-go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL, annotations=NULL, godir=NULL)
+go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapiens", gene_len=FALSE, regions=FALSE, circ_chrom=FALSE, silent=FALSE, domains=NULL, orgDb=NULL, txDb=NULL, annotations=NULL, gene_coords=NULL, godir=NULL)
 {
     
     #####   1. Check arguments and define parameters
@@ -96,9 +96,29 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     if (circ_chrom & !regions){
         stop("Argument 'circ_chrom = TRUE' can only be used with 'regions = TRUE'.")
     }
+    if (!is.null(gene_coords)){
+        if (test != "hyper"){
+            stop("Argument 'gene_coords' can only be used with 'test = 'hyper''.")
+        }
+        if (ncol(gene_coords) != 4){
+            stop("'gene_coords' has to be a data.frame with 4 columns: [gene, chromosome, start, end].")
+        }
+        # reorder columns like for db-gene-coords
+        gene_coords = gene_coords[,c(2:4,1)]
+        # add 'chr' if missing (coord_db has it too)
+        if (!startsWith(as.character(gene_coords[1,1]), "chr")){ 
+            gene_coords[,1] = paste0("chr", gene_coords[,1])
+        }
+        # check for multiple assignment of coords to genes
+        gene_coords = unique(gene_coords)
+        multi_coords = sort(unique(gene_coords[,4][duplicated(gene_coords[,4])]))
+        if (length(multi_coords) > 0){
+            stop("Genes with multiple coordinates in 'gene_coords': ", paste(multi_coords,collapse=", "))
+        }
+    }
     
     # evaluate database + go + opt combinations and get table including versions
-    databases = eval_db_input(organismDb, godir, orgDb, annotations, txDb, regions, gene_len)
+    databases = eval_db_input(organismDb, godir, orgDb, annotations, txDb, regions, gene_len, gene_coords)
     anno_db = databases[databases[,1] == "go_annotations", 2]
     coord_db = databases[databases[,1] == "gene_coordinates", 2] # might be NA
     entrez_db = databases[databases[,1] == "symbol_to_entrez", 2] # might be NA
@@ -127,9 +147,9 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     # convert genomic regions to single genes (also check them and write to file for C++)
     if (regions){
         if (!silent) message("get genes from regions...")
-        block_info = blocks_to_genes(directory, genes, coord_db, entrez_db, circ_chrom, silent)
-        genes = block_info[[1]]
-        gene_coords = block_info[[2]]
+        block_info = blocks_to_genes(directory, genes, coord_db, entrez_db, gene_coords, circ_chrom, silent)
+        genes = block_info[[1]] # 'classic' test and bg genes
+        gene_coords = block_info[[2]] # gene coords for test and bg genes
     }
     
     ### get GO-annotations
@@ -190,6 +210,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
             not_in = c(not_in, no_coords)
         }
     }
+    
     # after removing genes without annotations or coordinates: are enough genes left?
     if (length(not_in) > 0){
         # is any gene in the data? if not, stop.

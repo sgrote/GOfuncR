@@ -9,39 +9,46 @@
 
 # if coord_db = TxDb, then orgDb is used as entrez_db to convert TxDb-entrez-id to gene-symbols
 # eval_db_input checks that TxDb and OrgDb depend on each other
+# if gene_coords are provided as dataframe by user, use that instead of coord_db
 
-blocks_to_genes = function(directory, genes, coord_db="Homo.sapiens", entrez_db=NA, circ_chrom=FALSE, silent=FALSE){
+blocks_to_genes = function(directory, genes, coord_db="Homo.sapiens", entrez_db=NA, gene_coords=NULL, circ_chrom=FALSE, silent=FALSE){
 
     # check regions are valid, remove unused chroms for circ_chrom,
     # get two bed-dataframes back (candidate and background)
     regions = check_regions(genes, circ_chrom)
-    
-    # add "chr" substring (like in databases)
-    regions = lapply(regions, function(x) {x[,1] = paste0("chr", x[,1]); return(x)})
     test_regions = regions[[1]]
     bg_regions = regions[[2]]
     
-    # load databases and check if OrganismDb or OrgDb/TxDb
-    load_db(coord_db, silent)
-    if (is.na(entrez_db)){
-        # OrganismDb
-        gene_identifier = "SYMBOL"
-    } else {
-        # orgDb (entrez_db) + TxDb (coord_db)
-        gene_identifier = "GENEID"
-        load_db(entrez_db, silent)
-    }
-    
-    if (!silent){
-        message("find genes in input-regions using database '", coord_db,"'...")
-    }
-    
     # convert to GRanges
-    test_range = GRanges(test_regions[,1], IRanges(test_regions[,2], test_regions[,3]))
-    bg_range = GRanges(bg_regions[,1], IRanges(bg_regions[,2], bg_regions[,3]))
+    test_range = GRanges(test_regions[,1], IRanges::IRanges(test_regions[,2], test_regions[,3]))
+    bg_range = GRanges(bg_regions[,1], IRanges::IRanges(bg_regions[,2], bg_regions[,3]))
+
+    if (!is.null(gene_coords)){
+        # convert custom gene_coords to GRanger like coord_db coords
+        all_genes = GRanges(gene_coords[,1], IRanges::IRanges(gene_coords[,2], gene_coords[,3]), SYMBOL=gene_coords[,4])
+        gene_identifier = "SYMBOL"
+        if (!silent){
+            message("find genes in input-regions using custom 'gene_coords'...")
+        }
+    } else {
+        # load databases and check if OrganismDb or OrgDb/TxDb
+        load_db(coord_db, silent)
+        if (is.na(entrez_db)){
+            # OrganismDb
+            gene_identifier = "SYMBOL"
+        } else {
+            # orgDb (entrez_db) + TxDb (coord_db)
+            gene_identifier = "GENEID"
+            load_db(entrez_db, silent)
+        }
+        # get all genes from coord_db
+        all_genes = suppressMessages(geneRanges(get(coord_db), column=gene_identifier))
+        if (!silent){
+            message("find genes in input-regions using database '", coord_db,"'...")
+        }
+    }
     
     # get overlapping genes
-    all_genes = suppressMessages(geneRanges(get(coord_db), column=gene_identifier))
     test_genes = get_genes_from_regions(all_genes, test_range)
     bg_genes = get_genes_from_regions(all_genes, bg_range)
     # convert EntrezID from TxDb to symbol using orgDb
@@ -110,6 +117,11 @@ check_regions = function(genes, circ_chrom){
     bed = as.data.frame(bed)
     bed[,2:3] = apply(bed[,2:3], 2, as.numeric)
     bed[,1] = as.character(bed[,1])
+    
+    # add 'chr' if missing (coord_db has it too)
+    if (!startsWith(bed[1,1], "chr")){
+        bed[,1] = paste0("chr", bed[,1])
+    }
     
     # check that start < stop
     reverse_indi = bed[,2] > bed[,3]

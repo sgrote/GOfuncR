@@ -2,20 +2,19 @@
 
 # input: some arguments provided to go_enrich
 # output: database data.frame with type, db, version for GO-graph, GO-annotations, and gene-coords
-eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, gene_len){
+eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, gene_len, gene_coords){
     
-    # TODO: allow custom gene-length file, allows any weight for random-sets
     # annotation, coord databases/files
     if (regions || gene_len){
         if (!is.null(txDb) && is.null(orgDb)){
-            stop("Please provide an 'orgDb' package for annotations and/or Entrez-ID to gene-symbol conversion. go_enrich() uses either 'OrganismDb' or 'orgDb' + 'txDb'.")
+            stop("Please provide an 'orgDb' package for annotations and/or Entrez-ID to gene-symbol conversion if 'txDb' is defined.")
         }
-        if (!is.null(orgDb) && is.null(txDb)){
-            stop("Please provide a 'txDb' object from bioconductor (if 'orgDb' is defined for GO-annotations, then 'txDb' is used for gene-coordinates).")
+        if (!is.null(orgDb) && is.null(txDb) && is.null(gene_coords)){
+            stop("Please provide a 'txDb' object from bioconductor or a 'gene_coords' data.frame (if 'orgDb' is defined for GO-annotations, then either 'txDb' or 'gene_coords' is used to obtain gene-coordinates.")
         }
     }
-
-    # 1) annoatations 
+    
+    # 1) annotations 
     # if orgDb/annotations is defined use that one instead of default organismDb
     if (!is.null(annotations)){
         anno_db = "custom"
@@ -32,12 +31,16 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
     # 2) coordinates
     # only if blocks or gene-len
     if (regions || gene_len){
-        if (!is.null(txDb)){
+        if (!is.null(gene_coords)){
+            coord_db = "custom"
+            c_version = "custom"        
+        } else if (!is.null(txDb)){
             coord_db = txDb
+            c_version = as.character(packageVersion(coord_db))
         } else {
             coord_db = organismDb
+            c_version = as.character(packageVersion(coord_db))
         }
-        c_version = as.character(packageVersion(coord_db))
     } else {
         coord_db = NA
         c_version = NA

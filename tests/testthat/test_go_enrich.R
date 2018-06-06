@@ -71,7 +71,7 @@ set.seed(123)
 
 test_that("hyper_regions_circ works fine",{
 	expect_warning((res_circ = go_enrich(input_regions[c(1,3:5),], n_randsets=20, regions=TRUE, silent=TRUE, circ_chrom=TRUE)),
-	    "Unused chromosomes in background regions: 7.\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.")
+	    "Unused chromosomes in background regions: chr7.\n  With circ_chrom=TRUE only background regions on the same chromosome as a candidate region are used.")
 	expect_true("GO:0019433" %in% res_circ[[1]][1:100,2]) # should be high independent of rannum/versions
 	expect_true(res_circ[[1]][1,"FWER_underrep"] > 0.5)
 	expect_true(res_circ[[1]][1,"FWER_overrep"] < 0.5)
