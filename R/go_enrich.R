@@ -183,7 +183,6 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     gene_values = genes[genes[,1] %in% go_anno[,1],] # restrict
     if (nrow(gene_values) == 0) {
         stop("No GO-annotations for input genes.") 
-        # TODO: check if input matches regions-input and suggest region=T
     }
     not_in = genes[,1][!genes[,1] %in% gene_values[,1]] # removed
     if (length(not_in) > 0 && !regions){ # this message is usually too long when regions are used
@@ -192,7 +191,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     }
 
     ### get coordinates
-    if (gene_len){
+    if (gene_len & is.null(gene_coords)){
         # load gene coordinates
         if (test=="hyper" && all(genes[,2]==1)){
             gene_coords = suppressWarnings(get_all_coords(coord_db, entrez_db, silent))

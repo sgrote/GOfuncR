@@ -125,14 +125,14 @@ load_db = function(db, silent=FALSE){
 geneRanges = function(db=Homo.sapiens, column="SYMBOL"){
     g = genes(db, columns=column)
     col = mcols(g)[[column]]
-    genes = granges(g)[rep(seq_along(g), elementNROWS(col))]
+    genes = granges(g)[rep(seq_along(g), IRanges::elementNROWS(col))]
     mcols(genes)[[column]] = as.character(unlist(col))
     return(genes)
 }
 
 # find overlaps of genes, ranges and convert to data.frame chr, start, end, gene
 get_genes_from_regions = function(gene_coords, ranges){
-    genes = subsetByOverlaps(gene_coords, ranges)
+    genes = IRanges::subsetByOverlaps(gene_coords, ranges)
     out = data.frame(chr=seqnames(genes), start=start(genes), end=end(genes), gene=elementMetadata(genes)[,1])
     return(out)
 }
@@ -154,13 +154,13 @@ combine_tx = function(coords){
 }
 
 # get chr, start, stop, symbol for all genes in coord_db
-# txDb only has only entrez, not gene-symbol, need orgDb for conversion
+# txDb only has entrez, not gene-symbol, need orgDb for conversion
 # eval_db_input checks that TxDb and OrgDb depend on each other
 get_all_coords = function(coord_db="Homo.sapiens", entrez_db=NA, silent=FALSE){
     load_db(coord_db, silent)
     if (!silent){
         message("find gene coordinates using database '", coord_db,"'...")
-    }   
+    }
     if (is.na(entrez_db)){
         # OrganismDb
         symbols = keys(get(coord_db), keytype="SYMBOL")
@@ -174,7 +174,7 @@ get_all_coords = function(coord_db="Homo.sapiens", entrez_db=NA, silent=FALSE){
         colnames(coords)[1] = "SYMBOL"
     }
     # remove invalid chroms like "chr6_qbl_hap6"
-    coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]
+    coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]      ## TODO: rather not remove those?
     # maximum transcript range
     coords = combine_tx(coords)
     # remove genes that are still duplicated (on different chroms, mostly X/Y)
