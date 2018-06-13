@@ -12,7 +12,7 @@ Wilcoxon rank-sum, binomial or 2x2 contingency table test.
 \usage{
 go_enrich(genes, test = 'hyper', n_randsets = 1000, organismDb = 'Homo.sapiens', gene_len = FALSE,
     regions = FALSE, circ_chrom = FALSE, silent = FALSE, domains = NULL, orgDb = NULL,
-    txDb = NULL, annotations = NULL,  godir = NULL)
+    txDb = NULL, annotations = NULL, gene_coords = NULL,  godir = NULL)
 }
 
 \arguments{
@@ -43,7 +43,8 @@ Note that each gene has to be unique in the data.frame; e.g. for \code{test='wil
 }
 
 \item{gene_len}{
-    logical. If \code{TRUE} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length. If \code{FALSE} genes are chosen randomly with equal probability each. Only for \code{test='hyper'}.
+    logical. Correct for gene length. If \code{TRUE} the probability of a background gene to be chosen as a candidate gene in a random set is dependent on the gene length.
+    If \code{FALSE} genes are chosen randomly with equal probability each. Only for \code{test='hyper'}.
 }
 
 \item{regions}{
@@ -78,7 +79,12 @@ Note that each gene has to be unique in the data.frame; e.g. for \code{test='wil
     optional data.frame() for custom annotations, with two character() columns:
     (1) gene-symbols and (2) GO-categories.
     Note that options \code{gene_len} and \code{regions} also need an \code{organismDb} or \code{txDb} + \code{orgDb}.
-    
+}
+
+\item{gene_coords}{
+    optional data.frame() for custom gene coordinates, with four columns:
+    gene-symbols (character), chromosome (character), start (integer), end (integer).
+    When \code{gene_len=TRUE} or \code{regions=TRUE} these custom gene coordinates are used instead of the ones obtained from \code{organismDb} or \code{txDb}.
 }
 
 \item{godir}{

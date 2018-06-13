@@ -68,6 +68,7 @@ parameter | default | description
 `orgDb`| NULL | optional *OrgDb* package for GO-annotations (overrides `organismDb`)
 `txDb`| NULL | optional *TxDb* package for gene-coordinates (overrides `organismDb`)
 `annotations`| NULL | optional dataframe with GO-annotations (overrides `organismDb` and `orgDb`)
+`gene_coords`| NULL | optional dataframe with gene-coordinates (overrides `organismDb` and `txDb`)
 `godir`| NULL | optional directory with ontology graph tables to use instead of the integrated GO-graph 
 
 
@@ -173,7 +174,7 @@ res_hyper_len = go_enrich(input_hyper, gene_len=TRUE)
 ```  
 
 Note that the default annotation package `r Biocpkg('Homo.sapiens')` uses the *hg19* gene-coordinates.
-See [below](#other_db) for examples how to use other packages.
+See below for examples how to use [other packages](#other_db) or [custom gene-coordinates](#cu_coord).
 
 ### Hypergeometric test with genomic regions as input
 
@@ -215,7 +216,7 @@ candidate_genes
 ```
 
 Note that the default annotation package `r Biocpkg('Homo.sapiens')` uses the *hg19* gene-coordinates.
-See [below](#other_db) for examples how to use other packages.
+See below for examples how to use [other packages](#other_db) or [custom gene-coordinates](#cu_coord).
 
 
 ## Test for enrichment of high scored genes using the Wilcoxon rank-sum test
@@ -395,11 +396,37 @@ rownames(custom_anno) = 1:nrow(custom_anno)
 ## example for a dataframe with custom annotations
 head(custom_anno)
 ```
-```{r,eval=FALSE} 
-## run enrichment with custom annotations
+```{r,eval=FALSE}
+## run enrichment analysis with custom annotations
 res_hyper_anno = go_enrich(input_hyper, annotations=custom_anno)
 
 ```
+
+<a name='cu_coord'></a>
+
+## Custom gene-coordinates
+
+Gene-coordinates are used when the FWER is corrected for gene length (`gene_len=TRUE`) or for spatial clustering of genes (`regions=TRUE`).
+Instead of using gene-coordinates from bioconductor packages, one can also provide custom gene-coordinates directly as a dataframe wih four columns: gene, chromosome, start, end (parameter `gene_coords`).
+
+```{r,echo=FALSE}
+gene = c('NCAPG','APOL4','NGFR','NXPH4','C21orf59','CACNG2')
+chr = c('chr4', 'chr22', 'chr17', 'chr12', 'chr21', 'chr22')
+start = c(17812436, 36585176, 47572655, 57610578, 33954510, 36956916)
+end = c(17846487, 36600879, 47592382, 57620232, 33984918, 37098690)
+custom_coords = data.frame(gene, chr, start, end, stringsAsFactors=FALSE)
+```
+```{r}
+## example for a dataframe with custom gene-coordinates
+head(custom_coords)
+```
+```{r,eval=FALSE}
+## use correction for gene-length based on custom gene-coordinates
+res_hyper_cc = go_enrich(input_hyper, gene_len=TRUE, gene_coords=custom_coords)
+```
+
+Note that this allows to use `gene_len=TRUE` to correct the FWER for any user-defined gene 'weight', since the correction for gene length just weights each gene with its length (`end - start`).
+A gene with a higher weight has a bigger chance of becoming a candidate gene in the randomsets.
 
 
 ## Custom GO-graph
