@@ -97,12 +97,6 @@ check_regions = function(genes, circ_chrom){
         stop("All values of the genes[,2] input are 1. Using chromosomal regions as input requires defining background regions with 0.")
     }
     
-    # remove invalid ranges on (mt)-chromosome
-    inval = genes[! grepl("^[0-9XYMT]*:[0-9]*-[0-9]*$", genes[,1]),1]
-    if (length(inval) > 0){
-        stop("Invalid regions: ", paste(inval, collapse=", "))
-    }
-    
     # convert coordinates from 'genes'-names to bed-format
     genes[,1] = as.character(genes[,1])
     bed = do.call(rbind, strsplit(genes[,1], "[:-]"))

@@ -164,8 +164,6 @@ get_all_coords = function(coord_db="Homo.sapiens", entrez_db=NA, silent=FALSE){
         coords[,1] = entrez_to_symbol(coords[,1], get(entrez_db))[,2]
         colnames(coords)[1] = "SYMBOL"
     }
-    # remove invalid chroms like "chr6_qbl_hap6"
-    coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]      ## TODO: rather not remove those?
     # maximum transcript range
     coords = combine_tx(coords)
     # remove genes that are still duplicated (on different chroms, mostly X/Y)
@@ -192,8 +190,6 @@ get_gene_coords = function(symbols, coord_db="Homo.sapiens", entrez_db=NA, silen
         en_coords = suppressMessages(select(get(coord_db), keys=entrez[,2], columns=c("TXCHROM", "TXSTART", "TXEND", "GENEID"), keytype="GENEID"))
         coords = merge(entrez, en_coords, by.x="ENTREZID", by.y="GENEID")[,2:5]
     }
-    # remove invalid chroms like "chr6_qbl_hap6"
-    coords = coords[grepl("^chr[0-9XYMT]*$", coords[,2]),]
     # maximum transcript range
     coords = combine_tx(coords)
     # remove genes that are still duplicated (on different chroms, mostly X/Y)
