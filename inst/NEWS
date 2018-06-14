@@ -1,4 +1,20 @@
 
+CHANGES IN VERSION 1.1.2
+--------------------------
+
+NEW FEATURES
+
+    o allow for custom gene coordinates
+      (alternative to default Bioconductor annotation packages;
+      coordinates are used when the familiy-wise error rate is
+      corrected for gene length or spatial clustering of genes)
+      
+USER-LEVEL CHANGES
+
+    o gene coordinates used in correction for gene-length or spatial 
+      clustering are not restricted to chromosomes 1-22,X,Y,MT anymore
+
+
 CHANGES IN VERSION 0.99.14
 --------------------------
 

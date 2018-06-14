@@ -407,7 +407,7 @@ res_hyper_anno = go_enrich(input_hyper, annotations=custom_anno)
 ## Custom gene-coordinates
 
 Gene-coordinates are used when the FWER is corrected for gene length (`gene_len=TRUE`) or for spatial clustering of genes (`regions=TRUE`).
-Instead of using gene-coordinates from bioconductor packages, one can also provide custom gene-coordinates directly as a dataframe wih four columns: gene, chromosome, start, end (parameter `gene_coords`).
+Instead of using gene-coordinates from bioconductor packages, one can also provide custom gene-coordinates directly as a dataframe with four columns: gene, chromosome, start, end (parameter `gene_coords`).
 
 ```{r,echo=FALSE}
 gene = c('NCAPG','APOL4','NGFR','NXPH4','C21orf59','CACNG2')

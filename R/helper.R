@@ -13,6 +13,12 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
             stop("Please provide a 'txDb' object from bioconductor or a 'gene_coords' data.frame (if 'orgDb' is defined for GO-annotations, then either 'txDb' or 'gene_coords' is used to obtain gene-coordinates.")
         }
     }
+    if (!is.null(gene_coords) && !(gene_len || regions)){
+        stop("Parameter 'gene_coords' is only used when 'gene_len=TRUE' or 'regions=TRUE'.")
+    }
+    if (!is.null(txDb) && !(gene_len || regions)){
+        stop("Parameter 'txDb' is only used when 'gene_len=TRUE' or 'regions=TRUE'.")
+    }
     
     # 1) annotations 
     # if orgDb/annotations is defined use that one instead of default organismDb
