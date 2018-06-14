@@ -121,15 +121,6 @@ load_db = function(db, silent=FALSE){
     }
 }
 
-# taken from https://gist.github.com/mtmorgan/bcacbea1b46445769f1cb91f87e25c30
-geneRanges = function(db=Homo.sapiens, column="SYMBOL"){
-    g = genes(db, columns=column)
-    col = mcols(g)[[column]]
-    genes = granges(g)[rep(seq_along(g), IRanges::elementNROWS(col))]
-    mcols(genes)[[column]] = as.character(unlist(col))
-    return(genes)
-}
-
 # find overlaps of genes, ranges and convert to data.frame chr, start, end, gene
 get_genes_from_regions = function(gene_coords, ranges){
     genes = IRanges::subsetByOverlaps(gene_coords, ranges)

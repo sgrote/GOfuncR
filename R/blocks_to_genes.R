@@ -23,10 +23,8 @@ blocks_to_genes = function(directory, genes, coord_db="Homo.sapiens", entrez_db=
     test_range = GRanges(test_regions[,1], IRanges::IRanges(test_regions[,2], test_regions[,3]))
     bg_range = GRanges(bg_regions[,1], IRanges::IRanges(bg_regions[,2], bg_regions[,3]))
 
+    # get all gene coordinates
     if (!is.null(gene_coords)){
-        # convert custom gene_coords to GRanger like coord_db coords
-        all_genes = GRanges(gene_coords[,1], IRanges::IRanges(gene_coords[,2], gene_coords[,3]), SYMBOL=gene_coords[,4])
-        gene_identifier = "SYMBOL"
         if (!silent){
             message("find genes in input-regions using custom 'gene_coords'...")
         }
@@ -39,25 +37,19 @@ blocks_to_genes = function(directory, genes, coord_db="Homo.sapiens", entrez_db=
         } else {
             # orgDb (entrez_db) + TxDb (coord_db)
             gene_identifier = "GENEID"
-            load_db(entrez_db, silent)
         }
         # get all genes from coord_db
-        all_genes = suppressMessages(geneRanges(get(coord_db), column=gene_identifier))
+        gene_coords = get_all_coords(coord_db=coord_db, entrez_db=entrez_db, silent=silent)
         if (!silent){
             message("find genes in input-regions using database '", coord_db,"'...")
         }
     }
+    # convert to GRanges for IRanges::subsetByOverlaps
+    all_genes = GRanges(gene_coords[,1], IRanges::IRanges(gene_coords[,2], gene_coords[,3]), SYMBOL=gene_coords[,4])
     
     # get overlapping genes
     test_genes = get_genes_from_regions(all_genes, test_range)
     bg_genes = get_genes_from_regions(all_genes, bg_range)
-    # convert EntrezID from TxDb to symbol using orgDb
-    if (gene_identifier == "GENEID"){
-        test_genes[,4] = entrez_to_symbol(test_genes[,4], get(entrez_db))[,2]
-        bg_genes[,4] = entrez_to_symbol(bg_genes[,4], get(entrez_db))[,2]
-        test_genes = test_genes[!is.na(test_genes[,4]),]
-        bg_genes = bg_genes[!is.na(test_genes[,4]),]
-    }
     
     # check that candidate and background contain genes
     if (nrow(test_genes) == 0){
