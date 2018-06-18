@@ -33,7 +33,7 @@ GitHub:
 ## install GOfuncR from the command line
 git clone https://github.com/sgrote/GOfuncR
 R CMD build --no-build-vignettes GOfuncR
-R CMD INSTALL GOfuncR_1.1.0.tar.gz
+R CMD INSTALL GOfuncR_1.1.3.tar.gz
 ```
 
 or
