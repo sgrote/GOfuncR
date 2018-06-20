@@ -642,9 +642,9 @@ sessionInfo()
 
 # References
 
-[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25-29. doi:10.1038/75556
+[1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25: 25-29. [https://doi.org/10.1038/75556]
 
 [2] Pruefer, K. et al. (2007). FUNC: A package for detecting significant associations between gene
-sets and ontological annotations, BMC Bioinformatics 8: 41. doi:10.1186/1471-2105-8-41
+sets and ontological annotations, BMC Bioinformatics 8: 41. [https://doi.org/10.1186/1471-2105-8-41]
 
-[3] McDonald, J. H. Kreitman, M. (1991). Adaptive protein evolution at the Adh locus in Drosophila, Nature 351: 652-654. doi:10.1038/351652a0
+[3] McDonald, J. H. Kreitman, M. (1991). Adaptive protein evolution at the Adh locus in Drosophila, Nature 351: 652-654. [https://doi.org/10.1038/351652a0]
