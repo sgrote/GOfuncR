@@ -29,15 +29,6 @@ GitHub:
 
 + Installation from GitHub
 
-```bash
-## install GOfuncR from the command line
-git clone https://github.com/sgrote/GOfuncR
-R CMD build --no-build-vignettes GOfuncR
-R CMD INSTALL GOfuncR_1.1.3.tar.gz
-```
-
-or
-
 ```r
 ## install from GitHub in R:
 install.packages("devtools")
@@ -46,10 +37,9 @@ install_github("sgrote/GOfuncR")
 ```
 
 
-
 #### Usage
 
-See the [vignette](https://bioconductor.org/packages/release/bioc/vignettes/GOfuncR/inst/doc/GOfuncR.html) for an introduction.
+See the [vignette](https://bioconductor.org/packages/devel/bioc/vignettes/GOfuncR/inst/doc/GOfuncR.html) for an introduction.
 
 Also refer to the man-pages for single functions, e.g.
 ```r
