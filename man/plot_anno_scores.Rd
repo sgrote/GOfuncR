@@ -63,7 +63,7 @@ Steffi Grote
 #### Note that argument 'n_randsets' is reduced 
 #### to lower computational time in the example.
 
-## Assign two random counts and to some random genes to create example input
+## Assign two random counts to some genes to create example input
 set.seed(123)
 high_A_genes = c('G6PD', 'GCK', 'GYS1', 'HK2', 'PYGL', 'SLC2A8',
     'UGP2', 'ZWINT', 'ENGASE')

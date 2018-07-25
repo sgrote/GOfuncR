@@ -19,7 +19,7 @@ plot_hyper = function(aggrego, root_aggrego){
     }
     zero_go = fish_odds[fish_odds$odds_ratio==0,"go_id"]
     if(length(zero_go) > 0){
-        warning("The following GOs have an odds ratio of 0: ", paste(zero_go, collapse=", "))
+        warning("The following GO-categories have an odds ratio of 0: ", paste(zero_go, collapse=", "))
     }
 
     ### plot the odds-ratios, with CI

@@ -18,11 +18,11 @@ plot_conti = function(aggrego){
     # replace Inf or -Inf CI for plotting
     inf_go = fish_odds[is.infinite(fish_odds$odds_ratio),"go_id"]
     if(length(inf_go) > 0){
-        warning("The following GOs have an infinite odds ratio due to no background gene annotation: ", paste(inf_go, collapse=", "))
+        warning("The following GO-categories have an infinite odds ratio: ", paste(inf_go, collapse=", "))
     }
     zero_go = fish_odds[fish_odds$odds_ratio==0,"go_id"]
     if(length(zero_go) > 0){
-        warning("The following GOs have an odds ratio of 0: ", paste(zero_go, collapse=", "))
+        warning("The following GO-categories have an odds ratio of 0: ", paste(zero_go, collapse=", "))
     }
     ############# TODO influenced by setting par(oma) before function call?
     
