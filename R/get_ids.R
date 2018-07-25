@@ -9,8 +9,6 @@ get_ids = function(go_name, term_df=NULL, godir=NULL){
     if(length(go_name)!=1){
         stop("Please use a single GO-category name.")
     }
-    # restrict to 'real' GO-IDs
-    term = term[substr(term[,4],1,3)=="GO:",]
     # remove obsolete
     term = term[term[,5]==0,]
     # grep for name

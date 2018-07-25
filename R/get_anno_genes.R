@@ -8,12 +8,6 @@
 
 get_anno_genes = function(go_ids, database="Homo.sapiens", genes=NULL, annotations=NULL, term_df=NULL, graph_path_df=NULL, godir=NULL){
     
-    ## Check input  
-    go_ids = as.character(go_ids)
-    if (!is.vector(go_ids) || !all(substr(go_ids,1,3) == "GO:")){
-        stop("Please provide GO-IDs as input, e.g. go_ids=c('GO:0072221','GO:0004945')")
-    }
-    
     # get term and grpah_path depending on input
     onto = eval_onto_input(term_df, graph_path_df, godir)
     term = onto[[1]]
@@ -22,7 +16,7 @@ get_anno_genes = function(go_ids, database="Homo.sapiens", genes=NULL, annotatio
     ### get annotations
     
     # child nodes    
-    message("find child nodes of GOs...")
+    message("find child nodes of GO-categories...")
     children = get_child_nodes(go_ids, term, graph_path)[,1:2]
     uni_child = unique(children[,2])
     
