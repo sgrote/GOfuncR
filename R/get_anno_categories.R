@@ -67,10 +67,10 @@ get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL,
     }
     
     # create output
-    colnames(out) = c("gene", "go_id")
     out = unique(out)
     # add name and domain
     out = cbind(out, get_names(out[,2])[,2:3])
+    colnames(out) = c("gene", "go_id", "name", "domain")
     # sort
     out = out[order(out$gene, out$go_id),]
     rownames(out) = 1:nrow(out)
