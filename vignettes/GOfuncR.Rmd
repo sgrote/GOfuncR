@@ -389,7 +389,7 @@ Besides using bioconductor's annotation packages for the mapping of genes to GO-
 ```{r,echo=FALSE}
 custom_anno = get_anno_categories(input_hyper_bg[,1])
 # to have several genes in head
-custom_anno = custom_anno[6:nrow(custom_anno),]
+custom_anno = custom_anno[6:nrow(custom_anno),1:2]
 rownames(custom_anno) = 1:nrow(custom_anno)
 ```
 ```{r}
