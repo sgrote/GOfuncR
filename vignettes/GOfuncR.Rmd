@@ -81,8 +81,9 @@ See below for examples [how to use other packages](#other_db) or [how to provide
 
 ```{r, eval=FALSE}
 ## install annotation package 'Homo.sapiens' from bioconductor
-source('https://bioconductor.org/biocLite.R')
-biocLite('Homo.sapiens')
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install('Homo.sapiens')
 ``` 
 
 ## Test for gene set enrichment using the hypergeometric test

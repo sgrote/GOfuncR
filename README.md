@@ -19,8 +19,9 @@ A stable release version can be obtained from [_Bioconductor_](https://www.bioco
 + Installation from Bioconductor
 
 ```r
-source("https://bioconductor.org/biocLite.R")
-biocLite("GOfuncR")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("GOfuncR")
 ```
 
 The developmental (this) version can be obtained from the ['devel' version of Bioconductor](https://bioconductor.org/developers/how-to/useDevel/) or directly from
