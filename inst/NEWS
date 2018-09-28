@@ -1,4 +1,12 @@
 
+CHANGES IN VERSION 1.1.5
+--------------------------
+
+USER-LEVEL CHANGES
+
+    o add name and domain to categories in get_anno_categories()
+
+
 CHANGES IN VERSION 1.1.2
 --------------------------
 
