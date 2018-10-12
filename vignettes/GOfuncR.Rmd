@@ -2,7 +2,7 @@
 ---
 title: "GOfuncR: Gene Ontology Enrichment Using FUNC"
 author: "Steffi Grote"
-date: "April 24, 2018"
+date: "October 12, 2018"
 output:
     BiocStyle::html_document:
     toc: true
@@ -29,8 +29,8 @@ It provides the standard candidate vs. background enrichment analysis using the 
 To correct for multiple testing and interdependency of the tests, family-wise error rates (FWER) are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below).
 `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
 GO-annotations and gene-coordinates are obtained from *OrganismDb* packages (`r Biocpkg('Homo.sapiens')` by default) or *OrgDb* and *TxDb* packages.
-The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 10-Apr-2018), is integrated in the package.
-From version 0.99.14 on it is also possible to provide custom annotations and ontologies.  
+The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 11-Oct-2018), is integrated in the package.
+It is also possible to provide custom gene coordinates, annotations and ontologies.  
 
 ![input data and test selection](Input_data_test_selection.png 'overview tests')
 
@@ -390,7 +390,7 @@ Besides using bioconductor's annotation packages for the mapping of genes to GO-
 ```{r,echo=FALSE}
 custom_anno = get_anno_categories(input_hyper_bg[,1])
 # to have several genes in head
-custom_anno = custom_anno[6:nrow(custom_anno),]
+custom_anno = custom_anno[6:nrow(custom_anno),1:2]
 rownames(custom_anno) = 1:nrow(custom_anno)
 ```
 ```{r}

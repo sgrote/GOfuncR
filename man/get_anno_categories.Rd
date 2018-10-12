@@ -47,7 +47,7 @@ get_anno_categories(genes,  database = 'Homo.sapiens', annotations = NULL,
 }
 
 \value{
-a data.frame() with two columns: gene (character()) and GO-ID (character()).
+a data.frame() with four columns: gene (character()), GO-ID (character(), GO-name (character() and GO-domain (character()).
 }
 \references{
 [1] Ashburner, M. et al. (2000). Gene Ontology: tool for the unification of biology. Nature Genetics 25, 25-29.
@@ -72,9 +72,5 @@ Also note that GO-categories which are not represented or obsolete in the intern
 ## get the GO-annotations for two random genes
 anno1 = get_anno_categories(c('BTC', 'SPAG5'))
 head(anno1)
-# add the names and domains of the GO-categories
-named_anno1 = merge(anno1, get_names(anno1$go_id))
-head(named_anno1)
-
 }
 
