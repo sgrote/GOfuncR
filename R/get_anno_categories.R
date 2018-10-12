@@ -71,6 +71,9 @@ get_anno_categories = function(genes, database="Homo.sapiens", annotations=NULL,
     # add name and domain
     out = cbind(out, get_names(out[,2])[,2:3])
     colnames(out) = c("gene", "go_id", "name", "domain")
+    # convert to char (user-defined factor can introduce NA in root-node loop subset in go_enrich)
+    out$gene = as.character(out$gene)
+    out$go_id = as.character(out$go_id)
     # sort
     out = out[order(out$gene, out$go_id),]
     rownames(out) = 1:nrow(out)
