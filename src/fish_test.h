@@ -145,7 +145,6 @@ double chi_square_2x2( int a1, int a2, int b1, int b2 )
 	} 
 	
 	return  R::pchisq( result, 1., 0, 0 );
-	return  0.03;
 }	
 
 // Calculates fisher exact if one value is below 10, otherwise chi_square
