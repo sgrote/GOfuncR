@@ -27,10 +27,10 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
         a_version = "custom"
     } else if (!is.null(orgDb)){
         anno_db = orgDb
-        a_version = as.character(packageVersion(anno_db))
+        a_version = load_db(anno_db)
     } else {
         anno_db = organismDb
-        a_version = as.character(packageVersion(anno_db))
+        a_version = load_db(anno_db)
     }
     databases = data.frame(type="go_annotations", db=anno_db, version=a_version, stringsAsFactors=FALSE)
     
@@ -42,10 +42,10 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
             c_version = "custom"        
         } else if (!is.null(txDb)){
             coord_db = txDb
-            c_version = as.character(packageVersion(coord_db))
+            c_version = load_db(coord_db)
         } else {
             coord_db = organismDb
-            c_version = as.character(packageVersion(coord_db))
+            c_version = load_db(coord_db)
         }
     } else {
         coord_db = NA
@@ -57,7 +57,7 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
     # only if coords are needed and TxDb is used
     if (!(is.na(coord_db)) &&  !(is.null(txDb))){
         entrez_db = orgDb
-        e_version = as.character(packageVersion(orgDb))
+        e_version = load_db(orgDb)
     } else {
         entrez_db = NA
         e_version = NA
@@ -119,12 +119,11 @@ eval_term = function(term_df, godir){
 
 # load database
 load_db = function(db, silent=FALSE){
-    if (!silent){
-        message("load database '", db,"'...")
+    if (!suppressWarnings(suppressMessages(require(db, character.only=TRUE)))){
+        stop("database '" ,db, "' is not installed. Please install it from bioconductor:\nif (!requireNamespace('BiocManager', quietly = TRUE))\n\tinstall.packages('BiocManager')\nBiocManager::install('",db ,"')")
     }
-    if (!suppressPackageStartupMessages(suppressMessages(require(db, character.only=TRUE)))){
-        stop("database '" ,db, "' is not installed. Please install it from bioconductor.")
-    }
+    vers = as.character(packageVersion(db))
+    return(invisible(vers))
 }
 
 # find overlaps of genes, ranges and convert to data.frame chr, start, end, gene
