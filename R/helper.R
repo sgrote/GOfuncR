@@ -134,7 +134,7 @@ get_genes_from_regions = function(gene_coords, ranges){
 }
 
 # convert EntrezID from TxDb to symbol using orgDb
-entrez_to_symbol = function(entrez, orgDb=org.Hs.eg.db){
+entrez_to_symbol = function(entrez, orgDb){
     symbol = suppressMessages(select(orgDb, keys=as.character(entrez), columns=c("ENTREZID","SYMBOL"), keytype="ENTREZID"))
     # just double-check
     if(any(symbol[,1] != entrez)) {stop("Unexpected order in entrez_to_symbol.")}
