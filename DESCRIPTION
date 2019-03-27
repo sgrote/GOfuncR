@@ -1,14 +1,14 @@
 Package: GOfuncR
 Type: Package
 Title: Gene ontology enrichment using FUNC
-Version: 1.3.2
+Version: 1.3.3
 Date: 2019-03-27
 Author: Steffi Grote
 Maintainer: Steffi Grote <steffi_grote@eva.mpg.de>
 Description: GOfuncR performs a gene ontology enrichment analysis based on
     the ontology enrichment software FUNC. GO-annotations are obtained 
     from OrganismDb or OrgDb packages ('Homo.sapiens' by default);
-    the GO-graph is included in the package and updated regularly (11-Oct-2018).  
+    the GO-graph is included in the package and updated regularly (26-Mar-2019).  
     GOfuncR provides the standard candidate vs. background enrichment analysis
     using the hypergeometric test, as well as three additional tests: 
     (i) the Wilcoxon rank-sum test that is used when genes are ranked, 
