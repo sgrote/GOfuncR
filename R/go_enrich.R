@@ -175,7 +175,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     # check that all root nodes in term
     root_node_ids = term[match(root_nodes, term[,2]),4]
     if (!(is.null(godir)) && any(is.na(root_node_ids))){
-        stop("Not all domains present in term.txt \n If the custom ontology has other domains than 'molecular_function', 'biological_process' and 'cellular_component', they have to be defined in the 'domains' parameter.")
+        stop("Not all root_nodes present in term.txt.")
     }
     
     # subset genes to annotated genes (also reduced to internal ontology)
