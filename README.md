@@ -31,10 +31,9 @@ GitHub:
 + Installation from GitHub
 
 ```r
-## install from GitHub in R:
-install.packages("devtools")
-library(devtools)
-install_github("sgrote/GOfuncR")
+if (!requireNamespace("devtools", quietly=TRUE))
+    install.packages("devtools")
+devtools::install_github("sgrote/GOfuncR")
 ```
 
 
