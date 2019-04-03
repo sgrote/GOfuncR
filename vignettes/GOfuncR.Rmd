@@ -434,17 +434,16 @@ A gene with a higher weight has a bigger chance of becoming a candidate gene in 
 
 A default GO-graph (obtained from [geneontology](http://archive.geneontology.org/lite/latest/), last modified on 27-Mar-2019), is integrated in the package.
 However, also a custom GO-graph, e.g. a specific version or a different ontology can be provided. `go_enrich` needs a directory which contains three tab-separated files in the GO MySQL Database Schema:
-[term.txt](http://www.geneontology.org/page/go-mysql-database-schema#go-graph.table.term),
-[term2term.txt](http://www.geneontology.org/page/go-mysql-database-schema#go-graph.table.term2term) and
-[graph_path.txt](http://www.geneontology.org/GO.database.schema.shtml#go-optimisations.table.graph-path). The full path to this directory needs to be defined in the parameter `godir`.  
-Specific versions of the GO-graph can be downloaded from http://archive.geneontology.org/termdb/.
-For example, to use the GO-graph from 2018-03-30, download and unpack the files from 
-http://archive.geneontology.org/termdb/2018-03-30/go_daily-termdb-tables.tar.gz.
-Assume the files were saved in `/home/user/go_graphs/2018-03-30/`. This directory now contains the needed files `term.txt`, `term2term.txt` and `graph_path.txt` and can be used in `go_enrich`:
+*term.txt*, *term2term.txt* and *graph_path.txt*.
+The full path to this directory needs to be defined in the parameter `godir`.  
+Specific versions of the GO-graph can be downloaded from http://archive.geneontology.org/lite/.
+For example, to use the GO-graph from 2018-11-24, download and unpack the files from 
+http://archive.geneontology.org/lite/2018-11-24/go_weekly-termdb-tables.tar.gz.
+Assume the files were saved in `/home/user/go_graphs/2018-11-24/`. This directory now contains the needed files `term.txt`, `term2term.txt` and `graph_path.txt` and can be used in `go_enrich`:
 
 ```{r,eval=FALSE} 
 ## run enrichment with custom GO-graph
-go_path = '/home/user/go_graphs/2018-03-30/'
+go_path = '/home/user/go_graphs/2018-11-24/'
 res_hyper = go_enrich(input_hyper, godir=go_path)
 
 ```
