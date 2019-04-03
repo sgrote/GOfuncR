@@ -7,7 +7,7 @@ To correct for multiple testing and interdependency of the tests, family-wise er
 _GOfuncR_ also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
 
 GO-annotations and gene-coordinates are obtained from _OrganismDb_ packages ([_Homo.sapiens_](https://www.bioconductor.org/packages/release/data/annotation/html/Homo.sapiens.html) by default) or _OrgDb_ and _TxDb_ packages.
-The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/latest-termdb/), last modified on 26-Mar-2019), is integrated in the package.
+The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/lite/latest/), last modified on 27-Mar-2019), is integrated in the package.
 It is also possible to provide custom gene coordinates, annotations and ontologies.
 
 
