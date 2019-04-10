@@ -140,6 +140,11 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         write.table(term2term, go_paths[2], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
         write.table(graph_path, go_paths[3], col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
     } else {
+        # ~ seems to not work within C++ code
+        if (substring(godir, 1, 1) == "~"){
+            home = Sys.getenv("HOME")
+            godir = paste0(home, substring(godir, 2))
+        }
         go_paths = paste0(godir, c("/term.txt", "/term2term.txt", "/graph_path.txt"))
         term = read.table(go_paths[1], sep="\t", quote="", comment.char="", as.is=TRUE)
     }
