@@ -452,7 +452,7 @@ res_hyper = go_enrich(input_hyper, godir=go_path)
 At some point [Gene Ontology](http://geneontology.org/) may no longer provide the ontology in the GO MySQL Database Schema; and other ontologies may not be provided in that format at all.   
 Therefore, custom ontologies might need to be converted to the right format before using them in `GOfuncR`.
 On https://github.com/sgrote/OboToTerm you can find a python script that converts the widely used `.obo` format to the tables needed (*term.txt*, *term2term.txt* and *graph_path.txt*).
- 
+
 # Additional functionalities
 
 <a name='plot_anno'></a>
