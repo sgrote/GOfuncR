@@ -80,7 +80,7 @@ plot_anno_scores = function(res, go_ids, annotations=NULL){
         if (test == "hyper"){ 
             # counts of 1 and 0 genes in a node
             anno_scores[is.na(anno_scores[,3]), 3] = 0 # default 0 for hyper (NA if background not defined)
-            anno_scores = tapply(anno_scores[,3], anno_scores[,1], function(x) c(sum(x[]), length(x)-sum(x)))
+            anno_scores = tapply(anno_scores[,3], anno_scores[,1], function(x) c(sum(x), length(x)-sum(x)))
             anno_scores = data.frame(go_id = names(anno_scores), do.call(rbind, anno_scores))
         } else { 
             # sums of scores in a node (binom + conti)
