@@ -59,10 +59,7 @@ go_to_term = function(go_ids, term){
     # remove obsolete terms
     term = term[term[,5]==0,]
     # get term-IDs of GOs
-    go_ids_term = term[term[,4] %in% go_ids, 1]
-    if(length(go_ids_term) == 0){
-        stop("GO-IDs not found in ontology or obsolete.")
-    }
+    go_ids_term = term[match(go_ids, term[,4]), 1]
     return(go_ids_term)
 }
 
