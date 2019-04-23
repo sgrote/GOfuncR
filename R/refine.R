@@ -52,7 +52,7 @@ refine = function(res, pval){
     }
 
     # merge with original data, all=T just to be sure, should always have the same
-    out = merge(signi_stats, refined, by="node_id", all=T)
+    out = merge(signi_stats, refined, by="node_id", all=TRUE)
     out$signif = out$refined_p < pval
 
     message("\nDone.")

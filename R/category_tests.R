@@ -7,7 +7,7 @@ hyper = function(candi_node, candi_root, bg_node, bg_root, under=FALSE){
     if (under){
         p = phyper(candi_node, candi_root, bg_root, total_node)
     } else {
-        p = phyper(candi_node-1, candi_root, bg_root, total_node, lower.tail=F)
+        p = phyper(candi_node-1, candi_root, bg_root, total_node, lower.tail=FALSE)
     }
     return(p)
 }
