@@ -53,21 +53,6 @@ get_child_nodes = function(go_ids, term_df=NULL, graph_path_df=NULL, godir=NULL)
     return(out)
 }
 
-# get term.txt IDs for GO-IDs
-go_to_term = function(go_ids, term){
-    go_ids = as.character(go_ids)
-    # remove obsolete terms
-    term = term[term[,5]==0,]
-    # get term-IDs of GOs
-    go_ids_term = term[match(go_ids, term[,4]), 1]
-    return(go_ids_term)
-}
-
-# get GO-IDs of term.txt IDs
-term_to_go = function(term_ids, term){
-    go_ids = term[match(term_ids, term[,1]) ,4]
-    return(go_ids)
-}
 
 # rearrange output
 sort_out = function(out){

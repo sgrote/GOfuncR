@@ -203,3 +203,88 @@ get_gene_coords = function(symbols, coord_db="Homo.sapiens", entrez_db=NA, silen
     return(coords)
 }
 
+# get term.txt IDs for GO-IDs
+go_to_term = function(go_ids, term){
+    go_ids = as.character(go_ids)
+    # remove obsolete terms
+    term = term[term[,5]==0,]
+    # get term-IDs of GOs
+    go_ids_term = term[match(go_ids, term[,4]), 1]
+    return(go_ids_term)
+}
+
+# get GO-IDs of term.txt IDs
+term_to_go = function(term_ids, term){
+    go_ids = term[match(term_ids, term[,1]) ,4]
+    return(go_ids)
+}
+
+# check if res is really go_enrich()[[1]]
+check_res = function(res){
+    if (!(is.list(res) && all(names(res) == c("results","genes","databases")))){
+        stop("Please use an object returned from go_enrich as input (list with 3 elements).")
+    }
+}
+
+# infer go_enrich test given input_genes = res[[2]]
+# TODO: maybe remove parameter 'test' for go_enrich too
+infer_test = function(input_genes){
+    if (ncol(input_genes) == 2){
+        if(all(input_genes[,2] %in% c(1,0))){
+            test = "hyper"
+        } else {
+            test = "wilcoxon"
+        }
+    } else if(ncol(input_genes) == 3){
+        test = "binomial"
+    } else if(ncol(input_genes) == 5){
+        test = "contingency"
+    } else {
+        stop("Identification of test failed.")
+    }
+    return(test)
+}
+
+# infer ontology, load term and graph_path if custom
+# given databases = go_enrich()[[3]]
+load_onto = function(databases){
+    onto = databases[databases[,1] == "go_graph", ]
+    if (onto[1,2] == "custom"){
+        godir = onto[1,3]
+        term = read.table(paste0(godir,"/term.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
+        graph_path = read.table(paste0(godir,"/graph_path.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
+    } # else, take from sysdata
+    return(list(term, graph_path))
+}
+
+# get annotated genes and their scores from go_enrich() given GO-IDs
+# use term and graph_path directly to avoid re-reading custom ontology
+get_anno_scores = function(res, go_ids, term, graph_path, annotations=NULL){
+    in_genes = res[[2]]
+    anno_db = res[[3]][1,2]
+    if (anno_db == "custom" && is.null(annotations)){
+        stop("Apparently go_enrich was run with custom annotations. Please provide those custom annotations to this function too.")
+    }
+    # check if background genes are defined (optional for hyper)
+    test = infer_test(in_genes)
+    if (test == "hyper" & all(in_genes[,2] == 1)){
+        genes = NULL
+    } else {
+        genes = in_genes[,1]
+    }
+    # genes=NULL will return annotations for all genes
+    anno = get_anno_genes(go_ids, database=anno_db, genes, annotations, term, graph_path)
+    if (is.null(anno)){
+        return(invisible(NULL)) # no annotations - warning from get_anno_genes
+    }
+    # add scores to nodes
+    anno_scores = cbind(anno, in_genes[match(anno[,2], in_genes[,1]), 2:ncol(in_genes)])
+    colnames(anno_scores)[3:ncol(anno_scores)] = colnames(in_genes)[2:ncol(in_genes)]
+    # for default background, bg-genes are not in res[[2]], match yields NA, convert to 0
+    if (test == "hyper"){
+        anno_scores[is.na(anno_scores[,3]), 3] = 0 # default 0 for hyper (NA if background not defined)
+    }
+
+    return(anno_scores)
+}
+
