@@ -18,7 +18,7 @@ refine = function(res, pval){
         godir = onto[1,3]
         term = read.table(paste0(godir,"/term.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
         graph_path = read.table(paste0(godir,"/graph_path.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
-    } 
+    }
 
     # get scores for nodes
     anno = get_anno_scores(res, signi_stats$node_id, annotations=NULL, go_roots_only=TRUE)
@@ -76,10 +76,10 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined){
     }
     
     # aggregate annotations for leaves
-    anno_leaves = anno_signi[anno_signi$go_id %in% leaves, ]   
+    anno_leaves = anno_signi[anno_signi$go_id %in% leaves, ]
     empty_leaves = leaves[!leaves %in% anno_leaves[,1]]
     names(empty_leaves) = empty_leaves
-   
+
     # TODO: from here it's hyper-specific
 
     # counts of 1 and 0 genes in a node

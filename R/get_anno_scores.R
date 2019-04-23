@@ -53,7 +53,7 @@ get_anno_scores = function(res, go_ids, annotations=NULL, go_roots_only=TRUE){
     if (go_roots_only){
         val_roots = unique(res[[1]][res[[1]][,2] %in% go_ids,1])
     } else {
-        val_roots = unique(res[[1]][,1])        
+        val_roots = unique(res[[1]][,1])
     }
     root_names_id = term[match(root_names, term[,2]) ,]
     root_names_id = root_names_id[root_names_id[,2] %in% val_roots, ]
@@ -91,7 +91,7 @@ get_anno_scores = function(res, go_ids, annotations=NULL, go_roots_only=TRUE){
     colnames(anno_scores)[4:ncol(anno_scores)] = colnames(in_genes)[2:ncol(in_genes)]
     
     # for default background, bg-genes are not in res[[2]], match yields NA, convert to 0
-    if (test == "hyper"){ 
+    if (test == "hyper"){
         anno_scores[is.na(anno_scores[,4]), 4] = 0 # default 0 for hyper (NA if background not defined)
     }
     
