@@ -2,29 +2,45 @@
 
 ## for hyper
 
-refine = function(res, pval){
+# annotations = custom annotations dataframe if needed
+refine = function(res, pval, annotations=NULL){
 
     # TODO: remove hardcoded raw_p_overrep
+    
+    # check input
+    check_res(res)
+    onto = load_onto(res[[3]])
+    term = onto[[1]]
+    graph_path = onto[[2]]
+    test = infer_test(res[[2]])
 
     # get significant GO-categories
     stats = res[[1]]
     signi_stats = stats[stats$raw_p_overrep < pval, ]
     message("Found ", nrow(signi_stats), " significant categories at p-value threshold ", pval)
-
-    # infer ontology
-    # TODO remove redundancy with get_anno_scores
-    onto = res[[3]][res[[3]][,1] == "go_graph", ]
-    if (onto[1,2] == "custom"){
-        godir = onto[1,3]
-        term = read.table(paste0(godir,"/term.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
-        graph_path = read.table(paste0(godir,"/graph_path.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
+    go_ids = signi_stats$node_id
+    
+    # add root nodes for significant nodes
+    if (test != "contingency"){
+        root_names = unique(signi_stats[,1])
+        root_names_id = term[match(root_names, term[,2]),]
+        root_ids = root_names_id[,4]
+        go_ids = c(go_ids, root_ids)
+        # add root_ids to GO-ids for combining them with output
+        matched_root_name = get_names(go_ids, term) # get names also returns root-node-name
+        matched_root_name$root_id = root_names_id[match(matched_root_name[,3], root_names_id[,2]), 4]
     }
+    
+    # get annotated genes with scores
+    message("\nGet annotations for categories:")
+    anno = get_anno_scores(res, go_ids, term, graph_path, annotations)
 
-    # get scores for nodes
-    anno = get_anno_scores(res, signi_stats$node_id, annotations=NULL, go_roots_only=TRUE)
-
-    # add term-ID
+    # add term-ID and root_ids
     anno = cbind(anno, term_id=go_to_term(anno$go_id, term))
+    if (test != "contingency"){
+        anno = cbind(anno, root_id=matched_root_name[match(anno[,1], matched_root_name[,1]), "root_id"])
+        anno$root_id = as.character(anno$root_id)
+    }
 
     # add GO-ID of children
     graph_path$go_id = term_to_go(graph_path[,3], term)
@@ -32,7 +48,6 @@ refine = function(res, pval){
     refined = data.frame(node_id=signi_stats$node_id, raw_p=signi_stats$raw_p_overrep, refined_p=NA) 
     # loop over roots
     # TODO: for contingency root nodes are not part of anno, have to get them differently
-    root_ids = unique(anno$root_id)
     for (r in root_ids){
         message("\nRefine root node ", r, "...")
         # restrict graph to significant+root categories from this root node
@@ -41,11 +56,11 @@ refine = function(res, pval){
         sub_graph_path = graph_path[graph_path[,2] %in% term_ids & graph_path[,3] %in% term_ids, ]
         # remove dist=0
         sub_graph_path = sub_graph_path[sub_graph_path[,5] != 0,]
-        # divide into root and significant-node annoatios
+        # divide into root and significant-node annotatios
         anno_signi = anno_one_root[anno_one_root$go_id != r,]
         anno_root = anno_one_root[anno_one_root$go_id == r,]
         # aggregate scores per root (stable across refinement rounds)
-        scores_root = tapply(anno_root[,4], anno_root[,1], function(x) c(sum(x[]), length(x)-sum(x)))
+        scores_root = tapply(anno_root[,3], anno_root[,1], function(x) c(sum(x[]), length(x)-sum(x)))
         scores_root = do.call(rbind, scores_root)
         # recursively compute refinement (update 'refined')
         refined = refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined)
@@ -83,7 +98,7 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined){
     # TODO: from here it's hyper-specific
 
     # counts of 1 and 0 genes in a node
-    scores_leaves = tapply(anno_leaves[,4], anno_leaves[,1], function(x) c(sum(x[]), length(x)-sum(x)))
+    scores_leaves = tapply(anno_leaves[,3], anno_leaves[,1], function(x) c(sum(x[]), length(x)-sum(x)))
     # add leaves without any genes left - if there's none doesn't matter
     scores_leaves = c(scores_leaves, lapply(empty_leaves, function(x) c(0,0)))
     # collapse
