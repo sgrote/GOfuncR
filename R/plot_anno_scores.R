@@ -23,11 +23,11 @@ plot_anno_scores = function(res, go_ids, annotations=NULL){
     graph_path = onto[[2]]
 
     # infer root_nodes
-    if (res[[3]][1,2] == "custom"){
-        root_names = rev(sort(unique(res[[1]][,1])))
-    } else {
-        # use fixed root names for stable colors (if some root node is skipped in go_enrich)
-        root_names = c("molecular_function","cellular_component","biological_process")
+    root_names = rev(sort(unique(res[[1]][,1])))
+    # if some (default) root node is skipped in go_enrich, add it for stable colors
+    default_roots = c("molecular_function","cellular_component","biological_process")
+    if (all(root_names %in% default_roots)){
+        root_names = default_roots
     }
     
     # colors and IDs for root nodes
@@ -73,7 +73,6 @@ plot_anno_scores = function(res, go_ids, annotations=NULL){
         if (test != "wilcoxon"){
             if (test == "hyper"){ 
                 # counts of 1 and 0 genes in a node
-                root_anno_scores[is.na(root_anno_scores[,3]), 3] = 0 
                 root_anno_scores = tapply(root_anno_scores[,3], root_anno_scores[,1], function(x) c(sum(x[]), length(x)-sum(x)))
                 root_anno_scores = data.frame(go_id = names(root_anno_scores), do.call(rbind, root_anno_scores))
             } else { 
@@ -81,10 +80,10 @@ plot_anno_scores = function(res, go_ids, annotations=NULL){
                 root_anno_scores = aggregate(root_anno_scores[,3:ncol(root_anno_scores)], list(go_id=root_anno_scores[,1]), sum)
             }
             # add colors and root_node_name
-            root_anno_scores$root_name = get_names(root_anno_scores[,1], term)[,2]
+            root_anno_scores$root_name = root_names_id[match(root_anno_scores[,1], root_names_id[,4]), 2]
             root_anno_scores$root_col = root_cols[match(root_anno_scores[,1], root_cols[,1]), 2]
             # merge nodes with root node info
-            matched_root_name = get_names(anno_scores[,1], term)[,3] # get names
+            matched_root_name = get_names(anno_scores[,1], term)[,3] # get names also has root name
             anno_scores$root_id = root_names_id[match(matched_root_name, root_names_id[,2]), 4]
             anno_scores = cbind(anno_scores, root_anno_scores[match(anno_scores$root_id, root_anno_scores[,1]), 2:ncol(root_anno_scores)])
         } else { 
