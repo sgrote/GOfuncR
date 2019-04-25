@@ -49,17 +49,14 @@ plot_anno_scores = function(res, go_ids, annotations=NULL){
     anno_scores = get_anno_scores(res, go_ids, term, graph_path, annotations)
 
     # aggregate scores in nodes (wilcox: plot score distribution)
-    if (test != "wilcoxon"){
-        if (test == "hyper"){ 
-            # counts of 1 and 0 genes in a node
-            anno_scores = tapply(anno_scores[,3], anno_scores[,1], function(x) c(sum(x), length(x)-sum(x)))
-            anno_scores = data.frame(go_id = names(anno_scores), do.call(rbind, anno_scores))
-        } else { 
-            # sums of scores in a node (binom + conti)
-            anno_scores = aggregate(anno_scores[,3:ncol(anno_scores)], list(go_id=anno_scores[,1]), sum)
-        }
+    if (test == "hyper"){
+        # counts of 1 and 0 genes in a node
+        anno_scores = tapply(anno_scores[,3], anno_scores[,1], function(x) c(sum(x), length(x)-sum(x)))
+        anno_scores = data.frame(go_id = names(anno_scores), do.call(rbind, anno_scores))
+    } else if (test %in% c("binomial", "contingency")){
+        # sums of scores in a node (binom + conti)
+        anno_scores = aggregate(anno_scores[,3:ncol(anno_scores)], list(go_id=anno_scores[,1]), sum)
     }
-
 
     ### get annotation for root nodes   (conti independent of root nodes)
     if (test != "contingency"){
