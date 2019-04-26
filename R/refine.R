@@ -85,9 +85,10 @@ refine = function(res, pval, pcol=5, annotations=NULL){
             # counts of 1 and 0 genes in a node
             scores_root = c(sum(anno_root[,3]), length(anno_root[,3])-sum(anno_root[,3]))
         } else if (test %in% c("binomial", "contingency")){
-            # sums of scores in a node (binom + conti)
+            # sums of scores c(A,B(,C,D)) (binom + conti)
+            # TODO: simpler, just colSums, just one node
             scores_root = aggregate(anno_root[,3:ncol(anno_root)], list(go_id=anno_root[,1]), sum)
-        } else if (test == "wilcox"){
+        } else if (test == "wilcoxon"){
             # genes, scores
             scores_root = anno_root[,2:3]
         }
@@ -125,9 +126,11 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     anno_leaves = anno_signi[anno_signi$go_id %in% leaves, 1:3]
     empty_leaves = leaves[!leaves %in% anno_leaves[,1]]
     
-    # run category test for leaves
+    # run category test for leaves; data.frame(go_id, new_p)
     if (test == "hyper"){
         new_p_leaves = hyper_nodes(anno_leaves, empty_leaves, scores_root, low)
+    } else if (test == "wilcoxon"){
+        new_p_leaves = wilcox_nodes(anno_leaves, empty_leaves, scores_root, low)
     }
     
     # add to output

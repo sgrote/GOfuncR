@@ -21,15 +21,14 @@ test_that("hyper_nodes() - refinement hyper category test for all leaves",{
     scores = c(0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0)), row.names = 17684:17696, class = "data.frame")
 	empty_nodes = c("nodeA", "nodeB")	
 	pvals = hyper_nodes(anno_nodes, empty_nodes, scores_root)	
-	expected = structure(list(go_id = structure(1:4, .Label = c("GO:0072205", 
-	"GO:0072221", "nodeA", "nodeB"), class = "factor"), new_p = c(1.18340981614424e-05, 
-	4.23125608013295e-06, 1, 1)), class = "data.frame", row.names = c(NA,-4L))	
+	expected = structure(list(go_id = c("GO:0072205", "GO:0072221", "nodeA", 
+	"nodeB"), new_p = c(1.18340981614424e-05, 4.23125608013295e-06, 
+	1, 1)), class = "data.frame", row.names = c(NA, -4L))
 	expect_true(all.equal(pvals, expected))
 	
 	# only non-empty leaves
 	pvals = hyper_nodes(anno_nodes, character(0), scores_root)
-	expected = structure(list(go_id = structure(1:2, .Label = c("GO:0072205", 
-	"GO:0072221"), class = "factor"), new_p = c(1.18340981614424e-05, 
+	expected = structure(list(go_id = c("GO:0072205", "GO:0072221"), new_p = c(1.18340981614424e-05, 
 	4.23125608013295e-06)), class = "data.frame", row.names = c(NA, -2L))
 	expect_true(all.equal(pvals, expected[1:2,]))
 	
@@ -37,8 +36,8 @@ test_that("hyper_nodes() - refinement hyper category test for all leaves",{
 	anno_nodes = structure(list(go_id = character(0), gene = character(0), scores = numeric(0)),
 	row.names = integer(0), class = "data.frame")
 	pvals = hyper_nodes(anno_nodes, empty_nodes, scores_root)
-	expected = structure(list(go_id = structure(1:2, .Label = c("nodeA", "nodeB"), class = "factor"), 
-	new_p = c(1, 1)), class = "data.frame", row.names = c(NA, -2L))
+	expected = structure(list(go_id = c("nodeA", "nodeB"), new_p = c(1, 1)), 
+	class = "data.frame", row.names = c(NA, -2L))
 	expect_true(all.equal(pvals, expected))
 	
 })
@@ -46,8 +45,7 @@ test_that("hyper_nodes() - refinement hyper category test for all leaves",{
 
 
 
-
-test_that("refinement wilcoxon category test",{
+test_that("wilcox() - refinement wilcoxon category test",{
 	
 	anno_genes_node = structure(list(gene = c("AGTR1", "BTBD3", "CACNG2", "CALB1", 
 	"ENGASE", "G6PD", "GCK", "GYG1", "GYS1", "HK2", "PAX2", "PYGL", 
@@ -66,4 +64,39 @@ test_that("refinement wilcoxon category test",{
 	
 	expect_true(all.equal(c(p_high_rank, p_low_rank), c(0.329622, 0.714625), tolerance=1.5e-6))
 
+})
+
+
+
+test_that("wilcox_nodes() - refinement hyper category test for all leaves",{
+
+	scores_root = structure(list(gene = c("GYG1", "MTUS1", "NCAPG", "NGFR", "NXPH4", 
+	"PAX2"), scores = c(30L, 10L, 9L, 12L, 24L, 22L)), row.names = 21:26, class = "data.frame")
+	
+	# empty and non-empty leaves
+	anno_nodes = structure(list(go_id = c("GO:0003824", "GO:0003824", "GO:0008194"
+	), gene = c("GYG1", "PAX2", "GYG1"), scores = c(30L, 22L, 30L
+	), term_id = c(3010L, 3010L, 6655L), root_id = c("GO:0003674", 
+	"GO:0003674", "GO:0003674")), row.names = c(27L, 28L, 67L), class = "data.frame")
+	empty_nodes = c("nodeA", "nodeB")
+	pvals = wilcox_nodes(anno_nodes, empty_nodes, scores_root)
+	expected = structure(list(go_id = c("GO:0003824", "GO:0008194", "nodeA", 
+	"nodeB"), new_p = c(0.123579986605954, 0.120783293484486, 1, 
+	1)), row.names = c(NA, -4L), class = "data.frame")
+	expect_true(all.equal(pvals, expected))
+	
+	# only non-empty leaves
+	pvals = wilcox_nodes(anno_nodes, character(0), scores_root)
+	expected = structure(list(go_id = c("GO:0003824", "GO:0008194"), new_p = c(0.123579986605954, 
+	0.120783293484486)), class = "data.frame", row.names = c(NA, -2L))
+	expect_true(all.equal(pvals, expected))
+	
+	# only empty leaves
+	anno_nodes = structure(list(go_id = character(0), gene = character(0), scores = numeric(0)),
+	row.names = integer(0), class = "data.frame")
+	pvals = wilcox_nodes(anno_nodes, empty_nodes, scores_root)
+	expected = structure(list(go_id = c("nodeA", "nodeB"), new_p = c(1, 1)),
+	class = "data.frame", row.names = c(NA, -2L))
+	expect_true(all.equal(pvals, expected))
+	
 })
