@@ -83,8 +83,7 @@ refine = function(res, pval, pcol=5, annotations=NULL){
         # (leave individual scores for wilcox)
         if (test == "hyper"){
             # counts of 1 and 0 genes in a node
-            scores_root = tapply(anno_root[,3], anno_root[,1], function(x) c(sum(x[]), length(x)-sum(x)))
-            scores_root = do.call(rbind, scores_root)
+            scores_root = c(sum(anno_root[,3]), length(anno_root[,3])-sum(anno_root[,3]))
         } else if (test %in% c("binomial", "contingency")){
             # sums of scores in a node (binom + conti)
             scores_root = aggregate(anno_root[,3:ncol(anno_root)], list(go_id=anno_root[,1]), sum)

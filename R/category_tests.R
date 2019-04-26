@@ -13,10 +13,10 @@ hyper = function(candi_node, candi_root, bg_node, bg_root, under=FALSE){
 }
 
 # to test all leaves at once in refinement
-# also hande empty_nodes = nodes with no annotations left during refinement steps 
+# also handle empty_nodes = nodes with no annotations left during refinement steps 
 # anno_nodes: data.frame(go_id, gene, score 0/1)
 # empty_nodes: vector of go-ids of empty nodes
-# scores_root: data.frame(go_id, scores)
+# scores_root: c(sum_candi, sum_bg)
 # low: T/F under-/overrep
 # out: go_id, new_p
 hyper_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
@@ -33,7 +33,7 @@ hyper_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
     scores_nodes$score_id = paste(scores_nodes[,2], scores_nodes[,3], sep="_")
     unique_scores = unique(scores_nodes[,2:4])
     # hyper(candi_node, candi_root, bg_node, bg_root, under=FALSE){
-    new_p = hyper(unique_scores[,1], scores_root[,1], unique_scores[,2], scores_root[,2], low)
+    new_p = hyper(unique_scores[,1], scores_root[1], unique_scores[,2], scores_root[2], low)
     
     # add to leaves
     scores_nodes$new_p = new_p[match(scores_nodes$score_id, unique_scores$score_id)]
