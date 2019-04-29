@@ -102,17 +102,17 @@ binom = function(a_node, b_node, a_root, b_root, low=FALSE){
     n = a_node + b_node
     if (low){
         # high_B
-        bino = binom.test(a_node, n, p = p_a, alternative="less")
+        bino = binom.test(a_node, n, p=p_a, alternative="less")
     } else {
         # high_A
-        bino = binom.test(a_node, n, p = p_a, alternative="greater")
+        bino = binom.test(a_node, n, p=p_a, alternative="greater")
     }
     return(bino$p.value)
 }
 
 
 # to test all leaves at once in refinement
-# also handle empty_nodes = nodes with no annotations left during refinement steps 
+# also handle empty_nodes = nodes with no annotations left during refinement steps
 # anno_nodes: data.frame(go_id, gene, counts_A, counts_B, ...)
 # empty_nodes: vector of go-ids of empty nodes
 # scores_root: c(counts_A, counts_B) in root
@@ -132,7 +132,8 @@ binom_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
     unique_scores = unique(scores_nodes[,2:4])
     # binom(a_node, b_node, a_root, b_root, low=FALSE)
     # binom.test doesn't take vectors as input
-    new_p = mapply(binom, unique_scores[,1], unique_scores[,2], MoreArgs=list(a_root=scores_root[1], b_root=scores_root[2], low=low))
+    new_p = mapply(binom, unique_scores[,1], unique_scores[,2],
+        MoreArgs=list(a_root=scores_root[1], b_root=scores_root[2], low=low))
     # add p-val to leaves
     scores_nodes$new_p = new_p[match(scores_nodes$score_id, unique_scores$score_id)]
     out = scores_nodes[,c("go_id", "new_p")]

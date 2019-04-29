@@ -250,6 +250,7 @@ infer_test = function(input_genes){
 load_onto = function(databases){
     onto = databases[databases[,1] == "go_graph", ]
     if (onto[1,2] == "custom"){
+        message("Read custom ontology graph...")
         godir = onto[1,3]
         term = read.table(paste0(godir,"/term.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
         graph_path = read.table(paste0(godir,"/graph_path.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)

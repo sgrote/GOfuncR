@@ -1,7 +1,5 @@
 
 
-## for hyper
-
 # annotations = custom annotations dataframe if needed
 refine = function(res, pval, pcol=5, annotations=NULL){
     
@@ -93,7 +91,7 @@ refine = function(res, pval, pcol=5, annotations=NULL){
             scores_root = colSums(anno_root[,3:6])
         }
         # recursively compute refinement (update 'refined')
-        refined = refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined, test, low)
+        refined = refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined, test, low, first=TRUE)
     }
 
     # merge with original data, all=T just to be sure, should always have the same
@@ -108,10 +106,19 @@ refine = function(res, pval, pcol=5, annotations=NULL){
 }
 
 
-# recursive algorithm for refinement
-refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, test, low){
+# recursive algorithm for refinement, bottom-up
+# anno_signi: data.frame(go_id, gene, scores, ..., term_id, ...)
+# scores_root: aggregated scores per root, e.g. c(candi, bg) for hyper
+# sub_graph_path: data.frame(id, term_id_ancestor, term_id_child, ..., go_id=go_id of child)
+#   for all significant nodes, all distances>0
+# pval: p-value threshold for significance
+# refined: data.frame(node_id, raw_p, refined_p) - output, recursively updated
+# test: e.g. "wilcoxon"
+# low:  T/F direction of test, e.g. under-/overrep
+# first: T/F first round of refinement, i.e. the very leaves of the significant sub-graph
+refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, test, low, first){
     
-    # get leaves sub_graph_path (id, parent, child, ...)
+    # get go_id of leaves from sub_graph_path (id, parent, child, ...)
     leaves = unique(sub_graph_path[!(sub_graph_path[,3] %in% sub_graph_path[,2]), "go_id"])
     message("Found ", length(leaves), " leaves:")
     print(leaves)
@@ -127,7 +134,7 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     empty_leaves = leaves[!leaves %in% anno_leaves[,1]]
     
     # run category test for leaves; data.frame(go_id, new_p)
-    # TODO: skip in first round after testing that raw_p == leaf_p for all absolute leaves
+    # TODO: maybe skip in first round after testing that raw_p == leaf_p for all absolute leaves
     if (test == "hyper"){
         new_p_leaves = hyper_nodes(anno_leaves, empty_leaves, scores_root, low)
     } else if (test == "wilcoxon"){
@@ -138,6 +145,15 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     
     # add to output
     refined[match(new_p_leaves$go_id, refined$node_id), "refined_p"] = new_p_leaves$new_p
+
+    # check that p-value for leaves is the same before and after refinement
+    if (first){
+        abs_leaves = refined[!is.na(refined$new_p),]
+        if (! all.equal(abs_leaves$raw_p, abs_leaves$refined_p)){
+            print(abs_leaves)
+            stop("raw_p != refined_p for lowest level of significant nodes.")
+        }
+    }
 
     # extract leaves that are still significant, if there are none it doesn't matter
     signi_leaves = new_p_leaves[new_p_leaves$new_p < pval, ]
@@ -161,7 +177,7 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     
     # refine next level with updated annotations, graph_path and final 'refined'-table
     message("Refine next level...")
-    refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined, test, low)
+    refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined, test, low, first=FALSE)
 }
 
 
