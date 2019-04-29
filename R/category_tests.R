@@ -14,7 +14,7 @@ hyper = function(candi_node, candi_root, bg_node, bg_root, under=FALSE){
 
 # to test all leaves at once in refinement
 # also handle empty_nodes = nodes with no annotations left during refinement steps 
-# anno_nodes: data.frame(go_id, gene, score 0/1)
+# anno_nodes: data.frame(go_id, gene, score 0/1, ...)
 # empty_nodes: vector of go-ids of empty nodes
 # scores_root: c(sum_candi, sum_bg)
 # low: T/F under-/overrep
@@ -67,7 +67,7 @@ wilcox = function(anno_genes_node, anno_genes_root, low=FALSE){
 
 # to test all leaves at once in refinement
 # also handle empty_nodes = nodes with no annotations left during refinement steps 
-# anno_nodes: data.frame(go_id, gene, score)
+# anno_nodes: data.frame(go_id, gene, score, ...)
 # empty_nodes: vector of go-ids of empty nodes
 # scores_root: data.frame(gene, score)
 # low: T/F lowrank/highrank
@@ -90,3 +90,57 @@ wilcox_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
     }
     return(out)
 }
+
+
+
+#### binomial test
+# binom.test(x, n, p)
+# x=successes, n=trials, p=prob. of success
+
+binom = function(a_node, b_node, a_root, b_root, low=FALSE){
+    p_a = a_root / (a_root + b_root)
+    n = a_node + b_node
+    if (low){
+        # high_B
+        bino = binom.test(a_node, n, p = p_a, alternative="less")
+    } else {
+        # high_A
+        bino = binom.test(a_node, n, p = p_a, alternative="greater")
+    }
+    return(bino$p.value)
+}
+
+
+# to test all leaves at once in refinement
+# also handle empty_nodes = nodes with no annotations left during refinement steps 
+# anno_nodes: data.frame(go_id, gene, counts_A, counts_B, ...)
+# empty_nodes: vector of go-ids of empty nodes
+# scores_root: c(counts_A, counts_B) in root
+# low: T/F high-B/high-A
+# out: go_id, new_p
+binom_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
+
+    # no annotations at all
+    if (nrow(anno_nodes) == 0){
+        out = data.frame(go_id=empty_nodes, new_p=1, stringsAsFactors=FALSE)
+        return(out)
+    }
+    # binomial test per node
+    scores_nodes = aggregate(anno_nodes[,3:4], list(go_id=anno_nodes[,1]), sum)
+    # save time: run test for each combination of scores only once
+    scores_nodes$score_id = paste(scores_nodes[,2], scores_nodes[,3], sep="_")
+    unique_scores = unique(scores_nodes[,2:4])
+    # binom(a_node, b_node, a_root, b_root, low=FALSE)
+    # binom.test doesn't take vectors as input
+    new_p = mapply(binom, unique_scores[,1], unique_scores[,2], MoreArgs=list(a_root=scores_root[1], b_root=scores_root[2], low=low))
+    # add p-val to leaves
+    scores_nodes$new_p = new_p[match(scores_nodes$score_id, unique_scores$score_id)]
+    out = scores_nodes[,c("go_id", "new_p")]
+    # add empty leaves
+    if (length(empty_nodes) > 0){
+        empty_out = data.frame(go_id=empty_nodes, new_p=1)
+        out = rbind(out, empty_out)
+    }
+    return(out)
+}
+

@@ -84,13 +84,13 @@ refine = function(res, pval, pcol=5, annotations=NULL){
         if (test == "hyper"){
             # counts of 1 and 0 genes in a node
             scores_root = c(sum(anno_root[,3]), length(anno_root[,3])-sum(anno_root[,3]))
-        } else if (test %in% c("binomial", "contingency")){
-            # sums of scores c(A,B(,C,D)) (binom + conti)
-            # TODO: simpler, just colSums, just one node
-            scores_root = aggregate(anno_root[,3:ncol(anno_root)], list(go_id=anno_root[,1]), sum)
         } else if (test == "wilcoxon"){
             # genes, scores
             scores_root = anno_root[,2:3]
+        } else if (test == "binomial"){
+            scores_root = colSums(anno_root[,3:4])
+        } else if (test == "contingency"){
+            scores_root = colSums(anno_root[,3:6])
         }
         # recursively compute refinement (update 'refined')
         refined = refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined, test, low)
@@ -123,14 +123,17 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     }
     
     # annotations for leaves
-    anno_leaves = anno_signi[anno_signi$go_id %in% leaves, 1:3]
+    anno_leaves = anno_signi[anno_signi$go_id %in% leaves, ]
     empty_leaves = leaves[!leaves %in% anno_leaves[,1]]
     
     # run category test for leaves; data.frame(go_id, new_p)
+    # TODO: skip in first round after testing that raw_p == leaf_p for all absolute leaves
     if (test == "hyper"){
         new_p_leaves = hyper_nodes(anno_leaves, empty_leaves, scores_root, low)
     } else if (test == "wilcoxon"){
         new_p_leaves = wilcox_nodes(anno_leaves, empty_leaves, scores_root, low)
+    } else if (test == "binomial"){
+        new_p_leaves = binom_nodes(anno_leaves, empty_leaves, scores_root, low)
     }
     
     # add to output

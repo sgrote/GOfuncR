@@ -100,3 +100,21 @@ test_that("wilcox_nodes() - refinement hyper category test for all leaves",{
 	expect_true(all.equal(pvals, expected))
 	
 })
+
+
+
+
+test_that("binom() - refinement binomial category test",{
+
+	a_node = 148
+	b_node = 176
+	a_root = 289
+	b_root = 315
+	
+	p_high_a = binom(a_node, b_node, a_root, b_root)
+	p_high_b = binom(a_node, b_node, a_root, b_root, low=TRUE)
+	
+	expect_true(all.equal(c(p_high_a, p_high_b), c(0.798633, 0.234112), tolerance=1.5e-6))
+	
+})
+
