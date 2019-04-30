@@ -118,3 +118,32 @@ test_that("binom() - refinement binomial category test",{
 	
 })
 
+
+test_that("conti() - contingency table category test",{
+
+	# high A/B
+	abcd = c(55, 17, 95, 31) 
+	p_high_ab = conti(abcd[1], abcd[2], abcd[3], abcd[4])
+	p_high_cd = conti(abcd[1], abcd[2], abcd[3], abcd[4], low=TRUE)
+	expect_true(all.equal(c(p_high_ab, p_high_cd), c(0.8754846, 1), tolerance=1.5e-6))
+	
+	# high C/D
+	abcd = c(166, 63, 320, 75)
+	p_high_ab = conti(abcd[1], abcd[2], abcd[3], abcd[4])
+	p_high_cd = conti(abcd[1], abcd[2], abcd[3], abcd[4], low=TRUE)
+	expect_true(all.equal(c(p_high_ab, p_high_cd), c(1, 0.01340939), tolerance=1.5e-6))
+	
+	# Fisher
+	abcd = c(29, 1, 54, 22)
+	p_high_ab = conti(abcd[1], abcd[2], abcd[3], abcd[4])
+	p_high_cd = conti(abcd[1], abcd[2], abcd[3], abcd[4], low=TRUE)
+	expect_true(all.equal(c(p_high_ab, p_high_cd), c(0.003322334, 1), tolerance=1.5e-6))
+	
+
+})
+
+
+
+
+
+

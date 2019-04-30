@@ -94,6 +94,7 @@ wilcox_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
 
 
 #### binomial test
+
 # binom.test(x, n, p)
 # x=successes, n=trials, p=prob. of success
 
@@ -144,4 +145,37 @@ binom_nodes = function(anno_nodes, empty_nodes, scores_root, low=FALSE){
     }
     return(out)
 }
+
+
+
+
+#### contingency table
+
+# low: T/F p for high_CD/high_AB
+conti = function(a_node, b_node, c_node, d_node, low=FALSE){
+    # matrix is filled col-wise
+    conti_tab = matrix(c(a_node, b_node, c_node, d_node), ncol=2)
+    # FUNC original: if one number < 10 --> Fisher's exact test
+    if (any(c(a_node, b_node, c_node, d_node) < 10)){
+        p = fisher.test(conti_tab)$p.value
+    } else {
+        p = chisq.test(conti_tab, correct=FALSE)$p.value
+    }
+    # FUNC original: if A/B > C/D p-val is assigned high_A/B, else high_C/D; other one is set to 1
+    if ((a_node / b_node) > (c_node / d_node)){
+        p_ab = p
+        p_cd = 1
+    } else {
+        p_ab = 1
+        p_cd = p
+    }
+    if (low){
+        return(p_cd)
+    } else {
+        return(p_ab)
+    }
+}
+
+
+
 
