@@ -95,7 +95,7 @@ refine = function(res, pval, pcol=5, annotations=NULL){
     }
 
     # merge with original data, all=T just to be sure, should always have the same
-    out = merge(signi_stats, refined, by="node_id", all=TRUE)
+    out = merge(signi_stats, refined, by="node_id", all=TRUE, sort=FALSE)
     out$signif = out$refined_p < pval
     # TODO remove raw_p column after testing
     colnames(out)[colnames(out) == "refined_p"] = paste0("refined_", substring(pcol_string, 5))
