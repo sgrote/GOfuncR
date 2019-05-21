@@ -177,5 +177,36 @@ conti = function(a_node, b_node, c_node, d_node, low=FALSE){
 }
 
 
+# to test all leaves at once in refinement
+# also handle empty_nodes = nodes with no annotations left during refinement steps
+# anno_nodes: data.frame(go_id, gene, counts_A, counts_B, counts_C, counts_D)
+# empty_nodes: vector of go-ids of empty nodes
+# low: T/F high C/D  /  high-A/B
+# out: go_id, new_p
+conti_nodes = function(anno_nodes, empty_nodes, low=FALSE){
+
+    # no annotations at all
+    if (nrow(anno_nodes) == 0){
+        out = data.frame(go_id=empty_nodes, new_p=1, stringsAsFactors=FALSE)
+        return(out)
+    }
+    # contingency test per node
+    scores_nodes = aggregate(anno_nodes[,3:6], list(go_id=anno_nodes[,1]), sum)
+    # save time: run test for each combination of scores only once
+    scores_nodes$score_id = paste(scores_nodes[,2], scores_nodes[,3], scores_nodes[,4], scores_nodes[,5], sep="_")
+    unique_scores = unique(scores_nodes[,2:6])
+    # conti(a_node, b_node, c_node, d_node, low=FALSE)
+    new_p = mapply(conti, unique_scores[,1], unique_scores[,2], unique_scores[,3], unique_scores[,4],
+        MoreArgs=list(low=low))
+    # add p-val to leaves
+    scores_nodes$new_p = new_p[match(scores_nodes$score_id, unique_scores$score_id)]
+    out = scores_nodes[,c("go_id", "new_p")]
+    # add empty leaves
+    if (length(empty_nodes) > 0){
+        empty_out = data.frame(go_id=empty_nodes, new_p=1)
+        out = rbind(out, empty_out)
+    }
+    return(out)
+}
 
 

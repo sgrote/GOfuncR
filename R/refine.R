@@ -38,16 +38,19 @@ refine = function(res, pval, pcol=5, annotations=NULL){
     message("Found ", nrow(signi_stats), " significant categories at p-value threshold ", pval)
     go_ids = signi_stats$node_id
     
-    # add root nodes for significant nodes
+    # add root nodes for significant nodes (to call get_anno_scores only once)
+    # TODO: maybe split that again, like in plot_anno_scores
     if (test != "contingency"){
         root_names = unique(signi_stats[,1])
-        root_names_id = term[match(root_names, term[,2]),]
-        root_ids = root_names_id[,4]
+        # TODO add name_to_go_id to helper
+        root_ids = term[match(root_names, term[,2]), 4]
         go_ids = c(go_ids, root_ids)
-        # add root_ids to GO-ids for combining them with output
-        matched_root_name = get_names(go_ids, term) # get names also returns root-node-name
-        matched_root_name$root_id = root_names_id[match(matched_root_name[,3], root_names_id[,2]), 4]
     }
+    
+    # add root_ids to GO-ids for combining them with output
+    matched_root_name = get_names(go_ids, term) # get names also returns root-node-name
+    matched_root_name$root_id = term[match(matched_root_name$root_node, term[,2]), 4]
+    root_ids = unique(matched_root_name$root_id) # re-assign for conti
     
     # get annotated genes with scores
     message("\nGet annotations for categories:")
@@ -55,28 +58,26 @@ refine = function(res, pval, pcol=5, annotations=NULL){
 
     # add term-ID and root_ids
     anno = cbind(anno, term_id=go_to_term(anno$go_id, term))
-    if (test != "contingency"){
-        anno = cbind(anno, root_id=matched_root_name[match(anno[,1], matched_root_name[,1]), "root_id"])
-        anno$root_id = as.character(anno$root_id)
-    }
+    anno = cbind(anno, root_id=matched_root_name[match(anno[,1], matched_root_name[,1]), "root_id"])
+    anno$root_id = as.character(anno$root_id)
 
     # add GO-ID of children
     graph_path$go_id = term_to_go(graph_path[,3], term)
     # intialize refinement results
     refined = data.frame(node_id=signi_stats$node_id, raw_p=signi_stats[,pcol], refined_p=NA) 
     # loop over roots
-    # TODO: for contingency root nodes are not part of anno, have to get them differently
     for (r in root_ids){
         message("\nRefine root node ", r, "...")
         # restrict graph to significant+root categories from this root node
         anno_one_root = anno[anno$root_id == r,]
-        term_ids = unique(anno_one_root$term_id)
+        # this root needs to be added for conti
+        term_ids = unique(c(anno_one_root$term_id, go_to_term(r, term)))
         sub_graph_path = graph_path[graph_path[,2] %in% term_ids & graph_path[,3] %in% term_ids, ]
         # remove dist=0
         sub_graph_path = sub_graph_path[sub_graph_path[,5] != 0,]
         # divide into root and significant-node annotations
         anno_signi = anno_one_root[anno_one_root$go_id != r,]
-        anno_root = anno_one_root[anno_one_root$go_id == r,]
+        anno_root = anno_one_root[anno_one_root$go_id == r,] # empty for conti
         # aggregate scores per root (stable across refinement rounds)
         # (leave individual scores for wilcox)
         if (test == "hyper"){
@@ -88,7 +89,7 @@ refine = function(res, pval, pcol=5, annotations=NULL){
         } else if (test == "binomial"){
             scores_root = colSums(anno_root[,3:4])
         } else if (test == "contingency"){
-            scores_root = colSums(anno_root[,3:6])
+            scores_root = NA
         }
         # recursively compute refinement (update 'refined')
         refined = refine_algo(anno_signi, scores_root, sub_graph_path, pval, refined, test, low, first=TRUE)
@@ -108,7 +109,7 @@ refine = function(res, pval, pcol=5, annotations=NULL){
 
 # recursive algorithm for refinement, bottom-up
 # anno_signi: data.frame(go_id, gene, scores, ..., term_id, ...)
-# scores_root: aggregated scores per root, e.g. c(candi, bg) for hyper
+# scores_root: aggregated scores per root, e.g. c(candi, bg) for hyper,  NA for conti
 # sub_graph_path: data.frame(id, term_id_ancestor, term_id_child, ..., go_id=go_id of child)
 #   for all significant nodes, all distances>0
 # pval: p-value threshold for significance
@@ -118,13 +119,14 @@ refine = function(res, pval, pcol=5, annotations=NULL){
 # first: T/F first round of refinement, i.e. the very leaves of the significant sub-graph
 refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, test, low, first){
     
+    print(sub_graph_path)
+    
     # get go_id of leaves from sub_graph_path (id, parent, child, ...)
     leaves = unique(sub_graph_path[!(sub_graph_path[,3] %in% sub_graph_path[,2]), "go_id"])
     message("Found ", length(leaves), " leaves:")
     print(leaves)
     
     # return updated p-vals table if no leaves are left
-    # (also works if dist=0 is not removed from graph_path)
     if (length(leaves)==0){
         return(refined)
     }
@@ -141,6 +143,8 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
         new_p_leaves = wilcox_nodes(anno_leaves, empty_leaves, scores_root, low)
     } else if (test == "binomial"){
         new_p_leaves = binom_nodes(anno_leaves, empty_leaves, scores_root, low)
+    } else if (test == "contingency"){
+        new_p_leaves = conti_nodes(anno_leaves, empty_leaves, low)
     }
     
     # add to output
