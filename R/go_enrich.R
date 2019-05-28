@@ -362,10 +362,15 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     # also return min_p per domain
     domains = rep(names(min_p), each=n_randsets)
     min_p = do.call(rbind, min_p)
+    # switch columns for binomial test high B - then high A to be more consistent
+    if (test == "binomial"){
+        min_p[,c(1,2)] = min_p[,c(2,1)]
+    }
     min_p = data.frame(ontology=domains, lower_tail=min_p[,1], upper_tail=min_p[,2])
     
     final_output = list(results=out, genes=gene_values, databases=databases, min_p=min_p)
     if (!silent) message("\nDone.")
+    
 
     return(final_output)
 }
