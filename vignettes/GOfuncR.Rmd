@@ -113,7 +113,7 @@ This dataframe is the only mandatory input for `go_enrich`, however to lower com
 res_hyper = go_enrich(input_hyper, n_randset=100)
 ```
 
-The output of `go_enrich` is a list of 3 elements: 
+The output of `go_enrich` is a list of 4 elements: 
 The most important is the first element which contains the results from the enrichment analysis (ordered by FWER for over-representation of candidate genes):
 
 ```{r}
@@ -124,13 +124,26 @@ head(stats)
 ## top GO-categories per domain
 by(stats, stats$ontology, head, n=3)
 ```
-The second element is a dataframe with all valid input genes, and the third element states the reference genome for the annotations and the version of the GO-graph:
+
+The second element is a dataframe with all valid input genes:
 
 ```{r}
 ## all valid input genes
 head(res_hyper[[2]])
+```
+
+The third element states the reference genome for the annotations and the version of the GO-graph:
+
+```{r}
 ## annotation package used (default='Homo.sapiens') and GO-graph version
 res_hyper[[3]]
+```
+
+The fourth element is a dataframe with the minimum p-values from the permutations, which are used to compute the FWER:
+
+```{r}
+## minimum p-values from randomsets
+head(res_hyper[[4]])
 ```
 
 ### Hypergeometric test using a defined background gene set

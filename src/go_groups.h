@@ -37,11 +37,19 @@ class go_groups {
 		 * FWER.
 		 ***********/
 		void print_pvals( int nr_randsets, ostream &os ) ;
+		
+		/**********
+		 * prints minimum p-vals from randsets to file
+		 * for FWER-to-pval interpolation in refinement
+		 ***********/
+		void print_min_p( ostream &os) ;
+		
+		
 	private:
 		vector<string> names ;
 		vector<int> nr_of_genes ;
 		
-		// NEW: expected and real number of annotated genes
+		// expected and real number of annotated genes
 		vector<double> ranksums_expected ;
 		vector<double> ranksums; // was declared in go_groups.cc before
 		

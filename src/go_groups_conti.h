@@ -40,7 +40,14 @@ class go_groups_conti {
 		 * prints statistics to os, uses nr_randsets to calculate
 		 * FWER.
 		 ***********/
+		
 		void print_pvals( int nr_randsets, ostream &os ) ;
+		/**********
+		 * prints minimum p-vals from randsets to file
+		 * for FWER-to-pval interpolation in refinement
+		 ***********/
+		void print_min_p( ostream &os) ;
+		
 	private:
 		vector<string> names ; // GO ID
 		vector<bool> check ; // whether #genes in group > cutoff

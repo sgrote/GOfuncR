@@ -235,12 +235,12 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 			int n_l = 0 ; 
 			multiset<double>::const_iterator it = smallest_rand_p_l.begin() ;
 			while ( it != smallest_rand_p_l.end() && 
-				*it <= data_pvals_l[i] + 1.0e-10 * data_pvals_l[i]) // NEW: add tolerance to account for float inaccuracy  
+				*it <= data_pvals_l[i] + 1.0e-10 * data_pvals_l[i]) // add tolerance to account for float inaccuracy  
 					n_l++, it++ ;
 			int n_r = 0 ;
 			it = smallest_rand_p_r.begin() ;
 			while ( it != smallest_rand_p_r.end() && 
-				*it <= data_pvals_r[i] + 1.0e-10 * data_pvals_r[i]) // NEW: add tolerance to account for float inaccuracy 
+				*it <= data_pvals_r[i] + 1.0e-10 * data_pvals_r[i]) // add tolerance to account for float inaccuracy 
 					n_r++, it++ ;
 			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
 			os << std::setprecision(17) << names[i] << "\t"				
@@ -248,9 +248,19 @@ void go_groups_hyper::print_pvals( int nr_randsets, ostream &os ) {
 				<< data_pvals_r[i] << "\t"
 				<< static_cast<double>(n_l)/ static_cast<double>(nr_randsets) << "\t" // FWER_under 
 				<< static_cast<double>(n_r)/ static_cast<double>(nr_randsets) << "\t" // FWER_over
-				<< n_anno_expected[i] << "\t" << changed_data[i]  //NEW: exp and real number of candi genes
+				<< n_anno_expected[i] << "\t" << changed_data[i]  // exp and real number of candi genes
 				<< endl;
 		}
 	} 
 	
+}
+
+void go_groups_hyper::print_min_p( ostream &os ) {
+	
+	multiset<double>::const_iterator it_l = smallest_rand_p_l.begin() ;
+	multiset<double>::const_iterator it_r = smallest_rand_p_r.begin() ;
+	while ( it_l != smallest_rand_p_l.end() ) { 
+		os << std::setprecision(17) << *it_l << "\t" << *it_r << endl;
+		it_l++, it_r++ ;
+	}
 }

@@ -39,12 +39,20 @@ class go_groups_hyper {
 		 * FWER.
 		 ***********/
 		void print_pvals( int nr_randsets, ostream &os ) ;
+		
+		/**********
+		 * prints minimum p-vals from randsets to file
+		 * for FWER-to-pval interpolation in refinement
+		 ***********/
+		void print_min_p( ostream &os) ;
+		
+		
 	private:
 		vector<string> names ; // GO ID
 		vector<int> detected ; // # annotated to node
 		vector<int> changed_data ; // # candidate annotated to node
 
-		// NEW: expected and real number of annotated genes
+		// expected and real number of annotated genes
 		vector<double> n_anno_expected ;
 
 		// pvalues for all groups in dataset

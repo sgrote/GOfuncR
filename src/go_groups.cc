@@ -224,21 +224,31 @@ void go_groups::print_pvals( int nr_randsets, ostream &os ) {
 			int n_l = 0 ; 
 			multiset<double>::const_iterator it = smallest_rand_p_l.begin() ;
 			while ( it != smallest_rand_p_l.end() && 
-				*it <= data_pvals_l[i] + 1.0e-10 * data_pvals_l[i]) // NEW: add tolerance to account for float inaccuracy
+				*it <= data_pvals_l[i] + 1.0e-10 * data_pvals_l[i]) // add tolerance to account for float inaccuracy
 					n_l++, it++ ;
 			int n_g = 0 ;
 			it = smallest_rand_p_g.begin() ;
 			while ( it != smallest_rand_p_g.end() && 
-				*it <= data_pvals_g[i] + 1.0e-10 * data_pvals_g[i]) // NEW: add tolerance to account for float inaccuracy 
+				*it <= data_pvals_g[i] + 1.0e-10 * data_pvals_g[i]) // add tolerance to account for float inaccuracy 
 					n_g++, it++ ;
-			// new: output higher precision for p-vals to check if FWER-order follows p-value-order
+			// output higher precision for p-vals to check if FWER-order follows p-value-order
 			os << std::setprecision(17) << names[i] << "\t" 
 				<< data_pvals_l[i] << "\t"
 				<< data_pvals_g[i] << "\t"
 				<< static_cast<double>(n_l)/static_cast<double>(nr_randsets) << "\t" //FWER low ranks
 				<< static_cast<double>(n_g)/static_cast<double>(nr_randsets) << "\t" //FWER high ranks
-				<< ranksums_expected[i] << "\t" << ranksums[i]  //NEW: expected and real sum of ranks
+				<< ranksums_expected[i] << "\t" << ranksums[i]  //expected and real sum of ranks
 				<< endl;
 		}
 	} 
+}
+
+void go_groups::print_min_p( ostream &os ) {
+	
+	multiset<double>::const_iterator it_l = smallest_rand_p_l.begin() ;
+	multiset<double>::const_iterator it_r = smallest_rand_p_g.begin() ;
+	while ( it_l != smallest_rand_p_l.end() ) { 
+		os << std::setprecision(17) << *it_l << "\t" << *it_r << endl;
+		it_l++, it_r++ ;
+	}
 }

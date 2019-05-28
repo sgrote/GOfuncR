@@ -33,6 +33,11 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 	if ( ! out ) {
 		Rcpp::Rcerr << "Cannot open " << output << endl ;
 	}
+	string out_min_p = directory + "_min_p";
+	ofstream min_p( out_min_p.c_str( )) ;
+	if ( ! out ) {
+		Rcpp::Rcerr << "Cannot open " << out_min_p << endl ;
+	}
 
 	/*************
          * start reading from randomset-file  
@@ -95,7 +100,10 @@ void hyper_category_test(std::string directory, int cutoff, std::string root, bo
 		delete[] randdata ;
 		num_randdata++ ;
 	}
+	// FWERs
 	gos.print_pvals( num_randdata, out ) ;
+	// save min_p to file for FWER-to-pval-interpolation in refinement
+	gos.print_min_p( min_p ) ;
 
 	// write summary to console
 	if (!silent){

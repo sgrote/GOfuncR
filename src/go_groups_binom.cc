@@ -220,21 +220,30 @@ void go_groups_binom::print_pvals( int nr_randsets, ostream &os ) {
 			int n_c = 0 ; 
 			multiset<double>::const_iterator it = smallest_rand_p_c.begin() ;
 			while ( it != smallest_rand_p_c.end() && 
-				*it <= data_pvals_c[i] + 1.0e-10 * data_pvals_c[i]) // NEW: add tolerance to account for float inaccuracy  
+				*it <= data_pvals_c[i] + 1.0e-10 * data_pvals_c[i]) // add tolerance to account for float inaccuracy  
 					n_c++, it++ ;
 			int n_h = 0 ;
 			it = smallest_rand_p_h.begin() ;
 			while ( it != smallest_rand_p_h.end() && 
-				*it <= data_pvals_h[i] + 1.0e-10 * data_pvals_h[i]) // NEW: add tolerance to account for float inaccuracy  
+				*it <= data_pvals_h[i] + 1.0e-10 * data_pvals_h[i]) // add tolerance to account for float inaccuracy  
 					n_h++, it++ ;
 			os << std::setprecision(17) << names[i] << "\t" 				
 				<< data_pvals_c[i] << "\t" //p-values
 				<< data_pvals_h[i] << "\t"
 				<< static_cast<double>(n_c)/ static_cast<double>(nr_randsets) << "\t"  //FWER high A
 				<< static_cast<double>(n_h)/ static_cast<double>(nr_randsets) << "\t"  //FWER high B
-				// TODO: hier noch was einfuegen so wie expected vs. real?
 				<< endl ;
 		}
 	} 
 
+}
+
+void go_groups_binom::print_min_p( ostream &os ) {
+	
+	multiset<double>::const_iterator it_l = smallest_rand_p_c.begin() ;
+	multiset<double>::const_iterator it_r = smallest_rand_p_h.begin() ;
+	while ( it_l != smallest_rand_p_c.end() ) { 
+		os << std::setprecision(17) << *it_l << "\t" << *it_r << endl;
+		it_l++, it_r++ ;
+	}
 }

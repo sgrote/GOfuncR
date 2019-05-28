@@ -247,12 +247,12 @@ void go_groups_conti::print_pvals( int nr_randsets, ostream &os ) {
 			int n_1 = 0 ; 
 			multiset<double>::const_iterator it = smallest_rand_p_1.begin() ;
 			while ( it != smallest_rand_p_1.end() && 
-				*it <= data_pvals_1[i] + 1.0e-10 * data_pvals_1[i])  // NEW: add tolerance
+				*it <= data_pvals_1[i] + 1.0e-10 * data_pvals_1[i])  // add tolerance
 					n_1++,it++ ;
 			int n_2 = 0 ;
 			it = smallest_rand_p_2.begin() ;
 			while ( it != smallest_rand_p_2.end() && 
-				*it <= data_pvals_2[i] + 1.0e-10 * data_pvals_2[i])  // NEW: add tolerance
+				*it <= data_pvals_2[i] + 1.0e-10 * data_pvals_2[i])  // add tolerance
 					n_2++,it++ ;
 			os << std::setprecision(17)  << names[i] << "\t" 
 				<< data_pvals_1[i] << "\t"
@@ -261,8 +261,17 @@ void go_groups_conti::print_pvals( int nr_randsets, ostream &os ) {
 				   static_cast<double>(nr_randsets) << "\t" 
 				<< static_cast<double>(n_2)/
 				   static_cast<double>(nr_randsets) << "\t"
-				// TODO: hier noch was einfuegen so wie expected vs. real?  
 				<< endl ;
 		}
+	}
+}
+
+void go_groups_conti::print_min_p( ostream &os ) {
+	
+	multiset<double>::const_iterator it_l = smallest_rand_p_1.begin() ;
+	multiset<double>::const_iterator it_r = smallest_rand_p_2.begin() ;
+	while ( it_l != smallest_rand_p_1.end() ) { 
+		os << std::setprecision(17) << *it_l << "\t" << *it_r << endl;
+		it_l++, it_r++ ;
 	}
 }

@@ -33,7 +33,6 @@ go_graph_conti::go_graph_conti( set<string> &nodes, istream &term2term, idmap &i
 		if ( par != temp_graph.end() ) {
 			// child id
 			term2term.getline( s1, 20, '\n' ) ;
-			// NEW
 			string str_s1( s1 ) ;
 			string child_id ;
 			string::size_type tab_pos = str_s1.find( '\t' ) ;
@@ -42,7 +41,6 @@ go_graph_conti::go_graph_conti( set<string> &nodes, istream &term2term, idmap &i
 			} else child_id = str_s1 ;
 			map<string, go_obj_conti*>::const_iterator child = 
 							temp_graph.find( child_id ) ;
-			// end NEW
 			if ( child != temp_graph.end() ) {
 				child->second->add_parent( par->second ) ;
 			//	par->second->add_child( child->second ) ;

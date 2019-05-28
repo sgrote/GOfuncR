@@ -13,7 +13,7 @@ plot_anno_scores(res, go_ids, annotations = NULL)
 }
 \arguments{
     \item{res}{
-        an object returned from \code{\link{go_enrich}} (list() of 3 elements).
+        an object returned from \code{\link{go_enrich}} (list() of 4 elements).
     }
     \item{go_ids}{
         character() vector of GO-IDs, e.g. c('GO:0005737','GO:0071495').

@@ -221,8 +221,8 @@ term_to_go = function(term_ids, term){
 
 # check if res is really go_enrich()[[1]]
 check_res = function(res){
-    if (!(is.list(res) && all(names(res) == c("results","genes","databases")))){
-        stop("Please use an object returned from go_enrich as input (list with 3 elements).")
+    if (!(is.list(res) && all(names(res) == c("results","genes","databases","min_p")))){
+        stop("Please use an object returned from go_enrich as input (list with 4 elements).")
     }
 }
 

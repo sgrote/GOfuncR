@@ -42,6 +42,13 @@ class go_groups_binom {
 		 * FWER
 		 ***********/
 		void print_pvals( int nr_randsets, ostream &os ) ;
+		
+		/**********
+		 * prints minimum p-vals from randsets to file
+		 * for FWER-to-pval interpolation in refinement
+		 ***********/
+		void print_min_p( ostream &os) ;
+		
 	private:
 		vector<string> names ; // group_id
 		vector<bool> check ; // whether #genes in group i is > cutoff

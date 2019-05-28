@@ -238,6 +238,7 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     #####   3. Loop over GO root-nodes and run FUNC
     
     out = list()
+    min_p = list()
     
     for (r in seq_along(root_nodes)){
         root_node = root_nodes[r]
@@ -320,6 +321,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
         # for debugging: save output-files per root-node
         #system(paste("mv ", directory, "_category_test_out ",directory, "_out_", root_id, sep=""))
         out[[r]] = groupy
+        
+        # NEW: save minimum-p-values from randomsets (used for refinement)
+        min_p_domain = read.table(paste(directory, "_min_p", sep=""))
+        min_p[[root_node]] = min_p_domain
+        
+        
     } # end root_nodes
 
     out = do.call(rbind, out)
@@ -352,7 +359,12 @@ go_enrich=function(genes, test="hyper", n_randsets=1000, organismDb="Homo.sapien
     gene_values[,1] = as.character(gene_values[,1])
     rownames(gene_values) = 1:nrow(gene_values)
     
-    final_output = list(results=out, genes=gene_values, databases=databases)
+    # also return min_p per domain
+    domains = rep(names(min_p), each=n_randsets)
+    min_p = do.call(rbind, min_p)
+    min_p = data.frame(ontology=domains, lower_tail=min_p[,1], upper_tail=min_p[,2])
+    
+    final_output = list(results=out, genes=gene_values, databases=databases, min_p=min_p)
     if (!silent) message("\nDone.")
 
     return(final_output)

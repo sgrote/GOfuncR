@@ -122,6 +122,8 @@ This table contains the combined results for all three ontology domains. Note th
 the input \code{genes} data.frame(), excluding those genes for which no GO-annotations are available and which therefore were not included in the enrichment analysis. If \code{gene_len=TRUE}, also genes without gene coordinates are excluded.}
 \item{databases}{
 a data.frame() with the used annotation packages and GO-graph.}
+\item{min_p}{
+a data.frame() with the minimum p-values from the randomsets that are used to compute the FWER.}
 }
 
 \references{
@@ -164,7 +166,7 @@ genes
 # run enrichment analysis
 go_res = go_enrich(genes, n_randset=100)
 
-# go_enrich returns a list with 3 elements:
+# go_enrich returns a list with 4 elements:
 # 1) results from the anlysis
 # (ordered by FWER for overrepresentation of candidate genes)
 head(go_res[[1]])
@@ -174,6 +176,8 @@ by(go_res[[1]], go_res[[1]][,'ontology'], head)
 go_res[[2]]
 # 3) annotation databases used
 go_res[[3]]
+# 4) minimum p-values from randomsets
+head(go_res[[4]])
 
 #### see the package's vignette for more examples
 }
