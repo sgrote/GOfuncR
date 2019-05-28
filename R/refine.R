@@ -92,10 +92,6 @@ refine = function(res, pval, pcol=5, annotations=NULL){
         sub_graph_path = sub_graph_path[sub_graph_path[,5] != 0,]
         # scores per root (stable across refinement rounds)
         scores_root = scores_root_nodes[[r]]
-        print(scores_root)
-        print(scores_root_nodes)
-        print(r)
-        print(scores_root_nodes[[r]])
         # recursively compute refinement (update 'refined')
         refined = refine_algo(anno_one_root, scores_root, sub_graph_path, pval, refined, test, low, first=TRUE)
     }
@@ -126,8 +122,8 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     
     # get go_id of leaves from sub_graph_path (id, parent, child, ...)
     leaves = unique(sub_graph_path[!(sub_graph_path[,3] %in% sub_graph_path[,2]), "go_id"])
-    message("Found ", length(leaves), " leaves:")
-    print(leaves)
+    message("Found ", length(leaves), " leaves...")
+    #print(leaves)
     
     # return updated p-vals table if no leaves are left
     if (length(leaves)==0){
