@@ -46,6 +46,7 @@ function | description
 [get_ids](#get_ids) | returns all GO-categories that contain the input string
 [get_anno_genes](#get_anno_g) | returns genes that are annotated to input GO-categories
 [get_anno_categories](#get_anno_c) | returns GO-categories that input genes are annotated to
+[refine](#refine) | restrict results to most specific GO-categories
 
 
 <a name='go_enrich'></a>
@@ -630,6 +631,33 @@ head(full_anno)
 Like for `go_enrich` also custom annotations and ontologies can be used (see the help pages of the functions).
 
 
+
+<a name='refine'></a> 
+
+## Refine results from go_enrich
+
+When there are many significant GO-categories given a FWER-threshold, it may be useful to restrict the results to the most specific categories.  
+The `refine` function implements the _elim_ algorithm from [4], which removes genes from significant child categories and repeats the test to check whether a category would still be significant. 
+
+```{r, results='hide'}
+## perform enrichment analysis for some genes
+gene_ids = c('NCAPG', 'APOL4', 'NGFR', 'NXPH4', 'C21orf59', 'CACNG2', 'AGTR1',
+    'ANO1', 'BTBD3', 'MTUS1', 'CALB1', 'GYG1', 'PAX2')
+input_hyper = data.frame(gene_ids, is_candidate=1)
+res_hyper = go_enrich(input_hyper, n_randset=100)
+
+## perform refinement for categories with FWER < 0.1
+refined = refine(res_hyper, fwer=0.1)
+```
+
+```{r}
+## the result shows p-values and significance before and after refinement
+refined
+```
+
+By default `refine` performs the test for over-representation of candidate genes, see `?refine` for how to check for under-representation.
+
+
 # Schematics
 
 <a name='hyper_scheme'></a>
@@ -643,7 +671,7 @@ Then the statistical tests are evaluated again for every GO-category.
 
 <a name='block_scheme'></a>
 
-## Schematic 2: `circ_chrom` option for genomic regions input
+## Schematic 2: circ_chrom option for genomic regions input
 
 ![options for genomic regions input](./Skizze_Fig2.png 'options for genomic regions input')
 
@@ -666,3 +694,5 @@ sessionInfo()
 sets and ontological annotations, BMC Bioinformatics 8: 41. [https://doi.org/10.1186/1471-2105-8-41]
 
 [3] McDonald, J. H. Kreitman, M. (1991). Adaptive protein evolution at the Adh locus in Drosophila, Nature 351: 652-654. [https://doi.org/10.1038/351652a0]
+
+[4] Alexa, A. et al. (2006). Improved scoring of functional groups from gene expression data by decorrelating GO graph structure. Bioinformatics 22, 1600–1607. [https://doi.org/10.1093/bioinformatics/btl140]
