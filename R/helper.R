@@ -254,11 +254,7 @@ load_onto = function(databases){
         godir = onto[1,3]
         term = read.table(paste0(godir,"/term.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
         graph_path = read.table(paste0(godir,"/graph_path.txt"),sep="\t",quote="",comment.char="",as.is=TRUE)
-    } else {
-        # take from sysdata
-        term = GOfuncR:::term
-        graph_path = GOfuncR:::graph_path
-    }
+    } # else, take from sysdata
     return(list(term, graph_path))
 }
 
