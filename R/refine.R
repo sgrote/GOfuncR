@@ -1,7 +1,7 @@
 
 
 # annotations = custom annotations dataframe if needed
-refine = function(res, pval, pcol=5, annotations=NULL){
+refine = function(res, fwer=0.05, fwer_col=7, annotations=NULL){
     
     # check input
     check_res(res)
@@ -9,37 +9,41 @@ refine = function(res, pval, pcol=5, annotations=NULL){
     term = onto[[1]]
     graph_path = onto[[2]]
     test = infer_test(res[[2]])
+    if (fwer <= 0 || fwer >= 1){
+        stop("Please define a 'fwer' between 0 and 1 (exclusive)")
+    }
 
-    # check pval-column, allow string or number
-    if (! is.numeric(pcol)){
-        pcol = which(colnames(res[[1]]) == pcol)
+    # check FWER-column
+    if (! is.numeric(fwer_col)){
+        fwer_col = which(colnames(res[[1]]) == fwer_col)
     }
-    if (length(pcol) == 0 || ! pcol %in% c(4,5)){
-        colnam = paste(colnames(res[[1]])[4:5], collapse = "' or '")
-        stop("Invalid 'pcol' argument.\nPlease use 4 or 5 or the corresponding colnames '", colnam, "'.")
+    if (length(fwer_col) == 0 || ! fwer_col %in% c(6,7)){
+        colnam = paste(colnames(res[[1]])[6:7], collapse = "' or '")
+        stop("Invalid 'fwer_col' argument.\nPlease use 6 or 7 or the corresponding colnames '", colnam, "'.")
     }
-    pcol_string = colnames(res[[1]])[pcol]
-    message("\nRefinement on '", pcol_string, "' using p-value threshold ", pval, "...\n")
 
     # define direction for refinement test
     # col 4 is underrep/low-scores and col 5 overrep/high-scores/high-A/B in each test
-    if (pcol == 4){
+    if (fwer_col == 6){
+        pcol = 4
+        min_pcol = 2
         low = TRUE
-    } else if (pcol == 5){
+    } else if (fwer_col == 7){
+        pcol = 5
+        min_pcol = 3
         low = FALSE
     }
+    pcol_string = colnames(res[[1]])[pcol]
 
     # get significant GO-categories
     stats = res[[1]]
-    signi_stats = stats[stats[,pcol] < pval, ]
+    signi_stats = stats[stats[,fwer_col] < fwer, ]
     if (nrow(signi_stats) == 0){
-        stop("There are no significant categories at p-value threshold ", pval)
+        stop("There are no significant categories at FWER threshold ", fwer)
     }
-    message("Found ", nrow(signi_stats), " significant categories at p-value threshold ", pval)
+    message("Found ", nrow(signi_stats), " significant categories at FWER threshold ", fwer)
     go_ids = signi_stats$node_id
     
-    # add root_ids to GO-ids
-
     # get annotated genes with scores for significant GO-categories
     message("\nGet annotations for categories:")
     anno = get_anno_scores(res, go_ids, term, graph_path, annotations)
@@ -53,6 +57,7 @@ refine = function(res, pval, pcol=5, annotations=NULL){
     anno = cbind(anno, root_id=matched_root_name[match(anno[,1], matched_root_name[,1]), "root_id"])
     anno$root_id = as.character(anno$root_id)
     root_ids = unique(matched_root_name$root_id)
+    roots = get_names(root_ids, term)
     
     # get annotated genes with scores for root nodes
     if (test != "contingency"){
@@ -73,16 +78,15 @@ refine = function(res, pval, pcol=5, annotations=NULL){
         scores_root_nodes = sapply(root_ids, function(x){NA}, simplify=FALSE)
     }
     
-    
-    
     # add GO-ID of children
     graph_path$go_id = term_to_go(graph_path[,3], term)
     
     # intialize refinement results
     refined = data.frame(node_id=signi_stats$node_id, raw_p=signi_stats[,pcol], refined_p=NA) 
     # loop over roots
-    for (r in root_ids){
-        message("\nRefine root node ", r, "...")
+    for (i in seq_len(nrow(roots))){
+        r = roots[i, 1]
+        message("\nRefine root node ", roots[i, 2], "")
         # restrict graph to significant+root categories from this root node
         anno_one_root = anno[anno$root_id == r,]
         # leave root node in sub_graph_path
@@ -92,6 +96,10 @@ refine = function(res, pval, pcol=5, annotations=NULL){
         sub_graph_path = sub_graph_path[sub_graph_path[,5] != 0,]
         # scores per root (stable across refinement rounds)
         scores_root = scores_root_nodes[[r]]
+        # convert FWER to p
+        min_p = res[[4]][res[[4]][,1] == roots[i, 2], min_pcol]
+        pval = fwer_to_p(fwer, min_p)
+        message("using p-value threshold ", pval, "...\n")
         # recursively compute refinement (update 'refined')
         refined = refine_algo(anno_one_root, scores_root, sub_graph_path, pval, refined, test, low, first=TRUE)
     }
@@ -99,12 +107,29 @@ refine = function(res, pval, pcol=5, annotations=NULL){
     # merge with original data, all=T just to be sure, should always have the same
     out = merge(signi_stats, refined, by="node_id", all=TRUE, sort=FALSE)
     out$signif = out$refined_p < pval
-    # TODO remove raw_p column after testing
+    # remove raw_p column after testing
+    out = out[, colnames(out) != "raw_p"] 
     colnames(out)[colnames(out) == "refined_p"] = paste0("refined_", substring(pcol_string, 5))
     
     message("\nDone.")
 
     return(out)
+}
+
+fwer_to_p = function(fwer, min_p){
+    
+    # interpolate with approx
+    min_p = sort(min_p)
+    unique_p = unique(min_p)
+    fwers = ecdf(min_p)(unique_p)
+    # avoid NA if fwer too low (just min-p since p_category < p is tested (and not <=))
+    if (fwer < min(fwers)){
+        p = min(min_p)
+    }
+    else {
+        p = approx(fwers, unique_p, fwer)$y
+    }
+    return(p)
 }
 
 
