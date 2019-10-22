@@ -2,7 +2,7 @@
 ---
 title: "GOfuncR: Gene Ontology Enrichment Using FUNC"
 author: "Steffi Grote"
-date: "April 3, 2019"
+date: "October 22, 2019"
 output:
     BiocStyle::html_document:
     toc: true
@@ -29,7 +29,7 @@ It provides the standard candidate vs. background enrichment analysis using the 
 To correct for multiple testing and interdependency of the tests, family-wise error rates (FWER) are computed based on random permutations of the gene-associated variables (see [Schematic 1](#hyper_scheme) below).
 `r Biocpkg('GOfuncR')` also provides tools for exploring the ontology graph and the annotations, and options to take gene-length or spatial clustering of genes into account during testing.  
 GO-annotations and gene-coordinates are obtained from *OrganismDb* packages (`r Biocpkg('Homo.sapiens')` by default) or *OrgDb* and *TxDb* packages.
-The gene ontology graph (obtained from [geneontology](http://archive.geneontology.org/lite/latest/), last modified on 27-Mar-2019), is integrated in the package.
+The gene ontology graph (obtained from [geneontology](http://current.geneontology.org/ontology/), release date 07-Oct-2019), is integrated in the package.
 It is also possible to provide custom gene coordinates, annotations and ontologies.  
 
 ![input data and test selection](Input_data_test_selection.png 'overview tests')
@@ -446,7 +446,7 @@ A gene with a higher weight has a bigger chance of becoming a candidate gene in 
 
 ## Custom GO-graph
 
-A default GO-graph (obtained from [Gene Ontology](http://archive.geneontology.org/lite/latest/), last modified on 27-Mar-2019), is integrated in the package.
+A default GO-graph (obtained from [geneontology](http://current.geneontology.org/ontology/), release date 07-Oct-2019), is integrated in the package.
 However, also a custom GO-graph, e.g. a specific version or a different ontology can be provided. `go_enrich` needs a directory which contains three tab-separated files in the GO MySQL Database Schema:
 *term.txt*, *term2term.txt* and *graph_path.txt*.
 The full path to this directory needs to be defined in the parameter `godir`.  
