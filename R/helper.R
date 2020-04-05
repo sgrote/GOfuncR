@@ -66,7 +66,7 @@ eval_db_input = function(organismDb, godir, orgDb, annotations, txDb, regions, g
     
     # 4) GO-graph
     if (is.null(godir)){
-        databases = rbind(databases, list("go_graph", "integrated", "07-Oct-2019"))
+        databases = rbind(databases, list("go_graph", "integrated", "23-Mar-2020"))
     } else {
         databases = rbind(databases, list("go_graph", "custom", godir))
     }
