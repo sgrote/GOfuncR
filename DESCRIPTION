@@ -41,6 +41,8 @@ Suggests:
     Homo.sapiens,
     BiocStyle,
     knitr,
+    markdown,
+    rmarkdown,
     testthat
 VignetteBuilder: knitr
 biocViews: GeneSetEnrichment, GO
