@@ -106,7 +106,7 @@ refine = function(res, fwer=0.05, fwer_col=7, annotations=NULL){
 
     # merge with original data, all=T just to be sure, should always have the same
     out = merge(signi_stats, refined, by="node_id", all=TRUE, sort=FALSE)
-    out$signif = out$refined_p < pval
+
     # remove raw_p column after testing
     out = out[, colnames(out) != "raw_p"] 
     colnames(out)[colnames(out) == "refined_p"] = paste0("refined_", substring(pcol_string, 5))
@@ -173,6 +173,7 @@ refine_algo = function(anno_signi, scores_root, sub_graph_path, pval, refined, t
     
     # add to output
     refined[match(new_p_leaves$go_id, refined$node_id), "refined_p"] = new_p_leaves$new_p
+    refined[match(new_p_leaves$go_id, refined$node_id), "signif"] = new_p_leaves$new_p < pval
 
     # check that p-value for leaves is the same before and after refinement
     if (first){
