@@ -8,3 +8,7 @@ build/vignette.rds
 *.html
 vignettes/.Rhistory
 .Rproj.user
+*.Rproj
+.Rhistory
+.Rbuildignore
+tmp.R
