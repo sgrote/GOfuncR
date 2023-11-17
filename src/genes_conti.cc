@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <Rcpp.h>
+#include <random>
+#include <algorithm>
 
 genes_conti::genes_conti( go_graph_conti &graph, istream &annotation, istream &data ) 
 {
@@ -67,17 +69,10 @@ genes_conti::~genes_conti(  )
 		delete it->second ;
 }
 
-#include <algorithm>
-
-class c_prng {
-	public:
-		int operator()( int n ) { return( R::runif(0,1) * n ); } ;
-} ;
-
 void genes_conti::create_random_set(  ) 
 {
-	c_prng rng ;
-        random_shuffle( genevec.begin(), genevec.end(), rng ) ;
+      	std::mt19937 g(R::runif(0, 1e+05));
+        std::shuffle( genevec.begin(), genevec.end(), g ) ;
 
         int i = 0 ;
 
