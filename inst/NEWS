@@ -1,10 +1,11 @@
 
-CHANGES IN VERSION 1.23.1
+CHANGES IN VERSION 1.23.2
 --------------------------
 
 USER-LEVEL CHANGES
 
     o Bugfix for compilation error on Mac
+    o Bugfix for refinement "signif" column (see https://github.com/sgrote/GOfuncR/pull/7)
     
 
 CHANGES IN VERSION 1.13.1
