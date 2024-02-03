@@ -1,4 +1,12 @@
 
+CHANGES IN VERSION 1.23.1
+--------------------------
+
+USER-LEVEL CHANGES
+
+    o Bugfix for compilation error on Mac
+    
+
 CHANGES IN VERSION 1.13.1
 --------------------------
 
