@@ -1,3 +1,17 @@
+
+# DEPRECATED
+
+**Please note that this package is not maintained anymore**
+
+I recommend to use [evoGO](https://github.com/Evotec-Bioinformatics/evoGO) instead.
+
+
+---------------------------------
+
+
+<details>
+  <summary>Old README</summary>
+
 ### GOfuncR: Gene Ontology Enrichment Using FUNC 
 
 _GOfuncR_ performs a gene ontology enrichment analysis based on the ontology enrichment software [_FUNC_](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1800870/).
@@ -48,3 +62,5 @@ library(GOfuncR)
 ?get_anno_categories
 
 ```
+
+</details>
